@@ -39,3 +39,6 @@ docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros
 docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros.arm64.yaml build
 docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros.arm64.yaml up -d
 ```
+
+### Checking the docker
+```

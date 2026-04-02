@@ -23,6 +23,8 @@ find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(movensys_moveit_config REQUIRED)
+include_directories(${movensys_moveit_config_DIR}/../../../include)
+link_directories(${movensys_moveit_config_DIR}/../../../lib)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -44,16 +46,16 @@ add_executable(isaacsim_bridge src/isaacsim-bridge.cpp)
 ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
 
 add_executable(stage1_trajectory_cpp src/stage1_trajectory.cpp)
+ament_target_dependencies(stage1_trajectory_cpp rclcpp movensys_moveit_config)
 target_link_libraries(stage1_trajectory_cpp moveit2_client_lib)
-ament_target_dependencies(stage1_trajectory_cpp rclcpp)
 
 add_executable(stage2_pick_n_place_cpp src/stage2_pick_n_place.cpp)
+ament_target_dependencies(stage2_pick_n_place_cpp rclcpp movensys_moveit_config)
 target_link_libraries(stage2_pick_n_place_cpp moveit2_client_lib)
-ament_target_dependencies(stage2_pick_n_place_cpp rclcpp)
 
 add_executable(stage3_pose_to_pose_cpp src/stage3_pose_to_pose.cpp)
+ament_target_dependencies(stage3_pose_to_pose_cpp rclcpp movensys_moveit_config)
 target_link_libraries(stage3_pose_to_pose_cpp moveit2_client_lib)
-ament_target_dependencies(stage3_pose_to_pose_cpp rclcpp)
 
 install(TARGETS
   isaacsim_bridge
