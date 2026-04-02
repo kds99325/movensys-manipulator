@@ -4,10 +4,8 @@
 - Add the following environment variables to your `~/.bashrc`:
 ```
 export ROS_DOMAIN_ID=73
-export HOST_USER_UID=1000        # replace with: id -u
-export HOST_USER_GID=1000        # replace with: id -g
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-source /opt/ros/jazzy/setup.bash
+export HOST_USER_UID=$(id -u)
+export HOST_USER_GID=$(id -g)
 ```
 ```
 source ~/.bashrc
