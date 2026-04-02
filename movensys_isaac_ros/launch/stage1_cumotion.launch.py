@@ -28,11 +28,11 @@ def generate_launch_description():
         .to_moveit_configs()
     )
 
-    # Stage1 trajectory node with MoveIt parameters
+    # Stage1 cumotion node with MoveIt parameters
     stage1_trajectory_node = Node(
         package="movensys_isaac_ros",
-        executable="stage1_trajectory_cpp",
-        name="stage1_trajectory_cpp",
+        executable="stage1_cumotion_cpp",
+        name="stage1_cumotion_cpp",
         output="screen",
         parameters=[
             moveit_config.robot_description,

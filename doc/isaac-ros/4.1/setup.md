@@ -42,3 +42,5 @@ docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros
 
 ### Checking the docker
 ```
+docker exec -it --user admin movensys_manipulator_container bash
+```

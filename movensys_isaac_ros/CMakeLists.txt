@@ -45,9 +45,9 @@ install(DIRECTORY
 add_executable(isaacsim_bridge src/isaacsim-bridge.cpp)
 ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
 
-add_executable(stage1_trajectory_cpp src/stage1_trajectory.cpp)
-ament_target_dependencies(stage1_trajectory_cpp rclcpp movensys_moveit_config)
-target_link_libraries(stage1_trajectory_cpp moveit2_client_lib)
+add_executable(stage1_cumotion_cpp src/stage1_cumotion.cpp)
+ament_target_dependencies(stage1_cumotion_cpp rclcpp movensys_moveit_config)
+target_link_libraries(stage1_cumotion_cpp moveit2_client_lib)
 
 add_executable(stage2_pick_n_place_cpp src/stage2_pick_n_place.cpp)
 ament_target_dependencies(stage2_pick_n_place_cpp rclcpp movensys_moveit_config)
@@ -59,7 +59,7 @@ target_link_libraries(stage3_pose_to_pose_cpp moveit2_client_lib)
 
 install(TARGETS
   isaacsim_bridge
-  stage1_trajectory_cpp
+  stage1_cumotion_cpp
   stage2_pick_n_place_cpp
   stage3_pose_to_pose_cpp
   ARCHIVE DESTINATION lib
