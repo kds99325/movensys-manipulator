@@ -3,7 +3,7 @@ services:
     restart: unless-stopped
     build:
       context: .
-      dockerfile: isaac-ros-4.1.Dockerfile
+      dockerfile: isaac-ros_4.1.Dockerfile
       network: host
     image: ${IMAGE_NAME}
     container_name: ${CONTAINER_NAME}
@@ -21,15 +21,15 @@ services:
       - HOST_USER_GID=${HOST_USER_GID}
       - USER=${USER}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
-      - CYCLONEDDS_URI=file:///home/admin/cyclonedds.xml
+      - CYCLONEDDS_URI=file:///workspaces/cyclonedds.xml
       - DISPLAY
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - QT_X11_NO_MITSHM=1
       - ISAAC_ROS_ACCEPT_EULA=1
     volumes:
-      - ${MOVENSYS_WS}:/workspaces/movensys_manipulator_ws:rw
-      - ${CYCLONEDDS_DIR}:/home/admin/cyclonedds.xml:ro
+      - ${MOVENSYS_MANIPULATOR_PACKAGES}:/workspaces/movensys_manipulator_ws/src/movensys-manipulator:rw
+      - ${CYCLONEDDS_DIR}:/workspaces/cyclonedds.xml:ro
       - /etc/localtime:/etc/localtime:ro
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /dev/dri:/dev/dri
@@ -40,14 +40,14 @@ services:
 
                echo ====== Build movensys_manipulator ======= && \
                cd /workspaces/movensys_manipulator_ws && \
-               mkdir -p /home/admin/ws/{build,install,test_results} && \
+               mkdir -p /workspaces/ws/{build,install,test_results} && \
                colcon --log-base /dev/shm/colcon_logs build \
-                  --build-base /home/admin/ws/build \
-                  --install-base /home/admin/ws/install \
-                  --test-result-base /home/admin/ws/test_results && \
+                  --build-base /workspaces/ws/build \
+                  --install-base /workspaces/ws/install \
+                  --test-result-base /workspaces/ws/test_results && \
 
                echo ====== Build Terminated ======= && \
-               source /home/admin/ws/install/setup.bash && \
+               source /workspaces/ws/install/setup.bash && \
                export RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION} && \
                exec bash"
               ]

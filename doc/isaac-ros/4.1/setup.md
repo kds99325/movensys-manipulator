@@ -26,16 +26,16 @@ sudo apt-get install -y ros-jazzy-joint-state-publisher \
 ## 3. Docker 
 ### Case A: Docker [x86]
 ```
-cd ${MANIPULATOR_ROS_WS}/src/movensys-manipulator/doc/isaac-ros-4.1/docker
-docker compose -f isaac-ros-4.1.yaml -f compose.x86.yaml down
-docker compose -f isaac-ros-4.1.yaml -f compose.x86.yaml build
-docker compose -f isaac-ros-4.1.yaml -f compose.x86.yaml up -d
+cd ~/movensys-manipulator/doc/isaac-ros/4.1/docker
+docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros.x86.yaml down
+docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros.x86.yaml build
+docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros.x86.yaml up -d
 ```
 
 ### Case B: Docker [arm64]
 ```
-cd ${MANIPULATOR_ROS_WS}/src/movensys-manipulator/doc/isaac-ros-4.1/docker
-docker compose -f isaac-ros-4.1.yaml -f compose.arm64.yaml down
-docker compose -f isaac-ros-4.1.yaml -f compose.arm64.yaml build
-docker compose -f isaac-ros-4.1.yaml -f compose.arm64.yaml up -d
+cd ~/movensys-manipulator/doc/isaac-ros/4.1/docker
+docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros.arm64.yaml down
+docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros.arm64.yaml build
+docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros.arm64.yaml up -d
 ```
