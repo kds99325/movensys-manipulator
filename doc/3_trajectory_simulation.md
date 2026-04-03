@@ -9,7 +9,7 @@
 docker exec -it movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
         source /home/admin/ws/install/setup.bash && \
-        ros2 launch movensys_movensys_gazebo_harmonic trajectory_simulation.launch.py'
+        ros2 launch movensys_gazebo trajectory_simulation.launch.py'
 ```
 
 
