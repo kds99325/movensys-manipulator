@@ -20,8 +20,8 @@ cspace:
   retract_config:          [1.57, 0.0, 1.57, 0.0, -1.57, 0.0]
   null_space_weight:       [1, 1, 1, 1, 1, 1]
   cspace_distance_weight:  [1, 1, 1, 1, 1, 1]
-  velocity_limits:     [3.0, 3.0, 3.0, 3.0, 3.0, 3.0]
-  acceleration_limits: [3.0, 3.0, 3.0, 3.0, 3.0, 3.0]
+  velocity_limits:     [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+  acceleration_limits: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
   jerk_limits: [50, 50, 50, 50, 50, 50]
 
 tool_frames: ["Link6"]

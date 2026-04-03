@@ -13,7 +13,7 @@
     <visual>
       <origin rpy="0 0 -1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link0.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link0.STL"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -22,7 +22,7 @@
     <collision>
       <origin rpy="0 0 -1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link0.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link0.STL"/>
       </geometry>
     </collision>
   </link>
@@ -31,7 +31,7 @@
     <parent link="Link0"/>
     <child link="Link1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-3.14" upper="3.14" velocity="3.0"/>
+    <limit effort="50" lower="-3.14" upper="3.14" velocity="1.0"/>
   </joint>
   <link name="Link1">
     <inertial>
@@ -42,7 +42,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link1.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link1.STL"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -51,7 +51,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link1.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link1.STL"/>
       </geometry>
     </collision>
   </link>
@@ -60,7 +60,7 @@
     <parent link="Link1"/>
     <child link="Link2"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-2.0" upper="2.0" velocity="3.0"/>
+    <limit effort="50" lower="-2.0" upper="2.0" velocity="1.0"/>
   </joint>
   <link name="Link2">
     <inertial>
@@ -71,7 +71,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link2.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link2.STL"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -80,7 +80,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link2.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link2.STL"/>
       </geometry>
     </collision>
   </link>
@@ -89,7 +89,7 @@
     <parent link="Link2"/>
     <child link="Link3"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-0.2" upper="2.55" velocity="3.0"/>
+    <limit effort="50" lower="-0.2" upper="2.55" velocity="1.0"/>
   </joint>
   <link name="Link3">
     <inertial>
@@ -100,7 +100,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link3.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link3.STL"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -109,7 +109,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link3.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link3.STL"/>
       </geometry>
     </collision>
   </link>
@@ -118,7 +118,7 @@
     <parent link="Link3"/>
     <child link="Link4"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-3.14" upper="3.14" velocity="3.0"/>
+    <limit effort="50" lower="-3.14" upper="3.14" velocity="1.0"/>
   </joint>
   <link name="Link4">
     <inertial>
@@ -129,7 +129,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link4.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link4.STL"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -138,7 +138,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link4.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link4.STL"/>
       </geometry>
     </collision>
   </link>
@@ -147,7 +147,7 @@
     <parent link="Link4"/>
     <child link="Link5"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-2.5" upper="0.1" velocity="3.0"/>
+    <limit effort="50" lower="-2.5" upper="0.1" velocity="1.0"/>
   </joint>
   <link name="Link5">
     <inertial>
@@ -158,7 +158,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link5.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link5.STL"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -167,7 +167,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link5.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link5.STL"/>
       </geometry>
     </collision>
   </link>
@@ -176,7 +176,7 @@
     <parent link="Link5"/>
     <child link="Link6"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-3.14" upper="3.14" velocity="3.0"/>
+    <limit effort="50" lower="-3.14" upper="3.14" velocity="1.0"/>
   </joint>
   <link name="Link6">
     <inertial>
@@ -187,7 +187,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link6.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link6.STL"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -196,7 +196,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link6.STL"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/Link6.STL"/>
       </geometry>
     </collision>
   </link>
@@ -214,7 +214,7 @@
     <visual>
       <origin rpy="0 0 3.14" xyz="0.0585 0.037 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/bracket.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/bracket.STL" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="">
         <color rgba="0 0 0 1"/>
@@ -223,7 +223,7 @@
     <collision>
       <origin rpy="0 0 3.14" xyz="0.0585 0.037 0"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/bracket.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/bracket.STL" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -241,13 +241,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.052 0.005 -0.09"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/gripper.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/gripper.STL" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.052 0.005 -0.09"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/gripper.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/gripper.STL" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -256,7 +256,7 @@
     <parent link="gripper"/>
     <child link="picker_1"/>
     <axis xyz="-1 0 0"/>
-    <limit effort="50" lower="0.0" upper="0.045" velocity="3.0"/>
+    <limit effort="50" lower="0.0" upper="0.045" velocity="1.0"/>
   </joint>
   <link name="picker_1">
     <inertial>
@@ -285,7 +285,7 @@
     <parent link="gripper"/>
     <child link="picker_2"/>
     <axis xyz="1 0 0"/>
-    <limit effort="50" lower="0.0" upper="0.045" velocity="3.0"/>
+    <limit effort="50" lower="0.0" upper="0.045" velocity="1.0"/>
   </joint>
   <link name="picker_2">
     <inertial>
@@ -324,7 +324,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.5 -0.35 -1.285"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/table.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/table.STL" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -333,7 +333,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="-0.5 -0.35 -1.285"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/table.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/table.STL" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -351,7 +351,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.23 -0.1 -1.285"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/stand.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/stand.STL" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="">
         <color rgba="1 1 1 1"/>
@@ -360,7 +360,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="-0.23 -0.1 -1.285"/>
       <geometry>
-        <mesh filename="file:///home/noah/workspaces/movensys_manipulator_ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/stand.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/stand.STL" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>

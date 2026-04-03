@@ -17,6 +17,10 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(control_msgs REQUIRED)
+find_package(trajectory_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(moveit_msgs REQUIRED)
@@ -64,7 +68,10 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
-install(TARGETS moveit2_client_lib
+add_executable(isaacsim_bridge src/isaacsim_bridge.cpp)
+ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
+
+install(TARGETS moveit2_client_lib isaacsim_bridge
   EXPORT export_moveit2_client_lib
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

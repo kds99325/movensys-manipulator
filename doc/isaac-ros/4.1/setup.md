@@ -1,29 +1,7 @@
 ## 1. Nvidia Setup
 please follow this isaac-ros setup first: https://nvidia-isaac-ros.github.io/v/release-4.1/getting_started/index.html
 
-## 2. Dependencies
-```
-sudo apt-get update -y && \
-sudo apt-get install -y ros-jazzy-joint-state-publisher \
-                        ros-jazzy-joint-state-publisher-gui \
-                        ros-jazzy-xacro \
-                        ros-jazzy-rqt* \
-                        ros-jazzy-ros2-control \
-                        ros-jazzy-ros2-controllers \
-                        ros-jazzy-controller-manager \
-                        ros-jazzy-tf-transformations \
-                        ros-jazzy-pal-statistics \
-                        ros-jazzy-pal-statistics-msgs \
-                        ros-jazzy-rmw-cyclonedds-cpp \
-                        ros-jazzy-moveit-ros \
-                        ros-jazzy-moveit-planners \
-                        ros-jazzy-moveit-plugins \
-                        ros-jazzy-moveit-setup-assistant \
-                        ros-jazzy-moveit-configs-utils \
-                        curl jq tar
-```
-
-## 3. Docker 
+## 2. Docker 
 ### Case A: Docker [x86]
 ```
 cd ${MOVENSYS_MANIPULATOR_PACKAGES}/doc/isaac-ros/4.1/docker
@@ -42,5 +20,6 @@ docker compose --env-file ../../../.env -f isaac-ros_4.1.yaml -f ../../isaac-ros
 
 ### Checking the docker
 ```
-docker exec -it --user admin movensys_manipulator_container bash
+docker exec -u admin -it movensys_manipulator_container bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/admin/ws/install/setup.bash && exec bash -i'
 ```
+

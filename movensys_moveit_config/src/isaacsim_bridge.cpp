@@ -42,7 +42,7 @@ public:
   IsaacSimBridge() : Node("isaacsim_bridge") {
     // Why type and name mismatch?? (Type : JointState, Name : /joint_command)
     pub_joint_state_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_command", 10);
-    sub_joint_state_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 
+    sub_joint_state_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states",
                         10, std::bind(&IsaacSimBridge::cb, this, std::placeholders::_1));
 
     setGripperService_ = this->create_service<std_srvs::srv::SetBool>("/wmx/set_gripper",
@@ -74,14 +74,14 @@ private:
     if (request->data){
       gripper_state_ = 0.045;
       response->success = true;
-    } 
+    }
     else{
       gripper_state_ = 0.000;
-      response->success = true; 
+      response->success = true;
     }
-    
+
     sensor_msgs::msg::JointState joint_command = last_joint_state;
-  
+
     joint_command.position[6] = gripper_state_;
     joint_command.position[7] = gripper_state_;
 
@@ -120,7 +120,7 @@ private:
       jn << traj.joint_names[i];
     }
     RCLCPP_INFO(this->get_logger(), "Joint Names: [%s]", jn.str().c_str());
-    
+
     // Log points
     for (size_t i = 0; i < traj.points.size(); ++i) {
       const auto &pt = traj.points[i];
@@ -140,10 +140,10 @@ private:
         RCLCPP_INFO(
           this->get_logger(),
           "Time interval: %f",
-          (duration_cur-duration_pre).seconds());        
+          (duration_cur-duration_pre).seconds());
       }
     }
-    
+
     for (size_t i = 0; i < traj.points.size(); ++i) {
       const auto& pt = traj.points[i];
 
@@ -151,15 +151,15 @@ private:
       sensor_msgs::msg::JointState joint_command;
       joint_command.name = joint_names_;
 
-      std::vector<double> pos = pt.positions;   
-      std::vector<double> vel = pt.velocities;  
-      
+      std::vector<double> pos = pt.positions;
+      std::vector<double> vel = pt.velocities;
+
       pos.resize(8, gripper_state_);
       vel.resize(8, 0.000000000000);
 
       joint_command.position = std::move(pos);
       joint_command.velocity = std::move(vel);
-      
+
       joint_command.header.stamp = this->get_clock()->now();
       pub_joint_state_->publish(joint_command);
 

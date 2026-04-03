@@ -17,11 +17,6 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
-find_package(rclcpp_action REQUIRED)
-find_package(control_msgs REQUIRED)
-find_package(trajectory_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(std_srvs REQUIRED)
 find_package(movensys_moveit_config REQUIRED)
 include_directories(${movensys_moveit_config_DIR}/../../../include)
 link_directories(${movensys_moveit_config_DIR}/../../../lib)
@@ -42,9 +37,6 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}/
 )
 
-add_executable(isaacsim_bridge src/isaacsim-bridge.cpp)
-ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
-
 add_executable(stage1_cumotion_cpp src/stage1_cumotion.cpp)
 ament_target_dependencies(stage1_cumotion_cpp rclcpp movensys_moveit_config)
 target_link_libraries(stage1_cumotion_cpp moveit2_client_lib)
@@ -58,7 +50,6 @@ ament_target_dependencies(stage3_pose_to_pose_cpp rclcpp movensys_moveit_config)
 target_link_libraries(stage3_pose_to_pose_cpp moveit2_client_lib)
 
 install(TARGETS
-  isaacsim_bridge
   stage1_cumotion_cpp
   stage2_pick_n_place_cpp
   stage3_pose_to_pose_cpp
