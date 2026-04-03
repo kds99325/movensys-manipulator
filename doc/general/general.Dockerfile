@@ -45,7 +45,3 @@ RUN apt-get update && \
       python3-colcon-common-extensions \
       python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
-
-      
-      
-    && rm -rf /var/lib/apt/lists/*
