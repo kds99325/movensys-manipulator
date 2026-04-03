@@ -4,7 +4,7 @@
 ### Step 1a: Open Isaac Sim
 `~/robotics_isaac_sim/movensys_manipulator/trajectory_simulation.usd`
 
-### Step 1b: Open Gazebo
+### Step 1b: Open Gazebo Harmonic
 
 
 
@@ -17,7 +17,7 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
         ros2 run movensys_manipulator_moveit_config isaacsim_bridge --ros-args -p use_sim_time:=true'
 ```
 
-### Step 2b: Run Gazebo Bridge
+### Step 2b: Run Gazebo Harmonic Bridge
 ```
 ```
 
