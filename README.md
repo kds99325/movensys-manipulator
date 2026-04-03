@@ -6,6 +6,7 @@
 export ROS_DOMAIN_ID=73
 export HOST_USER_UID=$(id -u)
 export HOST_USER_GID=$(id -g)
+export MOVENSYS_MANIPULATOR_PACKAGES=~/workspaces/movensys-manipulator
 ```
 ```
 source ~/.bashrc
@@ -26,6 +27,7 @@ sysctl net.core.rmem_max net.core.rmem_default net.core.wmem_max net.core.wmem_d
 
 ## 4. Clone Repository
 ```
+mkdir -p  workspaces && cd workspaces
 git clone https://github.com/movensys/movensys-manipulator.git
 ```
 
