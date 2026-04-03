@@ -1,1 +1,1 @@
-# movensys_manipulator_package
+# Movensys Manipulator

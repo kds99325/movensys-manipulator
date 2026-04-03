@@ -1,0 +1,187 @@
+format: "xrdf"
+
+format_version: 1.0
+
+# Base link for cuMotion - the root frame of the robot kinematics
+# The robot_segmenter_node uses this to compute robot collision spheres.
+# This should be the first moving link of the robot arm.
+base_link: "Link0"
+
+default_joint_positions:
+  joint1: 0.0000
+  joint2: 0.0000
+  joint3: 0.0000
+  joint4: 0.0000
+  joint5: 0.0000
+  joint6: 0.0000
+
+cspace:
+  joint_names: ["joint1","joint2","joint3","joint4","joint5","joint6"]
+  retract_config:          [1.57, 0.0, 1.57, 0.0, -1.57, 0.0]
+  null_space_weight:       [1, 1, 1, 1, 1, 1]
+  cspace_distance_weight:  [1, 1, 1, 1, 1, 1]
+  velocity_limits:     [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+  acceleration_limits: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+  jerk_limits: [50, 50, 50, 50, 50, 50]
+
+tool_frames: ["Link6"]
+
+collision:
+  geometry: "auto_generated_collision_sphere_group"
+  # buffer_distance adds a safety margin around collision spheres for obstacle avoidance
+  # This is CRITICAL for cuMotion to plan paths that avoid obstacles
+  # Increased buffer for gripper parts to ensure collision-free trajectories
+  buffer_distance:
+    Link0: 0.0
+    Link1: 0.0
+    Link2: 0.0
+    Link3: 0.0
+    Link4: 0.0
+    Link5: 0.0
+    Link6: 0.0
+    bracket: 0.0
+    gripper: 0.0
+    picker_1: 0.0
+    picker_2: 0.0
+
+self_collision:
+  geometry: "auto_generated_collision_sphere_group"
+  # buffer_distance for self-collision (usually smaller than world collision)
+  buffer_distance:
+    Link0: 0.002
+    Link1: 0.002
+    Link2: 0.002
+    Link3: 0.002
+    Link4: 0.002
+    Link5: 0.002
+    Link6: 0.002
+  ignore:
+    # Adjacent links (bi-directional) and skip-one pairs for articulated robot
+    Link0:
+      - "Link1"
+      - "Link2" 
+    Link1:
+      - "Link0"
+      - "Link2"
+      - "Link3"
+    Link2:
+      - "Link0"
+      - "Link1"
+      - "Link3"
+      - "Link4"  
+    Link3:
+      - "Link1"
+      - "Link2"
+      - "Link4"
+      - "Link5" 
+    Link4:
+      - "Link2"
+      - "Link3"
+      - "Link5"
+      - "Link6" 
+    Link5:
+      - "Link3"
+      - "Link4"
+      - "Link6"
+      - "bracket"
+      - "gripper"
+    Link6:
+      - "Link4"
+      - "Link5"
+      - "picker_1"
+      - "picker_2"
+      - "bracket"
+      - "gripper"
+    bracket:
+      - "Link5"
+      - "Link6"
+      - "gripper"
+      - "picker_1"
+      - "picker_2"
+    gripper:
+      - "Link5"
+      - "Link6"
+      - "bracket"
+      - "picker_1"
+      - "picker_2"
+    picker_1:
+      - "Link6"
+      - "bracket"
+      - "gripper"
+      - "picker_2"
+    picker_2:
+      - "Link6"
+      - "bracket"
+      - "gripper"
+      - "picker_1"
+
+# Collision sphere's center is based on URDF's joint
+# For simplicty, I call center as Link.
+geometry:
+  auto_generated_collision_sphere_group:
+    spheres:
+      # center is U-stand.
+      # -y : front, z : up
+      Link0:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.1
+        - center: [0.0, 0.0, 0.133]
+          radius: 0.1
+      # center is Link0
+      # -y : front, z : up
+      # This sphere is dummy to prevent error.
+      Link1:
+        - center: [0.0, -0.133, 0.133]
+          radius: 0.0
+      # center is Link1
+      # z : front, -x : up
+      Link2:
+        - center: [-0.266, 0.0, 0.133]
+          radius: 0.1
+        - center: [-0.266, 0.0, 0.0]
+          radius: 0.1
+        - center: [-0.133, 0.0, 0.133]
+          radius: 0.1
+        - center: [0.0, 0.0, 0.133]
+          radius: 0.1
+      # center is Link2
+      # z : front, -x : up
+      Link3:
+        - center: [-0.133, 0.0, 0.0]
+          radius: 0.1
+      # center is Link5
+      # z : front, -x : up
+      Link4:
+        - center: [0.0, 0.0, -0.133]
+          radius: 0.1
+      # center is Link 6
+      # y : front, -z : up
+      Link5: 
+        - center: [0.0, 0.0, -0.133]
+          radius: 0.1
+      # center is camera-stand
+      # z : front, -y : up
+      Link6:
+        - center: [0.0, 0.0, -0.133]
+          radius: 0.1
+      # center is camera-stand
+      # z : front, -y : up
+      bracket:
+        # neck sphere
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.09
+        # camera sphere
+        - center: [0.0, -0.065, 0.0]
+          radius: 0.09
+      # center is bracket
+      # y : front, z : up
+      gripper:
+        - center: [0.0, 0.08, 0.0]
+          radius: 0.09
+      picker_1:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.09
+      # picker_2 - gripper finger 2 (CONSERVATIVE - larger radii)
+      picker_2:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.09
