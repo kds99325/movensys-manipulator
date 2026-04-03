@@ -71,6 +71,9 @@ install(DIRECTORY include/
 add_executable(isaacsim_bridge src/isaacsim_bridge.cpp)
 ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
 
+add_executable(gazebo_bridge src/gazebo_bridge.cpp)
+ament_target_dependencies(gazebo_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
+
 add_executable(moveit2_trajectory_cpp src/moveit2_trajectory.cpp)
 target_link_libraries(moveit2_trajectory_cpp moveit2_client_lib)
 ament_target_dependencies(moveit2_trajectory_cpp
@@ -85,7 +88,7 @@ install(TARGETS moveit2_trajectory_cpp
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(TARGETS moveit2_client_lib isaacsim_bridge
+install(TARGETS moveit2_client_lib isaacsim_bridge gazebo_bridge
   EXPORT export_moveit2_client_lib
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

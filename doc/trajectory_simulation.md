@@ -5,7 +5,12 @@
 `~/robotics_isaac_sim/movensys_manipulator/trajectory_simulation.usd`
 
 ### Step 1b: Open Gazebo Harmonic
-
+```
+docker exec -it movensys_manipulator_container \
+bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
+        source /home/admin/ws/install/setup.bash && \
+        ros2 launch movensys_movensys_gazebo_harmonic trajectory_simulation.launch.py'
+```
 
 
 
@@ -19,6 +24,10 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
 ### Step 2b: Run Gazebo Harmonic Bridge
 ```
+docker exec -it movensys_manipulator_container \
+bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
+        source /home/admin/ws/install/setup.bash && \
+        ros2 run movensys_manipulator_moveit_config gazebo_bridge --ros-args -p use_sim_time:=true'
 ```
 
 
