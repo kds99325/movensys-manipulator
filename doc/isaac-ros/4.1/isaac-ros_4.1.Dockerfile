@@ -32,10 +32,10 @@ RUN apt-get update && \
       ros-jazzy-isaac-ros-nvblox \
     && rm -rf /var/lib/apt/lists/*
 
-COPY patches/fix_cumotion_planner.sh /tmp/fix_cumotion_planner.sh
+COPY fix_cumotion_planner.sh /tmp/fix_cumotion_planner.sh
 RUN chmod +x /tmp/fix_cumotion_planner.sh && /tmp/fix_cumotion_planner.sh && rm /tmp/fix_cumotion_planner.sh
 
-COPY patches/fix_robot_segmenter.sh /tmp/fix_robot_segmenter.sh
+COPY fix_robot_segmenter.sh /tmp/fix_robot_segmenter.sh
 RUN chmod +x /tmp/fix_robot_segmenter.sh && /tmp/fix_robot_segmenter.sh && rm /tmp/fix_robot_segmenter.sh
 
 RUN apt-get update && apt-get install -y \

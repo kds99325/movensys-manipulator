@@ -81,6 +81,10 @@ ament_target_dependencies(moveit2_trajectory_cpp
   std_srvs
 )
 
+install(TARGETS moveit2_trajectory_cpp
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 install(TARGETS moveit2_client_lib isaacsim_bridge
   EXPORT export_moveit2_client_lib
   ARCHIVE DESTINATION lib
@@ -101,7 +105,7 @@ ament_export_dependencies(
   Eigen3
 )
 
-ament_python_install_package(movensys_moveit_config)
+ament_python_install_package(movensys_manipulator_moveit_config)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

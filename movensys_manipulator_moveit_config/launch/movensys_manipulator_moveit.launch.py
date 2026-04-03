@@ -68,7 +68,7 @@ def launch_setup(context, *args, **kwargs):
     # RViz config
     rviz_base = LaunchConfiguration("rviz_config")
     rviz_config = PathJoinSubstitution(
-        [FindPackageShare("movensys_moveit_config"), "rviz", rviz_base]
+        [FindPackageShare("movensys_manipulator_moveit_config"), "rviz", rviz_base]
     )
 
     # RViz node

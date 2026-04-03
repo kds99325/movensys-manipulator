@@ -4,8 +4,10 @@
 - Add the following environment variables to your `~/.bashrc`:
 ```
 export ROS_DOMAIN_ID=73
+export ROS_DISTRO=jazzy             #support jazzy and humble
 export HOST_USER_UID=$(id -u)
 export HOST_USER_GID=$(id -g)
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export MOVENSYS_MANIPULATOR_PACKAGES=~/workspaces/movensys-manipulator
 ```
 ```
