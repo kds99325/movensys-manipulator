@@ -10,13 +10,22 @@ RUN sed -i 's|http://security.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu
     apt-get update
 
 RUN apt-get update && \
-    apt-get install -y \
+    if [ "$ROS_DISTRO" = "jazzy" ]; then \
+      apt-get install -y \
+        ros-${ROS_DISTRO}-ros-gz-sim \
+        ros-${ROS_DISTRO}-gz-ros2-control \
+        ros-${ROS_DISTRO}-ros-gz-bridge \
+        ros-${ROS_DISTRO}-gz-sim-vendor \
+        ros-${ROS_DISTRO}-gz-transport-vendor; \
+    elif [ "$ROS_DISTRO" = "humble" ]; then \
+      apt-get install -y \
+        ros-${ROS_DISTRO}-ros-ign-gazebo \
+        ros-${ROS_DISTRO}-ign-ros2-control \
+        ros-${ROS_DISTRO}-ros-ign-bridge; \
+    fi && \
 
-      ros-${ROS_DISTRO}-ros-gz-sim \
-      ros-${ROS_DISTRO}-gz-ros2-control \
-      ros-${ROS_DISTRO}-ros-gz-bridge \
-      ros-${ROS_DISTRO}-gz-sim-vendor \
-      ros-${ROS_DISTRO}-gz-transport-vendor \
+    
+    apt-get install -y \
       ros-${ROS_DISTRO}-joint-state-publisher \
       ros-${ROS_DISTRO}-joint-state-publisher-gui \
       ros-${ROS_DISTRO}-xacro \
