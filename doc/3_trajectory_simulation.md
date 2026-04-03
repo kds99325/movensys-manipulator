@@ -22,7 +22,7 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
         ros2 run movensys_manipulator_moveit_config isaacsim_bridge --ros-args -p use_sim_time:=true'
 ```
 
-### Step 2b: Run Gazebo Harmonic Bridge
+### Step 2b: Run Gazebo Bridge
 ```
 docker exec -it movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \

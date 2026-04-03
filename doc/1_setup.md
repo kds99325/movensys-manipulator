@@ -15,6 +15,7 @@ export ISAAC_ROS_WS=~/workspaces/isaac_ros-dev
 export MOVENSYS_MANIPULATOR_PACKAGES=~/workspaces/movensys-manipulator
 ```
 ```
+xhost +local:docker
 source ~/.bashrc
 ```
 
