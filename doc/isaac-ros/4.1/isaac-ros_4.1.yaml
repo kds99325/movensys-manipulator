@@ -21,6 +21,7 @@ services:
       - HOST_USER_GID=${HOST_USER_GID}
       - USER=${USER}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
+      - ISAAC_ROS_WS=/home/admin/workspaces/isaac_ros-dev
       - CYCLONEDDS_URI=file:///home/admin/workspaces/cyclonedds.xml
       - DISPLAY
       - NVIDIA_VISIBLE_DEVICES=all
@@ -29,6 +30,7 @@ services:
       - ISAAC_ROS_ACCEPT_EULA=1
       - ROS_DISTRO=${ROS_DISTRO}
     volumes:
+      - ${ISAAC_ROS_WS}:/home/admin/workspaces/isaac_ros-dev:rw
       - ${MOVENSYS_MANIPULATOR_PACKAGES}:/home/admin/workspaces/movensys_manipulator_ws/src/movensys-manipulator:rw
       - ${CYCLONEDDS_DIR}:/home/admin/workspaces/cyclonedds.xml:ro
       - /etc/localtime:/etc/localtime:ro

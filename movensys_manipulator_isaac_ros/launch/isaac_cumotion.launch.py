@@ -74,7 +74,7 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
     use_sim_time = LaunchConfiguration('use_sim_time')
     robot_xrdf = os.path.join(get_package_share_directory('movensys_manipulator_description'), 'urdf', 'movensys_manipulator.xrdf')
     xacro_path = os.path.join(get_package_share_directory('movensys_manipulator_description'), 'urdf', 'movensys_manipulator.xacro')
-    rviz_config_file = PathJoinSubstitution([FindPackageShare('movensys_moveit_config'), 'rviz', 'movensys_manipulator_moveit.rviz'])
+    rviz_config_file = PathJoinSubstitution([FindPackageShare('movensys_manipulator_moveit_config'), 'rviz', 'movensys_manipulator_moveit.rviz'])
 
     # Process xacro to generate URDF with correct paths at runtime
     robot_description_content = xacro.process_file(xacro_path).toxml()
@@ -83,15 +83,15 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
         urdf_file.write(robot_description_content)
 
     # Build MoveIt configuration (use xacro for runtime path resolution)
-    moveit_config = (MoveItConfigsBuilder(robot_name='movensys_manipulator', package_name='movensys_moveit_config')
+    moveit_config = (MoveItConfigsBuilder(robot_name='movensys_manipulator', package_name='movensys_manipulator_moveit_config')
                         .robot_description(file_path=os.path.join(get_package_share_directory('movensys_manipulator_description'),
                             'urdf', 'movensys_manipulator.xacro'))
-                        .robot_description_semantic(file_path=os.path.join(get_package_share_directory('movensys_moveit_config'),
+                        .robot_description_semantic(file_path=os.path.join(get_package_share_directory('movensys_manipulator_moveit_config'),
                             'config', 'movensys_manipulator.srdf'))
-                        .robot_description_kinematics(file_path=os.path.join(get_package_share_directory('movensys_moveit_config'),
+                        .robot_description_kinematics(file_path=os.path.join(get_package_share_directory('movensys_manipulator_moveit_config'),
                             'config', 'kinematics.yaml'))
                         .planning_pipelines(pipelines=['ompl'], default_planning_pipeline='ompl')
-                        .trajectory_execution(file_path=os.path.join(get_package_share_directory('movensys_moveit_config'),
+                        .trajectory_execution(file_path=os.path.join(get_package_share_directory('movensys_manipulator_moveit_config'),
                             'config','moveit_controllers.yaml'))
                         .to_moveit_configs())
 
