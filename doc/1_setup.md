@@ -3,7 +3,7 @@
 ## 1. Bashrc Configuration
 - Add the following environment variables to your `~/.bashrc`:
 ```
-export ROS_DOMAIN_ID=73
+export ROS_DOMAIN_ID=73                         #use any number
 export ROS_DISTRO=jazzy                         #support jazzy and humble
 export MOVENSYS_ROS_VERSION=general             #support isaac-ros_4.1, isaac-ros_3.2, and general 
 export HOST_USER_UID=$(id -u)
