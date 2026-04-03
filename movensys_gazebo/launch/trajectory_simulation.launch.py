@@ -9,6 +9,13 @@ from launch.substitutions import Command, PathJoinSubstitution, LaunchConfigurat
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
+    ros_distro = os.environ.get('ROS_DISTRO')
+
+    gz_sim_pkg =    {'humble': 'ros_ign_gazebo',       'jazzy': 'ros_gz_sim'}[ros_distro]
+    gz_bridge_pkg = {'humble': 'ros_ign_bridge',       'jazzy': 'ros_gz_bridge'}[ros_distro]
+    gz_sim_launch = {'humble': 'ign_gazebo.launch.py', 'jazzy': 'gz_sim.launch.py'}[ros_distro]
+    clock_msg =     {'humble': 'ignition.msgs.Clock',  'jazzy': 'gz.msgs.Clock'}[ros_distro]
+
     pkg_share = get_package_share_directory('movensys_manipulator_description')
     xacro_file = os.path.join(pkg_share, 'urdf', 'movensys_manipulator.xacro')
 
@@ -30,8 +37,8 @@ def generate_launch_description():
     # Include Gazebo sim launch file with physics optimization
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
-            get_package_share_directory('ros_gz_sim'),
-            '/launch/gz_sim.launch.py'
+            get_package_share_directory(gz_sim_pkg),
+            f'/launch/{gz_sim_launch}'
         ]),
         launch_arguments={
             'gz_args': '-r -v 1 empty.sdf'
@@ -40,7 +47,7 @@ def generate_launch_description():
 
     # Spawn robot from URDF topic
     spawn_entity_robot = Node(
-        package='ros_gz_sim',
+        package=gz_sim_pkg,
         executable='create',
         output='screen',
         arguments=[
@@ -52,9 +59,9 @@ def generate_launch_description():
 
     # Bridge for clock
     gz_ros_bridge = Node(
-        package='ros_gz_bridge',
+        package=gz_bridge_pkg,
         executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        arguments=[f'/clock@rosgraph_msgs/msg/Clock[{clock_msg}'],
         output='screen'
     )
 
