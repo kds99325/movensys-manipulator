@@ -31,8 +31,12 @@
     <parent link="Link0"/>
     <child link="Link1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-3.14" upper="3.14" velocity="1.0"/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="1.0"/>
+    <dynamics damping="10.0" friction="1.0"/>
   </joint>
+  <gazebo reference="joint1">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
   <link name="Link1">
     <inertial>
       <origin rpy="0 0 0" xyz="-3.68657602416735E-05 -0.00394516685385322 0.00364037839421286"/>
@@ -60,8 +64,12 @@
     <parent link="Link1"/>
     <child link="Link2"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-2.0" upper="2.0" velocity="1.0"/>
+    <limit effort="1000" lower="-2.0" upper="2.0" velocity="1.0"/>
+    <dynamics damping="15.0" friction="1.0"/>
   </joint>
+  <gazebo reference="joint2">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
   <link name="Link2">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.129235280055448 1.440541622715E-05 0.133173619961293"/>
@@ -89,8 +97,12 @@
     <parent link="Link2"/>
     <child link="Link3"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-0.2" upper="2.55" velocity="1.0"/>
+    <limit effort="1000" lower="-0.2" upper="2.55" velocity="1.0"/>
+    <dynamics damping="15.0" friction="1.0"/>
   </joint>
+  <gazebo reference="joint3">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
   <link name="Link3">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.119822632176479 8.63344146663093E-08 0.0099876637825216"/>
@@ -118,8 +130,12 @@
     <parent link="Link3"/>
     <child link="Link4"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-3.14" upper="3.14" velocity="1.0"/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="1.0"/>
+    <dynamics damping="10.0" friction="1.0"/>
   </joint>
+  <gazebo reference="joint4">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
   <link name="Link4">
     <inertial>
       <origin rpy="0 0 0" xyz="1.74679534498573E-07 0.0034522361215461 -0.0028730999658578"/>
@@ -147,8 +163,12 @@
     <parent link="Link4"/>
     <child link="Link5"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-2.5" upper="0.1" velocity="1.0"/>
+    <limit effort="1000" lower="-2.5" upper="0.1" velocity="1.0"/>
+    <dynamics damping="10.0" friction="1.0"/>
   </joint>
+  <gazebo reference="joint5">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
   <link name="Link5">
     <inertial>
       <origin rpy="0 0 0" xyz="-1.74603758796282E-07 -0.00333192403958193 -0.00286780844130663"/>
@@ -176,8 +196,12 @@
     <parent link="Link5"/>
     <child link="Link6"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50" lower="-3.14" upper="3.14" velocity="1.0"/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="1.0"/>
+    <dynamics damping="5.0" friction="0.5"/>
   </joint>
+  <gazebo reference="joint6">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
   <link name="Link6">
     <inertial>
       <origin rpy="0 0 0" xyz="-5.77233004964394E-07 0.000270130842674243 -0.0201386770129675"/>
@@ -256,8 +280,12 @@
     <parent link="gripper"/>
     <child link="picker_1"/>
     <axis xyz="-1 0 0"/>
-    <limit effort="50" lower="0.0" upper="0.045" velocity="1.0"/>
+    <limit effort="1000" lower="0.0" upper="0.045" velocity="1.0"/>
+    <dynamics damping="5.0" friction="0.5"/>
   </joint>
+  <gazebo reference="picker_1_joint">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
   <link name="picker_1">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -285,8 +313,12 @@
     <parent link="gripper"/>
     <child link="picker_2"/>
     <axis xyz="1 0 0"/>
-    <limit effort="50" lower="0.0" upper="0.045" velocity="1.0"/>
+    <limit effort="1000" lower="0.0" upper="0.045" velocity="1.0"/>
+    <dynamics damping="5.0" friction="0.5"/>
   </joint>
+  <gazebo reference="picker_2_joint">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
   <link name="picker_2">
     <inertial>
       <origin rpy="0 0 0" xyz="1 0 0"/>

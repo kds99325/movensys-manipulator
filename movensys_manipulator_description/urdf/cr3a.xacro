@@ -30,7 +30,12 @@
       <child link="${prefix}Link1" />
       <axis xyz="0 0 1" />
       <limit lower="-3.14" upper="3.14" effort="${joint_effort}" velocity="${joint_vel}" />
+      <dynamics damping="10.0" friction="1.0"/>
     </joint>
+
+    <gazebo reference="${prefix}joint1">
+      <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
 
     <link name="${prefix}Link1">
       <inertial>
@@ -60,7 +65,12 @@
       <child link="${prefix}Link2" />
       <axis xyz="0 0 1" />
       <limit lower="-2.0" upper="2.0" effort="${joint_effort}" velocity="${joint_vel}" />
+      <dynamics damping="15.0" friction="1.0"/>
     </joint>
+
+    <gazebo reference="${prefix}joint2">
+      <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
 
     <link name="${prefix}Link2">
       <inertial>
@@ -90,7 +100,12 @@
       <child link="${prefix}Link3" />
       <axis xyz="0 0 1" />
       <limit lower="-0.2" upper="2.55" effort="${joint_effort}" velocity="${joint_vel}" />
+      <dynamics damping="15.0" friction="1.0"/>
     </joint>
+
+    <gazebo reference="${prefix}joint3">
+      <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
 
     <link name="${prefix}Link3">
       <inertial>
@@ -120,7 +135,12 @@
       <child link="${prefix}Link4" />
       <axis xyz="0 0 1" />
       <limit lower="-3.14" upper="3.14" effort="${joint_effort}" velocity="${joint_vel}" />
+      <dynamics damping="10.0" friction="1.0"/>
     </joint>
+
+    <gazebo reference="${prefix}joint4">
+      <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
 
     <link name="${prefix}Link4">
       <inertial>
@@ -150,7 +170,12 @@
       <child link="${prefix}Link5" />
       <axis xyz="0 0 1" />
       <limit lower="-2.5" upper="0.1" effort="${joint_effort}" velocity="${joint_vel}" />
+      <dynamics damping="10.0" friction="1.0"/>
     </joint>
+
+    <gazebo reference="${prefix}joint5">
+      <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
 
     <link name="${prefix}Link5">
       <inertial>
@@ -180,7 +205,12 @@
       <child link="${prefix}Link6" />
       <axis xyz="0 0 1" />
       <limit lower="-3.14" upper="3.14" effort="${joint_effort}" velocity="${joint_vel}" />
+      <dynamics damping="5.0" friction="0.5"/>
     </joint>
+
+    <gazebo reference="${prefix}joint6">
+      <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
 
     <link name="${prefix}Link6">
       <inertial>
@@ -265,7 +295,12 @@
       <child link="${prefix}picker_1" />
       <axis xyz="-1 0 0"/>
       <limit effort="${joint_effort}" lower="0.0" upper="0.045" velocity="${joint_vel}" />
+      <dynamics damping="5.0" friction="0.5"/>
     </joint>
+
+    <gazebo reference="${prefix}picker_1_joint">
+      <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
 
     <link name="${prefix}picker_1">
       <inertial>
@@ -295,7 +330,12 @@
       <child link="${prefix}picker_2" />
       <axis xyz="1 0 0" />
       <limit effort="${joint_effort}" lower="0.0" upper="0.045" velocity="${joint_vel}" />
+      <dynamics damping="5.0" friction="0.5"/>
     </joint>
+
+    <gazebo reference="${prefix}picker_2_joint">
+      <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
 
     <link name="${prefix}picker_2">
       <inertial>
