@@ -41,6 +41,6 @@ docker compose --env-file .env -f general/general.yaml -f movensys_manipulator.x
 
 ### Checking the docker
 ```
-docker exec -u admin -it movensys_manipulator_container bash -lc 'source /opt/ros/${ROS_DISTRO}$/setup.bash && source /home/admin/ws/install/setup.bash && exec bash -i'
+docker exec -it movensys_manipulator_container bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && source /home/admin/ws/install/setup.bash && exec bash -i'
 ```
 

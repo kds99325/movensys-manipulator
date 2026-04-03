@@ -11,7 +11,7 @@
 
 ### Step 2a: Run Isaacsim Bridge
 ```
-docker exec -u admin -it movensys_manipulator_container \
+docker exec -it movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
         source /home/admin/ws/install/setup.bash && \
         ros2 run movensys_manipulator_moveit_config isaacsim_bridge --ros-args -p use_sim_time:=true'
@@ -26,7 +26,7 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
 ### Step 3: Launch Trajectory Planning based on MoveIt2's OMPL
 ```
-docker exec -u admin -it movensys_manipulator_container \
+docker exec -it movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
         source /home/admin/ws/install/setup.bash && \
         ros2 launch movensys_manipulator_moveit_config movensys_manipulator_moveit.launch.py use_sim_time:=true'
@@ -34,7 +34,7 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
 ### Step 4: Execute Trajectory Test
 ```
-docker exec -u admin -it movensys_manipulator_container \
+docker exec -it movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
         source /home/admin/ws/install/setup.bash && \
         ros2 launch movensys_manipulator_moveit_config movensys_manipulator_trajectory.launch.py use_sim_time:=true'

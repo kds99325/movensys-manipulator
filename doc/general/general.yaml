@@ -13,14 +13,11 @@ services:
     network_mode: host
     ipc: host
     working_dir: /home/admin/workspaces
-    entrypoint: ["/bin/bash"]
+    entrypoint: ["/ros_entrypoint.sh"]
     stdin_open: true
     tty: true
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - HOST_USER_UID=${HOST_USER_UID}
-      - HOST_USER_GID=${HOST_USER_GID}
-      - USER=${USER}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
       - CYCLONEDDS_URI=file:///home/admin/workspaces/cyclonedds.xml
       - DISPLAY
