@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(movensys_gazebo_harmonic)
+project(movensys_gazebo)
 
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
