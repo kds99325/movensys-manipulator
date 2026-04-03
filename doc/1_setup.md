@@ -4,8 +4,10 @@
 - Add the following environment variables to your `~/.bashrc`:
 ```
 export ROS_DOMAIN_ID=73                         #use any number
-export ROS_DISTRO=jazzy                         #support jazzy and humble
-export MOVENSYS_ROS_VERSION=general             #support isaac-ros_4.1, isaac-ros_3.2, and general 
+export ROS_DISTRO=jazzy                         #support {jazzy, humble}
+export MOVENSYS_ROS_VERSION=isaac-ros_4.1       #support {isaac-ros_4.1, isaac-ros_3.2, general} 
+export CPU_ARCH=amd64                           #support {amd64, arm64}
+
 export HOST_USER_UID=$(id -u)
 export HOST_USER_GID=$(id -g)
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
