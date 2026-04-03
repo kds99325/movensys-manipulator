@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>movensys_moveit_config</name>
+  <name>movensys_manipulator_moveit_config</name>
   <version>0.0.0</version>
-  <description>movensys_thor_manipulator</description>
+  <description>movensys_manipulator_moveit_config</description>
   <maintainer email="lp02781@gmail.com">mfikih15</maintainer>
   <maintainer email="sjhwang1236@gmail.com">noah</maintainer>
   <license>MIT License</license>

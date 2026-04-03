@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(movensys_moveit_config)
+project(movensys_manipulator_moveit_config)
 
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -70,6 +70,16 @@ install(DIRECTORY include/
 
 add_executable(isaacsim_bridge src/isaacsim_bridge.cpp)
 ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
+
+add_executable(moveit2_trajectory_cpp src/moveit2_trajectory.cpp)
+target_link_libraries(moveit2_trajectory_cpp moveit2_client_lib)
+ament_target_dependencies(moveit2_trajectory_cpp
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
 
 install(TARGETS moveit2_client_lib isaacsim_bridge
   EXPORT export_moveit2_client_lib
