@@ -32,4 +32,4 @@ git clone https://github.com/movensys/movensys-manipulator.git
 ```
 
 ## 5. How to run
-Please check the `doc/` folder to know how to run it.
+Please check the `doc/` folder to know how to run it. Example `doc/isaac-ros/4.1/setup.md`
