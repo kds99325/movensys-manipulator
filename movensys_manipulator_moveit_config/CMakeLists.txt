@@ -41,6 +41,7 @@ endif()
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/MovePose.srv"
   "srv/MoveJoints.srv"
+  "srv/GetEefPose.srv"
 )
 
 # MoveIt2 Client Library

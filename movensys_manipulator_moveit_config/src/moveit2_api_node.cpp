@@ -1,4 +1,6 @@
 #include "moveit2_api_node.hpp"
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 #include <thread>
 
 MoveIt2ApiNode::MoveIt2ApiNode(){
@@ -47,10 +49,16 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
                                                         std::placeholders::_1, std::placeholders::_2),
                                                         rclcpp::ServicesQoS(), cb_group_);
 
+    get_eef_pose_srv_ = node_->create_service<GetEefPose>("/wmx/moveit2/get_eef_pose",
+                                                        std::bind(&MoveIt2ApiNode::onGetEefPose, this,
+                                                        std::placeholders::_1, std::placeholders::_2),
+                                                        rclcpp::ServicesQoS(), cb_group_);
+
     // EEF pose publisher — separate callback group so it doesn't block movements
     pub_cb_group_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
     eef_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>("/wmx/moveit2/eef_pose", 10);
+    eef_rpy_pub_  = node_->create_publisher<geometry_msgs::msg::Vector3Stamped>("/wmx/moveit2/eef_rpy", 10);
 
     eef_pose_timer_ = node_->create_wall_timer(std::chrono::milliseconds(10),  // 100 Hz
                                                 std::bind(&MoveIt2ApiNode::publishEefPose, this), 
@@ -62,9 +70,11 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/relative_tool_eef_cartesian      [MovePose]");
     RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/absolute_base_eef_joint_movement [MovePose]");
     RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/joint_movement                   [MoveJoints]");
+    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/get_eef_pose                     [GetEefPose]");
     RCLCPP_INFO(node_->get_logger(), "  (gripper: call /wmx/set_gripper directly       [SetBool])");
-    RCLCPP_INFO(node_->get_logger(), "Publisher:");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/eef_pose [PoseStamped] @ 100 Hz");
+    RCLCPP_INFO(node_->get_logger(), "Publishers:");
+    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/eef_pose [PoseStamped]     @ 100 Hz");
+    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/eef_rpy  [Vector3Stamped]  @ 100 Hz  (x=roll, y=pitch, z=yaw rad)");
 }
 
 rclcpp::Node::SharedPtr MoveIt2ApiNode::get_node(){
@@ -137,6 +147,20 @@ void MoveIt2ApiNode::onJointMovement(const MoveJoints::Request::SharedPtr req,
     res->message = res->success ? "success" : "failed";
 }
 
+void MoveIt2ApiNode::onGetEefPose(const GetEefPose::Request::SharedPtr /*req*/,
+                                  GetEefPose::Response::SharedPtr res){
+    auto result = client_->getCurrentEefPose();
+    if (!result) {
+        res->success = false;
+        res->message = "failed to get current EEF pose";
+        return;
+    }
+    res->pos = {result->x, result->y, result->z};
+    res->rpy = {result->roll, result->pitch, result->yaw};
+    res->success = true;
+    res->message = "success";
+}
+
 void MoveIt2ApiNode::publishEefPose(){
     auto result = client_->getCurrentEefPose();
     if (!result) {
@@ -155,6 +179,17 @@ void MoveIt2ApiNode::publishEefPose(){
     msg.pose.orientation.w = result->qw;
 
     eef_pose_pub_->publish(msg);
+
+    tf2::Quaternion q(result->qx, result->qy, result->qz, result->qw);
+    double roll, pitch, yaw;
+    tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
+
+    geometry_msgs::msg::Vector3Stamped rpy_msg;
+    rpy_msg.header = msg.header;
+    rpy_msg.vector.x = roll;
+    rpy_msg.vector.y = pitch;
+    rpy_msg.vector.z = yaw;
+    eef_rpy_pub_->publish(rpy_msg);
 }
 
 int main(int argc, char* argv[]){
