@@ -321,17 +321,6 @@ std::optional<TFResult> MoveIt2Client::getCurrentEefPose() {
     tf2::Quaternion q(result.qx, result.qy, result.qz, result.qw);
     tf2::Matrix3x3(q).getRPY(result.roll, result.pitch, result.yaw);
 
-    RCLCPP_INFO(node_->get_logger(),
-                "\nCurrent EEF Pose\n"
-                "Link: %s\n"
-                "Translation: x=%.3f, y=%.3f, z=%.3f\n"
-                "Euler: roll=%.3f, pitch=%.3f, yaw=%.3f\n"
-                "Quaternion: qx=%.3f, qy=%.3f, qz=%.3f, qw=%.3f",
-                link_name.c_str(),
-                result.x, result.y, result.z,
-                result.roll, result.pitch, result.yaw,
-                result.qx, result.qy, result.qz, result.qw);
-
     return result;
 }
 
