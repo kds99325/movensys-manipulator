@@ -369,36 +369,9 @@
       </geometry>
     </collision>
   </link>
-  <joint name="table_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="table"/>
-    <child link="stand"/>
-  </joint>
-  <link name="stand">
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <mass value="0.653"/>
-      <inertia ixx="0.00075137" ixy="-3.0366E-08" ixz="1.2825E-06" iyy="0.00080094" iyz="2.5423E-09" izz="0.0010902"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="-0.23 -0.1 -1.285"/>
-      <geometry>
-        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/stand.STL" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="">
-        <color rgba="1 1 1 1"/>
-      </material>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="-0.23 -0.1 -1.285"/>
-      <geometry>
-        <mesh filename="file:///home/admin/ws/install/movensys_manipulator_description/share/movensys_manipulator_description/urdf/assets/stand.STL" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-  </link>
   <joint name="stand_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="-0.03 0.275 0.265"/>
-    <parent link="stand"/>
+    <origin rpy="0 0 0" xyz="-0.03 0.275 0.05"/>
+    <parent link="table"/>
     <child link="Link0"/>
   </joint>
 </robot>
