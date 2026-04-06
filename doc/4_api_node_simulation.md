@@ -33,7 +33,28 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
 
 
-### Step 3: Launch Trajectory Planning based on MoveIt2's OMPL
+
+### Step 3a: Launch Trajectory Planning based on MoveIt2's OMPL
+```
+docker exec -it movensys_manipulator_container \
+bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
+        source /home/admin/ws/install/setup.bash && \
+        ros2 launch movensys_manipulator_moveit_config movensys_manipulator_moveit.launch.py use_sim_time:=true'
+```
+
+### Step 3b: Launch cuMotion
+```
+docker exec -it movensys_manipulator_container \
+bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
+        source /home/admin/ws/install/setup.bash && \
+        ros2 launch movensys_manipulator_isaac_ros isaac_cumotion.launch.py use_sim_time:=true'
+```
+
+
+
+
+
+### Step 4: Launch Trajectory Planning based on MoveIt2's OMPL
 ```
 docker exec -it movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \

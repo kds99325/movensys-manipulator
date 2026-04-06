@@ -126,8 +126,6 @@ ament_export_dependencies(
   Eigen3
 )
 
-ament_python_install_package(movensys_manipulator_moveit_config)
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
