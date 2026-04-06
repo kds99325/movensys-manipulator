@@ -33,6 +33,7 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
 
 
+
 ### Step 3a: Launch Trajectory Planning based on MoveIt2's OMPL
 ```
 docker exec -it movensys_manipulator_container \
@@ -53,11 +54,11 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
 
 
-
-### Step 4: Execute Trajectory Test
+### Step 4: Launch API Node
 ```
 docker exec -it movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
         source /home/admin/ws/install/setup.bash && \
-        ros2 launch movensys_manipulator_moveit_config movensys_manipulator_trajectory.launch.py use_sim_time:=true'
+        ros2 launch movensys_manipulator_moveit_config movensys_manipulator_api.launch.py use_sim_time:=true'
 ```
+

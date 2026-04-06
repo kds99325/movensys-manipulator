@@ -15,6 +15,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(rclcpp_action REQUIRED)
@@ -36,6 +37,12 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/MovePose.srv"
+  "srv/MoveJoints.srv"
+  "srv/GetEefPose.srv"
+)
 
 # MoveIt2 Client Library
 add_library(moveit2_client_lib SHARED
@@ -84,7 +91,19 @@ ament_target_dependencies(moveit2_trajectory_cpp
   std_srvs
 )
 
-install(TARGETS moveit2_trajectory_cpp
+add_executable(moveit2_api_node src/moveit2_api_node.cpp)
+target_link_libraries(moveit2_api_node moveit2_client_lib)
+ament_target_dependencies(moveit2_api_node
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
+target_link_libraries(moveit2_api_node ${cpp_typesupport_target})
+
+install(TARGETS moveit2_trajectory_cpp moveit2_api_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -107,8 +126,6 @@ ament_export_dependencies(
   tf2_geometry_msgs
   Eigen3
 )
-
-ament_python_install_package(movensys_manipulator_moveit_config)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

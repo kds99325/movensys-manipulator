@@ -48,6 +48,7 @@ namespace moveit2_client{
             int replan_attempts;
 
             bool jointMovement(const std::map<std::string, double>& joint_targets);
+            bool relativeJointMovement(const std::map<std::string, double>& joint_deltas);
             bool absoluteBaseEefJointMovement(const PoseTarget& target);
             
             bool absoluteBaseEefCartesian(const PoseTarget& target);

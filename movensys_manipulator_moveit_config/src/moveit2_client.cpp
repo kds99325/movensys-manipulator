@@ -113,6 +113,34 @@ bool MoveIt2Client::jointMovement(const std::map<std::string, double>& joint_tar
     return result == moveit::core::MoveItErrorCode::SUCCESS;
 }
 
+bool MoveIt2Client::relativeJointMovement(const std::map<std::string, double>& joint_deltas){
+    auto robot_state = move_group_->getCurrentState(timeout);
+    if (!robot_state) {
+        RCLCPP_ERROR(node_->get_logger(), "relativeJointMovement: getCurrentState failed");
+        return false;
+    }
+
+    std::vector<double> current_values;
+    robot_state->copyJointGroupPositions(move_group_->getName(), current_values);
+    auto joint_names = move_group_->getJointNames();
+
+    std::map<std::string, double> targets;
+    for (size_t i = 0; i < joint_names.size(); ++i) {
+        targets[joint_names[i]] = current_values[i];
+    }
+    for (const auto& [name, delta] : joint_deltas) {
+        auto it = targets.find(name);
+        if (it != targets.end()) {
+            it->second += delta;
+        } else {
+            RCLCPP_WARN(node_->get_logger(), "relativeJointMovement: unknown joint '%s', skipping", name.c_str());
+        }
+    }
+
+    RCLCPP_INFO(node_->get_logger(), "Sending relative joint movement for %zu joints", joint_deltas.size());
+    return jointMovement(targets);
+}
+
 bool MoveIt2Client::absoluteBaseEefJointMovement(const PoseTarget& target){
     move_group_->setEndEffectorLink(link_name);
     move_group_->setPlanningTime(planning_time);
@@ -320,17 +348,6 @@ std::optional<TFResult> MoveIt2Client::getCurrentEefPose() {
 
     tf2::Quaternion q(result.qx, result.qy, result.qz, result.qw);
     tf2::Matrix3x3(q).getRPY(result.roll, result.pitch, result.yaw);
-
-    RCLCPP_INFO(node_->get_logger(),
-                "\nCurrent EEF Pose\n"
-                "Link: %s\n"
-                "Translation: x=%.3f, y=%.3f, z=%.3f\n"
-                "Euler: roll=%.3f, pitch=%.3f, yaw=%.3f\n"
-                "Quaternion: qx=%.3f, qy=%.3f, qz=%.3f, qw=%.3f",
-                link_name.c_str(),
-                result.x, result.y, result.z,
-                result.roll, result.pitch, result.yaw,
-                result.qx, result.qy, result.qz, result.qw);
 
     return result;
 }
