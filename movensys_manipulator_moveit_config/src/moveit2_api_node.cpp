@@ -49,6 +49,11 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
                                                         std::placeholders::_1, std::placeholders::_2),
                                                         rclcpp::ServicesQoS(), cb_group_);
 
+    rel_joint_mov_srv_ = node_->create_service<MoveJoints>("/wmx/moveit2/relative_joint_movement",
+                                                        std::bind(&MoveIt2ApiNode::onRelativeJointMovement, this,
+                                                        std::placeholders::_1, std::placeholders::_2),
+                                                        rclcpp::ServicesQoS(), cb_group_);
+
     get_eef_pose_srv_ = node_->create_service<GetEefPose>("/wmx/moveit2/get_eef_pose",
                                                         std::bind(&MoveIt2ApiNode::onGetEefPose, this,
                                                         std::placeholders::_1, std::placeholders::_2),
@@ -70,6 +75,7 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/relative_tool_eef_cartesian      [MovePose]");
     RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/absolute_base_eef_joint_movement [MovePose]");
     RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/joint_movement                   [MoveJoints]");
+    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/relative_joint_movement          [MoveJoints]");
     RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/get_eef_pose                     [GetEefPose]");
     RCLCPP_INFO(node_->get_logger(), "  (gripper: call /wmx/set_gripper directly       [SetBool])");
     RCLCPP_INFO(node_->get_logger(), "Publishers:");
@@ -144,6 +150,25 @@ void MoveIt2ApiNode::onJointMovement(const MoveJoints::Request::SharedPtr req,
 
     RCLCPP_INFO(node_->get_logger(), "[svc] joint_movement: %zu joints", joints.size());
     res->success = client_->jointMovement(joints);
+    res->message = res->success ? "success" : "failed";
+}
+
+void MoveIt2ApiNode::onRelativeJointMovement(const MoveJoints::Request::SharedPtr req,
+                                             MoveJoints::Response::SharedPtr res){
+    if (req->joint_names.size() != req->joint_values.size()) {
+        res->success = false;
+        res->message = "joint_names and joint_values size mismatch";
+        RCLCPP_ERROR(node_->get_logger(), "[svc] relative_joint_movement: %s", res->message.c_str());
+        return;
+    }
+
+    std::map<std::string, double> deltas;
+    for (size_t i = 0; i < req->joint_names.size(); ++i) {
+        deltas[req->joint_names[i]] = req->joint_values[i];
+    }
+
+    RCLCPP_INFO(node_->get_logger(), "[svc] relative_joint_movement: %zu joints", deltas.size());
+    res->success = client_->relativeJointMovement(deltas);
     res->message = res->success ? "success" : "failed";
 }
 

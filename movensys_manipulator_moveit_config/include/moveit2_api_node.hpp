@@ -38,6 +38,9 @@ private:
     void onJointMovement(const MoveJoints::Request::SharedPtr req,
                         MoveJoints::Response::SharedPtr res);
 
+    void onRelativeJointMovement(const MoveJoints::Request::SharedPtr req,
+                                 MoveJoints::Response::SharedPtr res);
+
     void onGetEefPose(const GetEefPose::Request::SharedPtr req,
                       GetEefPose::Response::SharedPtr res);
 
@@ -53,6 +56,7 @@ private:
     rclcpp::Service<MovePose>::SharedPtr                             rel_tool_cart_srv_;
     rclcpp::Service<MovePose>::SharedPtr                             abs_base_joint_srv_;
     rclcpp::Service<MoveJoints>::SharedPtr                           joint_mov_srv_;
+    rclcpp::Service<MoveJoints>::SharedPtr                           rel_joint_mov_srv_;
     rclcpp::Service<GetEefPose>::SharedPtr                           get_eef_pose_srv_;
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr    eef_pose_pub_;
     rclcpp::Publisher<geometry_msgs::msg::Vector3Stamped>::SharedPtr eef_rpy_pub_;
