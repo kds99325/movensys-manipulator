@@ -13,7 +13,7 @@ docker compose -f ${MOVENSYS_ROS_VERSION}.yaml -f movensys_manipulator.${CPU_ARC
 ```
 cd ~/workspaces/movensys_ws
 colcon build
-source install/setup.bash
+source ~/.bashrc
 ```
 
 ### Checking the docker
