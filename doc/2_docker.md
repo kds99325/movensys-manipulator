@@ -9,16 +9,16 @@ docker compose -f ${MOVENSYS_ROS_VERSION}.yaml -f movensys_manipulator.${CPU_ARC
 docker compose -f ${MOVENSYS_ROS_VERSION}.yaml -f movensys_manipulator.${CPU_ARCH}.yaml up -d 
 ```
 
-### Checking the docker
-```
-docker exec -it movensys_manipulator_container bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && source /home/admin/ws/install/setup.bash && exec bash -i'
-```
-
 # 3. Colcon build
 ```
 cd ~/workspaces/movensys_ws
 colcon build
 source install/setup.bash
+```
+
+### Checking the docker
+```
+docker exec -it movensys_manipulator_container bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && source /home/admin/ws/install/setup.bash && exec bash -i'
 ```
 
 # 4. Checking URDF
