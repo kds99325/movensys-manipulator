@@ -51,8 +51,8 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
 {
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Cartesian -------");
     std::vector<moveit2_client::PoseTarget> cartesian_poses = {
-                                                                {{0.098, -0.071, 0.561}, {M_PI, 0.0, M_PI}},
-                                                                {{-0.23, -0.07, 0.5}, {M_PI, 0.0, M_PI}},
+                                                                {{0.098, -0.071, 0.346}, {M_PI, 0.0, M_PI}},
+                                                                {{-0.23, -0.071, 0.346}, {M_PI, 0.0, M_PI}},
     };
     for (const auto& target : cartesian_poses) {
         if (!client.absoluteBaseEefCartesian(target)) {
@@ -102,8 +102,8 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
 
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Joint Movement -------");
     std::vector<moveit2_client::PoseTarget> joint_movement_poses = {
-                                                                    {{0.23, -0.07, 0.5}, {M_PI, 0.0, M_PI}},
-                                                                    {{-0.23, -0.07, 0.5}, {M_PI, 0.0, M_PI}},
+                                                                    {{0.23, -0.07, 0.346}, {M_PI, 0.0, M_PI}},
+                                                                    {{-0.23, -0.07, 0.346}, {M_PI, 0.0, M_PI}},
     };
     for (const auto& target : joint_movement_poses) {
         if (!client.absoluteBaseEefJointMovement(target)) {
