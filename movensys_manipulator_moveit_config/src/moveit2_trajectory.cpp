@@ -51,8 +51,9 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
 {
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Cartesian -------");
     std::vector<moveit2_client::PoseTarget> cartesian_poses = {
-                                                                {{0.098, -0.071, 0.561}, {M_PI, 0.0, M_PI}},
-                                                                {{-0.23, -0.07, 0.5}, {M_PI, 0.0, M_PI}},
+                                                                {{0.098, -0.071, 0.45}, {M_PI, 0.0, M_PI}},
+                                                                {{0.098, 0.130, 0.45}, {M_PI, 0.0, M_PI}},
+                                                                {{-0.23, 0.0, 0.450}, {M_PI, 0.0, M_PI}},
     };
     for (const auto& target : cartesian_poses) {
         if (!client.absoluteBaseEefCartesian(target)) {
@@ -87,11 +88,11 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
 
     RCLCPP_INFO(node->get_logger(), "------- Joint Movement -------");
     std::vector<std::map<std::string, double>> joint_poses = {
-                                                                {{"joint1", 1.915}, {"joint2", 0.2696}, {"joint3", 1.5353},
-                                                                {"joint4", -0.2303}, {"joint5", -1.5708}, {"joint6", 0.3443}},
+                                                                {{"joint1", 1.982}, {"joint2", 0.1325}, {"joint3", 0.9693},
+                                                                {"joint4", 0.474}, {"joint5", -1.5697}, {"joint6", 0.4105}},
                                                                 
-                                                                {{"joint1", 0.7178}, {"joint2", 0.1456}, {"joint3", 1.6902},
-                                                                {"joint4", -0.2614}, {"joint5", -1.5708}, {"joint6", -0.8529}},
+                                                                {{"joint1", 0.5551}, {"joint2", -0.0225}, {"joint3", 1.135},
+                                                                {"joint4", 0.4638}, {"joint5", -1.5708}, {"joint6", -1.0157}},
     };
     for (const auto& joints : joint_poses) {
         if (!client.jointMovement(joints)) {
@@ -102,8 +103,8 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
 
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Joint Movement -------");
     std::vector<moveit2_client::PoseTarget> joint_movement_poses = {
-                                                                    {{0.23, -0.07, 0.5}, {M_PI, 0.0, M_PI}},
-                                                                    {{-0.23, -0.07, 0.5}, {M_PI, 0.0, M_PI}},
+                                                                    {{0.23, 0.0, 0.450}, {M_PI, 0.0, M_PI}},
+                                                                    {{-0.23, 0.0, 0.450}, {M_PI, 0.0, M_PI}},
     };
     for (const auto& target : joint_movement_poses) {
         if (!client.absoluteBaseEefJointMovement(target)) {

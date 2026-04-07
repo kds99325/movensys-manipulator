@@ -12,7 +12,11 @@ export HOST_USER_UID=$(id -u)
 export HOST_USER_GID=$(id -g)
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export ISAAC_ROS_WS=~/workspaces/isaac_ros-dev
-export MOVENSYS_MANIPULATOR_PACKAGES=~/workspaces/movensys-manipulator
+export MOVENSYS_MANIPULATOR_PACKAGES=~/workspaces/movensys_ws/src/movensys-manipulator
+
+source /opt/ros/jazzy/setup.bash
+source ~/workspaces/movensys_ws/install/setup.bash
+
 ```
 ```
 xhost +local:docker
@@ -34,7 +38,8 @@ sysctl net.core.rmem_max net.core.rmem_default net.core.wmem_max net.core.wmem_d
 
 ## 4. Clone Repository
 ```
-mkdir -p  workspaces && cd workspaces
+mkdir -p  ~/workspaces/movensys_ws/src
+cd ~/workspaces/movensys_ws/src
 git clone https://github.com/movensys/movensys-manipulator.git
 ```
 

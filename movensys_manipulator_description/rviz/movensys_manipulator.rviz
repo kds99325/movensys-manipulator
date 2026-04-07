@@ -99,11 +99,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        bracket:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         gripper:
           Alpha: 1
           Show Axes: false
@@ -160,8 +155,6 @@ Visualization Manager:
           Value: false
         Link6:
           Value: false
-        bracket:
-          Value: false
         gripper:
           Value: false
         picker_1:
@@ -190,12 +183,11 @@ Visualization Manager:
                       Link4:
                         Link5:
                           Link6:
-                            bracket:
-                              gripper:
-                                picker_1:
-                                  {}
-                                picker_2:
-                                  {}
+                            gripper:
+                              picker_1:
+                                {}
+                              picker_2:
+                                {}
       Update Interval: 0
       Value: true
   Enabled: true

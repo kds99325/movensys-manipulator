@@ -234,37 +234,9 @@
       </collision>
     </link>
 
-    <joint name="${prefix}bracket_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <parent link="${prefix}Link6" />
-      <child link="${prefix}bracket" />
-    </joint>
-
-    <link name="${prefix}bracket">
-      <inertial>
-        <origin xyz="0.0585 0.037 0" rpy="0 0 3.14" />
-        <mass value="0.001" />
-        <inertia ixx="8.29484481057063E-05" ixy="-1.45209400395148E-09" ixz="-1.72340872805449E-11"
-                 iyy="8.35928339777967E-05" iyz="-1.33911019721127E-07" izz="0.000131911087085913" />
-      </inertial>
-      <visual>
-        <origin xyz="0.0585 0.037 0" rpy="0 0 3.14" />
-        <geometry>
-          <mesh filename="file://$(find movensys_manipulator_description)/urdf/assets/bracket.STL" scale="0.001 0.001 0.001"/>
-        </geometry>
-        <material name=""><color rgba="0 0 0 1" /></material>
-      </visual>
-      <collision>
-        <origin xyz="0.0585 0.037 0" rpy="0 0 3.14" />
-        <geometry>
-          <mesh filename="file://$(find movensys_manipulator_description)/urdf/assets/bracket.STL" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </collision>
-    </link>
-
     <joint name="${prefix}gripper_joint" type="fixed">
-      <origin xyz="0 0.003 0.003" rpy="1.57 0 0" />
-      <parent link="${prefix}bracket" />
+      <origin xyz="0 0 0" rpy="1.57 0 0" />
+      <parent link="${prefix}Link6" />
       <child link="${prefix}gripper" />
     </joint>
 
@@ -276,13 +248,13 @@
                  iyy="8.35928339777967E-05" iyz="-1.33911019721127E-07" izz="0.000131911087085913" />
       </inertial>
       <visual>
-        <origin xyz="-0.052 0.005 -0.09" rpy="0 0 0" />
+        <origin xyz="-0.052 0.0 -0.09" rpy="0 0 0" />
         <geometry>
           <mesh filename="file://$(find movensys_manipulator_description)/urdf/assets/gripper.STL" scale="0.001 0.001 0.001"/>
         </geometry>
       </visual>
       <collision>
-        <origin xyz="-0.052 0.005 -0.09" rpy="0 0 0" />
+        <origin xyz="-0.052 0.0 -0.09" rpy="0 0 0" />
         <geometry>
           <mesh filename="file://$(find movensys_manipulator_description)/urdf/assets/gripper.STL" scale="0.001 0.001 0.001"/>
         </geometry>
