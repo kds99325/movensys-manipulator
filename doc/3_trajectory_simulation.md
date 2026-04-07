@@ -45,3 +45,9 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
 ```
 ros2 launch movensys_manipulator_moveit_config movensys_manipulator_trajectory.launch.py use_sim_time:=true
 ```
+
+
+#### Get EEF pose
+```
+ros2 run tf2_ros tf2_echo world_manipulator Link6
+```
