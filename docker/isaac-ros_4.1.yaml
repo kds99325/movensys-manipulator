@@ -43,8 +43,8 @@ services:
 
                echo ====== Build movensys_manipulator ======= && \
                cd /home/admin/workspaces/movensys_manipulator_ws && \
-               mkdir -p /home/admin/ws/{build,install,test_results} && \
-               colcon --log-base /dev/shm/colcon_logs build \
+               mkdir -p /home/admin/ws/{build,install,test_results,colcon_logs} && \
+               colcon --log-base /home/admin/ws/colcon_logs build \
                   --build-base /home/admin/ws/build \
                   --install-base /home/admin/ws/install \
                   --test-result-base /home/admin/ws/test_results && \
