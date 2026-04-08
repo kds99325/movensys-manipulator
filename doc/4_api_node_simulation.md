@@ -4,10 +4,11 @@
 ### Step 1a: Open Isaac Sim
 `~/robotics_isaac_sim/movensys_manipulator/trajectory_simulation.usd`
 
-### Step 1b: Open Gazebo Harmonic [Docker]
+### Step 1b: Open Gazebo [Docker]
 ```
 ros2 launch movensys_gazebo trajectory_simulation.launch.py
 ```
+
 
 
 
