@@ -39,6 +39,22 @@ RUN apt-get update && \
       python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
 
+ARG HOST_USER_UID=1000
+ARG HOST_USER_GID=1000
+RUN existing_user=$(getent passwd ${HOST_USER_UID} | cut -d: -f1); \
+    existing_group=$(getent group ${HOST_USER_GID} | cut -d: -f1); \
+    if [ -n "$existing_group" ] && [ "$existing_group" != "admin" ]; then \
+      groupmod -n admin "$existing_group"; \
+    elif [ -z "$existing_group" ]; then \
+      groupadd -g ${HOST_USER_GID} admin; \
+    fi; \
+    if [ -n "$existing_user" ] && [ "$existing_user" != "admin" ]; then \
+      usermod -l admin -d /home/admin -m "$existing_user"; \
+    elif [ -z "$existing_user" ]; then \
+      useradd -m -u ${HOST_USER_UID} -g ${HOST_USER_GID} -s /bin/bash admin; \
+    fi && \
+    echo "admin ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
 RUN apt-get update && \
     if [ "$ROS_DISTRO" = "jazzy" ]; then \
       apt-get install -y \
