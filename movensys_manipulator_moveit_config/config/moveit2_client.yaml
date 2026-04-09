@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
     base_name:         "world_manipulator"
-    link_name:         "Link6"
+    eef_name:          "Link6"
     vel_scale:         0.3
     acc_scale:         0.3
     delay_exec:        0.1

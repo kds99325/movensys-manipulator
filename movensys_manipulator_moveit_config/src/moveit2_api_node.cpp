@@ -7,7 +7,7 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     node_ = std::make_shared<rclcpp::Node>("moveit2_api_node");
 
     node_->declare_parameter("base_name",         "world_manipulator");
-    node_->declare_parameter("link_name",         "Link6");
+    node_->declare_parameter("eef_name",         "Link6");
     node_->declare_parameter("vel_scale",         0.3);
     node_->declare_parameter("acc_scale",         0.3);
     node_->declare_parameter("delay_exec",        0.1);
@@ -22,7 +22,7 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     client_ = std::make_shared<moveit2_client::MoveIt2Client>(node_, "movensys_manipulator_arm");
 
     client_->base_name         = node_->get_parameter("base_name").as_string();
-    client_->link_name         = node_->get_parameter("link_name").as_string();
+    client_->eef_name         = node_->get_parameter("eef_name").as_string();
     client_->vel_scale         = node_->get_parameter("vel_scale").as_double();
     client_->acc_scale         = node_->get_parameter("acc_scale").as_double();
     client_->delay_exec        = node_->get_parameter("delay_exec").as_double();

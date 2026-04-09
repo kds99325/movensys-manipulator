@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
     std::thread spin_thread([&executor]() { executor.spin(); });
 
     node->declare_parameter("base_name",         "world_manipulator");
-    node->declare_parameter("link_name",         "Link6");
+    node->declare_parameter("eef_name",         "Link6");
     node->declare_parameter("vel_scale",         0.3);
     node->declare_parameter("acc_scale",         0.3);
     node->declare_parameter("delay_exec",        0.1);
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]){
     moveit2_client::MoveIt2Client client(node, "movensys_manipulator_arm");
 
     client.base_name         = node->get_parameter("base_name").as_string();
-    client.link_name         = node->get_parameter("link_name").as_string();
+    client.eef_name         = node->get_parameter("eef_name").as_string();
     client.vel_scale         = node->get_parameter("vel_scale").as_double();
     client.acc_scale         = node->get_parameter("acc_scale").as_double();
     client.delay_exec        = node->get_parameter("delay_exec").as_double();
@@ -44,9 +44,9 @@ int main(int argc, char* argv[]){
     client.replan_attempts   = node->get_parameter("replan_attempts").as_int();
 
     RCLCPP_INFO(node->get_logger(),
-        "Config: base_name=%s, link_name=%s, vel_scale=%.2f, acc_scale=%.2f, "
+        "Config: base_name=%s, eef_name=%s, vel_scale=%.2f, acc_scale=%.2f, "
         "max_step=%.2f, planning_time=%.2f, delay_exec=%.2f, delay_gripper=%.2f, timeout=%.2f",
-        client.base_name.c_str(), client.link_name.c_str(),
+        client.base_name.c_str(), client.eef_name.c_str(),
         client.vel_scale, client.acc_scale, client.max_step,
         client.planning_time, client.delay_exec, client.delay_gripper, client.timeout);
 
