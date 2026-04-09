@@ -11,7 +11,6 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     node_->declare_parameter("vel_scale",         0.3);
     node_->declare_parameter("acc_scale",         0.3);
     node_->declare_parameter("delay_exec",        0.1);
-    node_->declare_parameter("delay_gripper",     1.0);
     node_->declare_parameter("max_step",          0.1);
     node_->declare_parameter("planning_time",     1.0);
     node_->declare_parameter("timeout",           1.0);
@@ -26,7 +25,6 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     client_->vel_scale         = node_->get_parameter("vel_scale").as_double();
     client_->acc_scale         = node_->get_parameter("acc_scale").as_double();
     client_->delay_exec        = node_->get_parameter("delay_exec").as_double();
-    client_->delay_gripper     = node_->get_parameter("delay_gripper").as_double();
     client_->max_step          = node_->get_parameter("max_step").as_double();
     client_->planning_time     = node_->get_parameter("planning_time").as_double();
     client_->timeout           = node_->get_parameter("timeout").as_double();
