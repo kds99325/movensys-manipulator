@@ -23,7 +23,9 @@ public:
     std::vector<std::string> joint_names_{"joint1","joint2","joint3","joint4","joint5","joint6"};
     std::vector<std::string> gripper_joint_names_{"picker_1_joint","picker_2_joint"};
 
-    double gripper_state_ = 0.0;
+    double gripper_state_ = 0.000;
+    double gripper_open_ = 0.000;
+    double gripper_close_ = 0.045;
     sensor_msgs::msg::JointState last_joint_state_;
 
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr    pub_joint_state_;
@@ -74,7 +76,7 @@ void IsaacSimBridge::cbJointStates(const sensor_msgs::msg::JointState::SharedPtr
 
 void IsaacSimBridge::setGripper(const std::shared_ptr<std_srvs::srv::SetBool::Request>  request,
                                        std::shared_ptr<std_srvs::srv::SetBool::Response> response){
-    gripper_state_     = request->data ? 0.045 : 0.0;
+    gripper_state_     = request->data ? gripper_close_ : gripper_open_;
     response->success  = true;
 
     sensor_msgs::msg::JointState joint_command = last_joint_state_;
