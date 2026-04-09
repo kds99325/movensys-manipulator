@@ -45,7 +45,8 @@ services:
                colcon --log-base /home/admin/ws/colcon_logs build \
                   --build-base /home/admin/ws/build \
                   --install-base /home/admin/ws/install \
-                  --test-result-base /home/admin/ws/test_results && \
+                  --test-result-base /home/admin/ws/test_results \
+                  --symlink-install && \
 
                echo ====== Build Terminated ======= && \
                source /home/admin/ws/install/setup.bash && \
