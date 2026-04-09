@@ -34,6 +34,24 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     client_->replan            = node_->get_parameter("replan").as_bool();
     client_->replan_attempts   = node_->get_parameter("replan_attempts").as_int();
 
+    // Live vel_scale / acc_scale updates via ROS2 parameter service
+    param_cb_handle_ = node_->add_on_set_parameters_callback(
+        [this](const std::vector<rclcpp::Parameter>& params)
+        -> rcl_interfaces::msg::SetParametersResult {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+            for (const auto& p : params) {
+                if (p.get_name() == "vel_scale") {
+                    client_->vel_scale = p.as_double();
+                    RCLCPP_INFO(node_->get_logger(), "vel_scale updated to %.3f", client_->vel_scale);
+                } else if (p.get_name() == "acc_scale") {
+                    client_->acc_scale = p.as_double();
+                    RCLCPP_INFO(node_->get_logger(), "acc_scale updated to %.3f", client_->acc_scale);
+                }
+            }
+            return result;
+        });
+
     // Serialize movement commands so they don't interleave
     cb_group_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
