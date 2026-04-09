@@ -2,7 +2,21 @@
 #define MOVEIT2_CLIENT_HPP
 
 #include <rclcpp/rclcpp.hpp>
-#include <moveit/move_group_interface/move_group_interface.hpp>
+
+#if __has_include(<moveit/move_group_interface/move_group_interface.hpp>)
+    #define MOVEIT2_JAZZY
+    #define SERVICES_QOS rclcpp::ServicesQoS()
+    #include <moveit/move_group_interface/move_group_interface.hpp>
+    #include <moveit/trajectory_processing/time_optimal_trajectory_generation.hpp>
+    #include <moveit/robot_trajectory/robot_trajectory.hpp>
+#elif __has_include(<moveit/move_group_interface/move_group_interface.h>)
+    #define MOVEIT2_HUMBLE
+    #define SERVICES_QOS rmw_qos_profile_services_default
+    #include <moveit/move_group_interface/move_group_interface.h>
+    #include <moveit/trajectory_processing/time_optimal_trajectory_generation.h>
+    #include <moveit/robot_trajectory/robot_trajectory.h>
+#endif
+
 #include <geometry_msgs/msg/pose.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 #include <tf2/LinearMath/Quaternion.h>
