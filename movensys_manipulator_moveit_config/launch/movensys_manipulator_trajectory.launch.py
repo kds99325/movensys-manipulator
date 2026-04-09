@@ -3,6 +3,8 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
+from ament_index_python.packages import get_package_share_directory
+import os
 
 
 def generate_launch_description():
@@ -28,6 +30,9 @@ def generate_launch_description():
         .to_moveit_configs()
     )
 
+    pkg_share = get_package_share_directory("movensys_manipulator_moveit_config")
+    moveit2_client_config = os.path.join(pkg_share, "config", "moveit2_client.yaml")
+
     trajectory_node = Node(
         package="movensys_manipulator_moveit_config",
         executable="moveit2_trajectory_cpp",
@@ -38,6 +43,7 @@ def generate_launch_description():
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits,
+            moveit2_client_config,
             {"use_sim_time": use_sim_time},
         ],
     )

@@ -15,22 +15,33 @@ int main(int argc, char* argv[]){
     executor.add_node(node);
     std::thread spin_thread([&executor]() { executor.spin(); });
 
+    node->declare_parameter("base_name",         "world_manipulator");
+    node->declare_parameter("link_name",         "Link6");
+    node->declare_parameter("vel_scale",         0.3);
+    node->declare_parameter("acc_scale",         0.3);
+    node->declare_parameter("delay_exec",        0.1);
+    node->declare_parameter("delay_gripper",     1.0);
+    node->declare_parameter("max_step",          0.1);
+    node->declare_parameter("planning_time",     1.0);
+    node->declare_parameter("timeout",           1.0);
+    node->declare_parameter("planning_attempts", 5);
+    node->declare_parameter("replan",            true);
+    node->declare_parameter("replan_attempts",   5);
+
     moveit2_client::MoveIt2Client client(node, "movensys_manipulator_arm");
 
-    client.base_name = "world_manipulator";
-    client.link_name = "Link6";
-
-    client.vel_scale = 0.3;
-    client.acc_scale = 0.3;
-    client.delay_exec = 0.1;
-    
-    client.delay_gripper = 1.0;
-    client.max_step = 0.1;
-    client.planning_time = 1.0;
-    client.timeout = 1.0;
-    client.planning_attempts = 5;
-    client.replan = true;
-    client.replan_attempts = 5;
+    client.base_name         = node->get_parameter("base_name").as_string();
+    client.link_name         = node->get_parameter("link_name").as_string();
+    client.vel_scale         = node->get_parameter("vel_scale").as_double();
+    client.acc_scale         = node->get_parameter("acc_scale").as_double();
+    client.delay_exec        = node->get_parameter("delay_exec").as_double();
+    client.delay_gripper     = node->get_parameter("delay_gripper").as_double();
+    client.max_step          = node->get_parameter("max_step").as_double();
+    client.planning_time     = node->get_parameter("planning_time").as_double();
+    client.timeout           = node->get_parameter("timeout").as_double();
+    client.planning_attempts = node->get_parameter("planning_attempts").as_int();
+    client.replan            = node->get_parameter("replan").as_bool();
+    client.replan_attempts   = node->get_parameter("replan_attempts").as_int();
 
     RCLCPP_INFO(node->get_logger(),
         "Config: base_name=%s, link_name=%s, vel_scale=%.2f, acc_scale=%.2f, "
