@@ -61,6 +61,7 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr    eef_pose_pub_;
     rclcpp::Publisher<geometry_msgs::msg::Vector3Stamped>::SharedPtr eef_rpy_pub_;
     rclcpp::TimerBase::SharedPtr                                     eef_pose_timer_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_handle_;
 };
 
 #endif  // MOVEIT2_API_NODE_HPP

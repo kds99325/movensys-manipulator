@@ -6,20 +6,51 @@
 MoveIt2ApiNode::MoveIt2ApiNode(){
     node_ = std::make_shared<rclcpp::Node>("moveit2_api_node");
 
+    node_->declare_parameter("base_name",         "world_manipulator");
+    node_->declare_parameter("eef_name",         "Link6");
+    node_->declare_parameter("vel_scale",         0.3);
+    node_->declare_parameter("acc_scale",         0.3);
+    node_->declare_parameter("delay_exec",        0.1);
+    node_->declare_parameter("delay_gripper",     1.0);
+    node_->declare_parameter("max_step",          0.1);
+    node_->declare_parameter("planning_time",     1.0);
+    node_->declare_parameter("timeout",           1.0);
+    node_->declare_parameter("planning_attempts", 5);
+    node_->declare_parameter("replan",            true);
+    node_->declare_parameter("replan_attempts",   5);
+
     client_ = std::make_shared<moveit2_client::MoveIt2Client>(node_, "movensys_manipulator_arm");
 
-    client_->base_name         = "world_manipulator";
-    client_->link_name         = "Link6";
-    client_->vel_scale         = 0.3;
-    client_->acc_scale         = 0.3;
-    client_->delay_exec        = 0.1;
-    client_->delay_gripper     = 1.0;
-    client_->max_step          = 0.1;
-    client_->planning_time     = 1.0;
-    client_->timeout           = 1.0;
-    client_->planning_attempts = 5;
-    client_->replan            = true;
-    client_->replan_attempts   = 5;
+    client_->base_name         = node_->get_parameter("base_name").as_string();
+    client_->eef_name         = node_->get_parameter("eef_name").as_string();
+    client_->vel_scale         = node_->get_parameter("vel_scale").as_double();
+    client_->acc_scale         = node_->get_parameter("acc_scale").as_double();
+    client_->delay_exec        = node_->get_parameter("delay_exec").as_double();
+    client_->delay_gripper     = node_->get_parameter("delay_gripper").as_double();
+    client_->max_step          = node_->get_parameter("max_step").as_double();
+    client_->planning_time     = node_->get_parameter("planning_time").as_double();
+    client_->timeout           = node_->get_parameter("timeout").as_double();
+    client_->planning_attempts = node_->get_parameter("planning_attempts").as_int();
+    client_->replan            = node_->get_parameter("replan").as_bool();
+    client_->replan_attempts   = node_->get_parameter("replan_attempts").as_int();
+
+    // Live vel_scale / acc_scale updates via ROS2 parameter service
+    param_cb_handle_ = node_->add_on_set_parameters_callback(
+        [this](const std::vector<rclcpp::Parameter>& params)
+        -> rcl_interfaces::msg::SetParametersResult {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+            for (const auto& p : params) {
+                if (p.get_name() == "vel_scale") {
+                    client_->vel_scale = p.as_double();
+                    RCLCPP_INFO(node_->get_logger(), "vel_scale updated to %.3f", client_->vel_scale);
+                } else if (p.get_name() == "acc_scale") {
+                    client_->acc_scale = p.as_double();
+                    RCLCPP_INFO(node_->get_logger(), "acc_scale updated to %.3f", client_->acc_scale);
+                }
+            }
+            return result;
+        });
 
     // Serialize movement commands so they don't interleave
     cb_group_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);

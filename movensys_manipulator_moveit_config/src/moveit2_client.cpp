@@ -62,7 +62,7 @@ void MoveIt2Client::logCurrentState(){
     joints_str += " }";
 
     // Log EEF state
-    const Eigen::Isometry3d& eef_transform = robot_state->getGlobalLinkTransform(link_name);
+    const Eigen::Isometry3d& eef_transform = robot_state->getGlobalLinkTransform(eef_name);
     Eigen::Vector3d pos = eef_transform.translation();
     Eigen::Quaterniond quat(eef_transform.rotation());
     tf2::Quaternion q(quat.x(), quat.y(), quat.z(), quat.w());
@@ -84,7 +84,7 @@ bool MoveIt2Client::jointMovement(const std::map<std::string, double>& joint_tar
     }
     targets_str += " }";
 
-    move_group_->setEndEffectorLink(link_name);
+    move_group_->setEndEffectorLink(eef_name);
     move_group_->setPlanningTime(planning_time);
     move_group_->setMaxVelocityScalingFactor(vel_scale);
     move_group_->setMaxAccelerationScalingFactor(acc_scale);
@@ -140,7 +140,7 @@ bool MoveIt2Client::relativeJointMovement(const std::map<std::string, double>& j
 }
 
 bool MoveIt2Client::absoluteBaseEefJointMovement(const PoseTarget& target){
-    move_group_->setEndEffectorLink(link_name);
+    move_group_->setEndEffectorLink(eef_name);
     move_group_->setPlanningTime(planning_time);
     move_group_->setMaxVelocityScalingFactor(vel_scale);
     move_group_->setMaxAccelerationScalingFactor(acc_scale);
@@ -172,7 +172,7 @@ bool MoveIt2Client::absoluteBaseEefJointMovement(const PoseTarget& target){
 }
 
 bool MoveIt2Client::absoluteBaseEefCartesian(const PoseTarget& target){
-    move_group_->setEndEffectorLink(link_name);
+    move_group_->setEndEffectorLink(eef_name);
     move_group_->setPlanningTime(planning_time);
 
     logCurrentState();
@@ -228,14 +228,14 @@ bool MoveIt2Client::relativeBaseEefCartesian(const PoseTarget& delta){
                 delta.pos[0], delta.pos[1], delta.pos[2],
                 delta.ori[0], delta.ori[1], delta.ori[2]);
 
-    move_group_->setEndEffectorLink(link_name);
+    move_group_->setEndEffectorLink(eef_name);
     auto robot_state = move_group_->getCurrentState(timeout);
     if (!robot_state) {
         RCLCPP_ERROR(node_->get_logger(), "getCurrentState failed");
         return false;
     }
 
-    const Eigen::Isometry3d& eef_transform = robot_state->getGlobalLinkTransform(link_name);
+    const Eigen::Isometry3d& eef_transform = robot_state->getGlobalLinkTransform(eef_name);
     Eigen::Vector3d pos = eef_transform.translation();
     Eigen::Quaterniond quat(eef_transform.rotation());
 
@@ -257,14 +257,14 @@ bool MoveIt2Client::relativeToolEefCartesian(const PoseTarget& delta){
                 delta.pos[0], delta.pos[1], delta.pos[2],
                 delta.ori[0], delta.ori[1], delta.ori[2]);
 
-    move_group_->setEndEffectorLink(link_name);
+    move_group_->setEndEffectorLink(eef_name);
     auto robot_state = move_group_->getCurrentState(timeout);
     if (!robot_state) {
         RCLCPP_ERROR(node_->get_logger(), "getCurrentState failed");
         return false;
     }
 
-    Eigen::Isometry3d T_base_eef = robot_state->getGlobalLinkTransform(link_name);
+    Eigen::Isometry3d T_base_eef = robot_state->getGlobalLinkTransform(eef_name);
 
     Eigen::Isometry3d T_delta = Eigen::Isometry3d::Identity();
     T_delta.translation() = Eigen::Vector3d(delta.pos[0], delta.pos[1], delta.pos[2]);
@@ -329,14 +329,14 @@ std::optional<TFResult> MoveIt2Client::lookupTF(const std::string& parent_frame,
 }
 
 std::optional<TFResult> MoveIt2Client::getCurrentEefPose() {
-    move_group_->setEndEffectorLink(link_name);
+    move_group_->setEndEffectorLink(eef_name);
     auto robot_state = move_group_->getCurrentState(timeout);
     if (!robot_state) {
         RCLCPP_ERROR(node_->get_logger(), "getCurrentState failed");
         return std::nullopt;
     }
 
-    const Eigen::Isometry3d& eef_transform = robot_state->getGlobalLinkTransform(link_name);
+    const Eigen::Isometry3d& eef_transform = robot_state->getGlobalLinkTransform(eef_name);
     Eigen::Vector3d pos = eef_transform.translation();
     Eigen::Quaterniond quat(eef_transform.rotation());
 

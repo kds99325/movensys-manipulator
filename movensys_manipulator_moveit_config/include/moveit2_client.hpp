@@ -49,7 +49,7 @@ namespace moveit2_client{
             explicit MoveIt2Client(const rclcpp::Node::SharedPtr& node, const std::string& group_name);
 
             std::string base_name;
-            std::string link_name;
+            std::string eef_name;
             double vel_scale;
             double acc_scale;
             double max_step;
