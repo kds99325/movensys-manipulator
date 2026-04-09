@@ -3,8 +3,6 @@
 #include <Eigen/Geometry>
 #include <thread>
 #include <chrono>
-#include <moveit/trajectory_processing/time_optimal_trajectory_generation.hpp>
-#include <moveit/robot_trajectory/robot_trajectory.hpp>
 
 namespace moveit2_client{
 
@@ -187,7 +185,12 @@ bool MoveIt2Client::absoluteBaseEefCartesian(const PoseTarget& target){
     waypoints.push_back(createPose(target));
 
     moveit_msgs::msg::RobotTrajectory trajectory_msg;
+
+#ifdef MOVEIT2_JAZZY
     double fraction = move_group_->computeCartesianPath(waypoints, max_step, trajectory_msg);
+#elif defined(MOVEIT2_HUMBLE)
+    double fraction = move_group_->computeCartesianPath(waypoints, max_step, 0.0, trajectory_msg);
+#endif
 
     if (fraction < 1.0) {
         RCLCPP_WARN(node_->get_logger(), "Cartesian path fraction: %.2f (incomplete)", fraction);

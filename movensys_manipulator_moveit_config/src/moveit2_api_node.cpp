@@ -27,37 +27,37 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     abs_base_cart_srv_ = node_->create_service<MovePose>("/wmx/moveit2/absolute_base_eef_cartesian",
                                                         std::bind(&MoveIt2ApiNode::onAbsoluteBaseEefCartesian, this,
                                                         std::placeholders::_1, std::placeholders::_2),
-                                                        rclcpp::ServicesQoS(), cb_group_);
+                                                        SERVICES_QOS, cb_group_);
 
     rel_base_cart_srv_ = node_->create_service<MovePose>("/wmx/moveit2/relative_base_eef_cartesian",
                                                         std::bind(&MoveIt2ApiNode::onRelativeBaseEefCartesian, this,
                                                         std::placeholders::_1, std::placeholders::_2),
-                                                        rclcpp::ServicesQoS(), cb_group_);
+                                                        SERVICES_QOS, cb_group_);
 
     rel_tool_cart_srv_ = node_->create_service<MovePose>("/wmx/moveit2/relative_tool_eef_cartesian",
                                                         std::bind(&MoveIt2ApiNode::onRelativeToolEefCartesian, this,
                                                         std::placeholders::_1, std::placeholders::_2),
-                                                        rclcpp::ServicesQoS(), cb_group_);
+                                                        SERVICES_QOS, cb_group_);
 
     abs_base_joint_srv_ = node_->create_service<MovePose>("/wmx/moveit2/absolute_base_eef_joint_movement",
                                                         std::bind(&MoveIt2ApiNode::onAbsoluteBaseEefJointMovement, this,
                                                         std::placeholders::_1, std::placeholders::_2),
-                                                        rclcpp::ServicesQoS(), cb_group_);
+                                                        SERVICES_QOS, cb_group_);
 
     joint_mov_srv_ = node_->create_service<MoveJoints>("/wmx/moveit2/joint_movement",
                                                         std::bind(&MoveIt2ApiNode::onJointMovement, this,
                                                         std::placeholders::_1, std::placeholders::_2),
-                                                        rclcpp::ServicesQoS(), cb_group_);
+                                                        SERVICES_QOS, cb_group_);
 
     rel_joint_mov_srv_ = node_->create_service<MoveJoints>("/wmx/moveit2/relative_joint_movement",
                                                         std::bind(&MoveIt2ApiNode::onRelativeJointMovement, this,
                                                         std::placeholders::_1, std::placeholders::_2),
-                                                        rclcpp::ServicesQoS(), cb_group_);
+                                                        SERVICES_QOS, cb_group_);
 
     get_eef_pose_srv_ = node_->create_service<GetEefPose>("/wmx/moveit2/get_eef_pose",
                                                         std::bind(&MoveIt2ApiNode::onGetEefPose, this,
                                                         std::placeholders::_1, std::placeholders::_2),
-                                                        rclcpp::ServicesQoS(), cb_group_);
+                                                        SERVICES_QOS, cb_group_);
 
     // EEF pose publisher — separate callback group so it doesn't block movements
     pub_cb_group_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);

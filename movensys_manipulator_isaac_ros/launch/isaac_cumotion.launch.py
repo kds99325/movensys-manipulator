@@ -125,13 +125,17 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
     )
 
     # Static planning scene server (provides /publish_static_planning_scene service)
-    static_planning_scene_server = Node(
-        package='isaac_ros_cumotion',
-        executable='static_planning_scene',
-        name='static_planning_scene_server',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-    )
+    # Only available in Jazzy
+    ros_distro = os.environ.get('ROS_DISTRO', '')
+    static_planning_scene_server = None
+    if ros_distro == 'jazzy':
+        static_planning_scene_server = Node(
+            package='isaac_ros_cumotion',
+            executable='static_planning_scene',
+            name='static_planning_scene_server',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time}],
+        )
 
     cumotion_planner_node = Node(
         package='isaac_ros_cumotion',
@@ -163,13 +167,17 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
         ],
     )
 
-    return [
+    nodes = [
         robot_state_publisher,
         move_group_node,
-        static_planning_scene_server,
         cumotion_planner_node,
         rviz_node,
     ]
+
+    if static_planning_scene_server is not None:
+        nodes.insert(2, static_planning_scene_server)
+
+    return nodes
 
 
 def generate_launch_description():

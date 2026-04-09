@@ -2,7 +2,7 @@
 ## Execution Procedure
 
 ### Step 1a: Open Isaac Sim
-`~/robotics_isaac_sim/movensys_manipulator/trajectory_simulation.usd`
+`~/workspaces/robotics_isaac_sim/movensys_manipulator/trajectory_simulation.usd`
 
 ### Step 1b: Open Gazebo [Docker]
 ```
