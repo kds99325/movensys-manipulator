@@ -31,7 +31,7 @@
     <parent link="Link0"/>
     <child link="Link1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="1.0"/>
+    <limit effort="1000" lower="-1.57" upper="4.71239" velocity="1.0"/>
     <dynamics damping="10.0" friction="1.0"/>
   </joint>
   <gazebo reference="joint1">
@@ -64,7 +64,7 @@
     <parent link="Link1"/>
     <child link="Link2"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-2.0" upper="2.0" velocity="1.0"/>
+    <limit effort="1000" lower="-1.57" upper="1.57" velocity="1.0"/>
     <dynamics damping="15.0" friction="1.0"/>
   </joint>
   <gazebo reference="joint2">
@@ -163,7 +163,7 @@
     <parent link="Link4"/>
     <child link="Link5"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-2.5" upper="0.1" velocity="1.0"/>
+    <limit effort="1000" lower="-3.14" upper="0.1" velocity="1.0"/>
     <dynamics damping="10.0" friction="1.0"/>
   </joint>
   <gazebo reference="joint5">
@@ -343,8 +343,52 @@
     </collision>
   </link>
   <joint name="stand_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="-0.03 0.275 0.05"/>
+    <origin rpy="0 0 -1.57" xyz="-0.03 0.275 0.05"/>
     <parent link="table"/>
     <child link="Link0"/>
+  </joint>
+  <link name="jetson_thor">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.2 0.07"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.2 0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="table_to_jetson_thor" type="fixed">
+    <parent link="table"/>
+    <child link="jetson_thor"/>
+    <origin rpy="0 0 0" xyz="0.36 0.18 0.07"/>
+  </joint>
+  <link name="power_supply">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.25 0.125 0.04"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.25 0.125  0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="table_to_power_supply" type="fixed">
+    <parent link="table"/>
+    <child link="power_supply"/>
+    <origin rpy="0 0 1.57" xyz="-0.3 0.2 0.065"/>
   </joint>
 </robot>

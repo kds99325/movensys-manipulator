@@ -38,9 +38,57 @@
     </link>
 
     <joint name="stand_joint" type="fixed">
-        <origin xyz="-0.03 0.275 0.05" rpy="0 0 0"/>
+        <origin xyz="-0.03 0.275 0.05" rpy="0 0 -1.57"/>
         <parent link="table"/>
         <child link="Link0"/>
+    </joint>
+
+    <link name="jetson_thor">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.2 0.2 0.07"/>
+            </geometry>
+            <material name="">
+                <color rgba="0.8 0.8 0.8 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.2 0.2 0.07"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="table_to_jetson_thor" type="fixed">
+        <parent link="table"/>
+        <child link="jetson_thor"/>
+        <origin xyz="0.36 0.18 0.07" rpy="0 0 0"/>
+    </joint>
+
+    <link name="power_supply">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.25 0.125 0.04"/>
+            </geometry>
+            <material name="">
+                <color rgba="0.8 0.8 0.8 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.25 0.125  0.04"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="table_to_power_supply" type="fixed">
+        <parent link="table"/>
+        <child link="power_supply"/>
+        <origin xyz="-0.3 0.2 0.065" rpy="0 0 1.57"/>
     </joint>
 
 </robot>

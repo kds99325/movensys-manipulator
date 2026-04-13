@@ -9,7 +9,12 @@ docker compose -f ${MOVENSYS_ROS_VERSION}.yaml -f movensys_manipulator.${CPU_ARC
 docker compose -f ${MOVENSYS_ROS_VERSION}.yaml -f movensys_manipulator.${CPU_ARCH}.yaml up -d 
 ```
 
-# 3. Checking the docker
+# 3. Checkig Docker
+```
+docker logs movensys_manipulator_container -f
+```
+
+# 4. Running Docker
 ```
 docker exec -it -u admin movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
@@ -17,7 +22,7 @@ bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
 exec bash -i'
 ```
 
-# 4. Checking URDF [Docker]
+# 5. Checking URDF [Docker]
 ```
 ros2 launch movensys_manipulator_description movensys_manipulator_rviz.launch.py
 ```

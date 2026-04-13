@@ -60,9 +60,21 @@ int main(int argc, char* argv[]){
 
 bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Client& client)
 {
+    
+    RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Joint Movement -------");
+    std::vector<moveit2_client::PoseTarget> joint_movement_poses_initial = {
+                                                                    {{0.098, -0.071, 0.45}, {M_PI, 0.0, M_PI}},
+    };
+    for (const auto& target : joint_movement_poses_initial) {
+        if (!client.absoluteBaseEefJointMovement(target)) {
+            RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Joint Movement failed");
+            return false;
+        }
+    }
+
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Cartesian -------");
     std::vector<moveit2_client::PoseTarget> cartesian_poses = {
-                                                                {{0.098, -0.071, 0.45}, {M_PI, 0.0, M_PI}},
+                                                                
                                                                 {{0.098, 0.130, 0.45}, {M_PI, 0.0, M_PI}},
                                                                 {{-0.23, 0.0, 0.450}, {M_PI, 0.0, M_PI}},
     };
@@ -99,10 +111,10 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
 
     RCLCPP_INFO(node->get_logger(), "------- Joint Movement -------");
     std::vector<std::map<std::string, double>> joint_poses = {
-                                                                {{"joint1", 1.982}, {"joint2", 0.1325}, {"joint3", 0.9693},
-                                                                {"joint4", 0.474}, {"joint5", -1.5697}, {"joint6", 0.4105}},
+                                                                {{"joint1", 3.5519}, {"joint2", 0.1319}, {"joint3", 0.9702},
+                                                                {"joint4", 0.4732}, {"joint5", -1.5703}, {"joint6", 0.4102}},
                                                                 
-                                                                {{"joint1", 0.5551}, {"joint2", -0.0225}, {"joint3", 1.135},
+                                                                {{"joint1", 2.1251}, {"joint2", -0.0225}, {"joint3", 1.135},
                                                                 {"joint4", 0.4638}, {"joint5", -1.5708}, {"joint6", -1.0157}},
     };
     for (const auto& joints : joint_poses) {
