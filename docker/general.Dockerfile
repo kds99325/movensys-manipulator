@@ -1,5 +1,5 @@
 ARG ROS_DISTRO
-FROM osrf/ros:${ROS_DISTRO}-desktop
+FROM ros:${ROS_DISTRO}-ros-base
 ARG ROS_DISTRO
 USER root
 WORKDIR /workspaces
