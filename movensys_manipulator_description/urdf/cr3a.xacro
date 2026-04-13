@@ -29,7 +29,7 @@
       <parent link="${prefix}Link0" />
       <child link="${prefix}Link1" />
       <axis xyz="0 0 1" />
-      <limit lower="-3.14" upper="3.14" effort="${joint_effort}" velocity="${joint_vel}" />
+      <limit lower="-1.57" upper="4.71239" effort="${joint_effort}" velocity="${joint_vel}" />
       <dynamics damping="10.0" friction="1.0"/>
     </joint>
 
@@ -64,7 +64,7 @@
       <parent link="${prefix}Link1" />
       <child link="${prefix}Link2" />
       <axis xyz="0 0 1" />
-      <limit lower="-2.0" upper="2.0" effort="${joint_effort}" velocity="${joint_vel}" />
+      <limit lower="-1.57" upper="1.57" effort="${joint_effort}" velocity="${joint_vel}" />
       <dynamics damping="15.0" friction="1.0"/>
     </joint>
 
@@ -169,7 +169,7 @@
       <parent link="${prefix}Link4" />
       <child link="${prefix}Link5" />
       <axis xyz="0 0 1" />
-      <limit lower="-2.5" upper="0.1" effort="${joint_effort}" velocity="${joint_vel}" />
+      <limit lower="-3.14" upper="0.1" effort="${joint_effort}" velocity="${joint_vel}" />
       <dynamics damping="10.0" friction="1.0"/>
     </joint>
 
