@@ -11,15 +11,16 @@
                     iyy="0.00080094" iyz="2.5423E-09" izz="0.0010902" />
         </inertial>
         <visual>
-            <origin xyz="-0.5 -0.35 -1.285" rpy="0 0 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <box size="1.0 0.7 0.05"/>
+                <box size="1.0 0.7 0.01"/>
+            </geometry>
             <material name="">
                 <color rgba="1 1 1 1" />
             </material>
         </visual>
         <collision>
-            <origin xyz="-0.5 -0.35 -1.285" rpy="0 0 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <box size="1.0 0.7 0.05"/>
             </geometry>

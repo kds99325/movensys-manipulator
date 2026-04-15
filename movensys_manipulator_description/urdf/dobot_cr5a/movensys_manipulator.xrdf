@@ -79,15 +79,9 @@ self_collision:
       - "Link3"
       - "Link4"
       - "Link6"
-      - "bracket"
-      - "gripper"
     Link6:
       - "Link4"
       - "Link5"
-      - "picker_1"
-      - "picker_2"
-      - "bracket"
-      - "gripper"
     
 
 # Collision sphere's center is based on URDF's joint

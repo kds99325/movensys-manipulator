@@ -34,41 +34,41 @@
 	    		<state_interface name="velocity"/>
 	    	</joint>
 
-		<joint name="joint3">
-	    		<command_interface name="position"/>
-	    		<state_interface name="position"/>
-	    		<state_interface name="velocity"/>
-	    	</joint>
+			<joint name="joint3">
+					<command_interface name="position"/>
+					<state_interface name="position"/>
+					<state_interface name="velocity"/>
+				</joint>
 
-		<joint name="joint4">
-	    		<command_interface name="position"/>
-	    		<state_interface name="position"/>
-	    		<state_interface name="velocity"/>
-	    	</joint>
+			<joint name="joint4">
+					<command_interface name="position"/>
+					<state_interface name="position"/>
+					<state_interface name="velocity"/>
+				</joint>
 
-		<joint name="joint5">
-	    		<command_interface name="position"/>
-	    		<state_interface name="position"/>
-	    		<state_interface name="velocity"/>
-	    	</joint>
+			<joint name="joint5">
+					<command_interface name="position"/>
+					<state_interface name="position"/>
+					<state_interface name="velocity"/>
+				</joint>
 
-		<joint name="joint6">
-	    		<command_interface name="position"/>
-	    		<state_interface name="position"/>
-	    		<state_interface name="velocity"/>
-	    	</joint>
+			<joint name="joint6">
+					<command_interface name="position"/>
+					<state_interface name="position"/>
+					<state_interface name="velocity"/>
+				</joint>
 
-		<joint name="picker_1_joint">
-	    		<command_interface name="position"/>
-	    		<state_interface name="position"/>
-	    		<state_interface name="velocity"/>
-	    	</joint>
+			<joint name="picker_1_joint">
+					<command_interface name="position"/>
+					<state_interface name="position"/>
+					<state_interface name="velocity"/>
+				</joint>
 
-		<joint name="picker_2_joint">
-	    		<command_interface name="position"/>
-	    		<state_interface name="position"/>
-	    		<state_interface name="velocity"/>
-	    	</joint>
+			<joint name="picker_2_joint">
+					<command_interface name="position"/>
+					<state_interface name="position"/>
+					<state_interface name="velocity"/>
+				</joint>
 	  	</ros2_control>
 
 	<gazebo>
