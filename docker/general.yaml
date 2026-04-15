@@ -28,6 +28,7 @@ services:
       - DISPLAY
       - QT_X11_NO_MITSHM=1
       - ROS_DISTRO=${ROS_DISTRO}
+      - MANIPULATOR_MODEL=${MANIPULATOR_MODEL}
     volumes:
       - ${MOVENSYS_MANIPULATOR_PACKAGES}:/home/admin/workspaces/movensys_manipulator_ws/src/movensys-manipulator:rw
       - ${CYCLONEDDS_DIR}:/home/admin/workspaces/cyclonedds.xml:ro

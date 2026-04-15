@@ -29,6 +29,7 @@ services:
       - QT_X11_NO_MITSHM=1
       - ISAAC_ROS_ACCEPT_EULA=1
       - ROS_DISTRO=${ROS_DISTRO}
+      - MANIPULATOR_MODEL=${MANIPULATOR_MODEL}
     volumes:
       - ${ISAAC_ROS_WS}:/home/admin/workspaces/isaac_ros-dev:rw
       - ${MOVENSYS_MANIPULATOR_PACKAGES}:/home/admin/workspaces/movensys_manipulator_ws/src/movensys-manipulator:rw
