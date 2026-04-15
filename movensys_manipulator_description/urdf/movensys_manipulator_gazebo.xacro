@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<robot name="manipulator" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:include filename="$(find movensys_manipulator_description)/urdf/movensys_manipulator.xacro"/>
-  <xacro:include filename="$(find movensys_manipulator_description)/urdf/control.xacro"/>
-  <xacro:include filename="$(find movensys_manipulator_description)/urdf/transmission.xacro"/> 
-</robot>

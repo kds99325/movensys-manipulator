@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<robot name="manipulator" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find movensys_manipulator_description)/urdf/dobot_cr3a/movensys_manipulator.xacro"/>
+  <xacro:include filename="$(find movensys_manipulator_description)/urdf/dobot_cr3a/control.xacro"/>
+  <xacro:include filename="$(find movensys_manipulator_description)/urdf/dobot_cr3a/transmission.xacro"/> 
+</robot>
