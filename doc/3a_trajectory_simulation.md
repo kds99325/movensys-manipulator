@@ -2,7 +2,7 @@
 ## Execution Procedure
 
 ### Step 1a: Open Isaac Sim
-`~/workspaces/robotics_isaac_sim/<ROBOT_MODEL>/trajectory_simulation.usd`
+`~/workspaces/robotics_isaac_sim/<MANIPULATOR_MODEL>/trajectory_simulation.usd`
 
 ### Step 1b: Open Gazebo [Docker]
 ```
@@ -26,7 +26,7 @@ ros2 launch movensys_manipulator_moveit_config gazebo_bridge.launch.py --ros-arg
 
 
 
-### Step 3a: Launch Trajectory Planning based on MoveIt2's OMPL [Docker]
+### Step 3a: Launch MoveIt2's OMPL [Docker]
 ```
 ros2 launch movensys_manipulator_moveit_config moveit.launch.py use_sim_time:=true
 ```
