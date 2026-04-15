@@ -32,7 +32,7 @@ services:
       - MANIPULATOR_MODEL=${MANIPULATOR_MODEL}
     volumes:
       - ${ISAAC_ROS_WS}:/home/admin/workspaces/isaac_ros-dev:rw
-      - ${MOVENSYS_MANIPULATOR_PACKAGES}:/home/admin/workspaces/movensys_manipulator_ws/src/movensys-manipulator:rw
+      - ${MOVENSYS_MANIPULATOR_PACKAGES}:/home/admin/workspaces/movensys_ws/src/movensys-manipulator:rw
       - ${CYCLONEDDS_DIR}:/home/admin/workspaces/cyclonedds.xml:ro
       - /etc/localtime:/etc/localtime:ro
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -43,7 +43,7 @@ services:
               "source /opt/ros/jazzy/setup.bash && \
 
                echo ====== Build movensys_manipulator ======= && \
-               cd /home/admin/workspaces/movensys_manipulator_ws && \
+               cd /home/admin/workspaces/movensys_ws && \
                mkdir -p /home/admin/ws/{build,install,test_results,colcon_logs} && \
                colcon --log-base /home/admin/ws/colcon_logs build \
                   --build-base /home/admin/ws/build \
