@@ -33,6 +33,7 @@
   </group_state>
 
   <group name="movensys_manipulator_eef">
+    <link name="bracket"/>
     <link name="gripper"/>
   </group>
   
@@ -49,6 +50,7 @@
   <disable_collisions link1="table" link2="Link4" reason="Never"/>
   <disable_collisions link1="table" link2="Link5" reason="Never"/>
   <disable_collisions link1="table" link2="Link6" reason="Never"/>
+  <disable_collisions link1="table" link2="bracket" reason="Never"/>
   <disable_collisions link1="table" link2="gripper" reason="Never"/>
   <disable_collisions link1="table" link2="picker_1" reason="Never"/>
   <disable_collisions link1="table" link2="picker_2" reason="Never"/>
@@ -60,6 +62,7 @@
   <disable_collisions link1="power_supply" link2="Link4" reason="Never"/>
   <disable_collisions link1="power_supply" link2="Link5" reason="Never"/>
   <disable_collisions link1="power_supply" link2="Link6" reason="Never"/>
+  <disable_collisions link1="power_supply" link2="bracket" reason="Never"/>
   <disable_collisions link1="power_supply" link2="gripper" reason="Never"/>
   <disable_collisions link1="power_supply" link2="picker_1" reason="Never"/>
   <disable_collisions link1="power_supply" link2="picker_2" reason="Never"/>
@@ -71,6 +74,7 @@
   <disable_collisions link1="jetson_thor" link2="Link4" reason="Never"/>
   <disable_collisions link1="jetson_thor" link2="Link5" reason="Never"/>
   <disable_collisions link1="jetson_thor" link2="Link6" reason="Never"/>
+  <disable_collisions link1="jetson_thor" link2="bracket" reason="Never"/>
   <disable_collisions link1="jetson_thor" link2="gripper" reason="Never"/>
   <disable_collisions link1="jetson_thor" link2="picker_1" reason="Never"/>
   <disable_collisions link1="jetson_thor" link2="picker_2" reason="Never"/>
@@ -81,6 +85,7 @@
   <disable_collisions link1="Link0" link2="Link4" reason="Never"/>
   <disable_collisions link1="Link0" link2="Link5" reason="Never"/>
   <disable_collisions link1="Link0" link2="Link6" reason="Never"/>
+  <disable_collisions link1="Link0" link2="bracket" reason="Never"/>
   <disable_collisions link1="Link0" link2="gripper" reason="Never"/>
   <disable_collisions link1="Link0" link2="picker_1" reason="Never"/>
   <disable_collisions link1="Link0" link2="picker_2" reason="Never"/>
@@ -90,6 +95,7 @@
   <disable_collisions link1="Link1" link2="Link4" reason="Never"/>
   <disable_collisions link1="Link1" link2="Link5" reason="Never"/>
   <disable_collisions link1="Link1" link2="Link6" reason="Never"/>
+  <disable_collisions link1="Link1" link2="bracket" reason="Never"/>
   <disable_collisions link1="Link1" link2="gripper" reason="Never"/>
   <disable_collisions link1="Link1" link2="picker_1" reason="Never"/>
   <disable_collisions link1="Link1" link2="picker_2" reason="Never"/>
@@ -98,6 +104,7 @@
   <disable_collisions link1="Link2" link2="Link4" reason="Never"/>
   <disable_collisions link1="Link2" link2="Link5" reason="Never"/>
   <disable_collisions link1="Link2" link2="Link6" reason="Never"/>
+  <disable_collisions link1="Link2" link2="bracket" reason="Never"/>
   <disable_collisions link1="Link2" link2="gripper" reason="Never"/>
   <disable_collisions link1="Link2" link2="picker_1" reason="Never"/>
   <disable_collisions link1="Link2" link2="picker_2" reason="Never"/>
@@ -105,24 +112,32 @@
   <disable_collisions link1="Link3" link2="Link4" reason="Adjacent"/>
   <disable_collisions link1="Link3" link2="Link5" reason="Never"/>
   <disable_collisions link1="Link3" link2="Link6" reason="Never"/>
+  <disable_collisions link1="Link3" link2="bracket" reason="Never"/>
   <disable_collisions link1="Link3" link2="gripper" reason="Never"/>
   <disable_collisions link1="Link3" link2="picker_1" reason="Never"/>
   <disable_collisions link1="Link3" link2="picker_2" reason="Never"/>
 
   <disable_collisions link1="Link4" link2="Link5" reason="Adjacent"/>
   <disable_collisions link1="Link4" link2="Link6" reason="Never"/>
+  <disable_collisions link1="Link4" link2="bracket" reason="Never"/>
   <disable_collisions link1="Link4" link2="gripper" reason="Never"/>
   <disable_collisions link1="Link4" link2="picker_1" reason="Never"/>
   <disable_collisions link1="Link4" link2="picker_2" reason="Never"/>
 
   <disable_collisions link1="Link5" link2="Link6" reason="Adjacent"/>
+  <disable_collisions link1="Link5" link2="bracket" reason="Never"/>
   <disable_collisions link1="Link5" link2="gripper" reason="Never"/>
   <disable_collisions link1="Link5" link2="picker_1" reason="Never"/>
   <disable_collisions link1="Link5" link2="picker_2" reason="Never"/>
 
-  <disable_collisions link1="Link6" link2="gripper" reason="Adjacent"/>
+  <disable_collisions link1="Link6" link2="bracket" reason="Adjacent"/>
+  <disable_collisions link1="Link6" link2="gripper" reason="Never"/>
   <disable_collisions link1="Link6" link2="picker_1" reason="Never"/>
   <disable_collisions link1="Link6" link2="picker_2" reason="Never"/>
+
+  <disable_collisions link1="bracket" link2="gripper" reason="Adjacent"/>
+  <disable_collisions link1="bracket" link2="picker_1" reason="Never"/>
+  <disable_collisions link1="bracket" link2="picker_2" reason="Never"/>
 
   <disable_collisions link1="gripper" link2="picker_1" reason="Adjacent"/>
   <disable_collisions link1="gripper" link2="picker_2" reason="Adjacent"/>

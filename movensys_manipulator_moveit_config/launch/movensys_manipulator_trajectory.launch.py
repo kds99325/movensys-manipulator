@@ -20,18 +20,20 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration("use_sim_time")
 
+    manipulator_model = os.environ.get("MANIPULATOR_MODEL", "dobot_cr3a")
+
     # Build MoveIt config with joint_limits
     moveit_config = (
         MoveItConfigsBuilder("movensys_manipulator", package_name="movensys_manipulator_moveit_config")
-        .robot_description_semantic(file_path="config/movensys_manipulator.srdf")
-        .robot_description(file_path="config/movensys_manipulator.urdf.xacro")
-        .joint_limits(file_path="config/joint_limits.yaml")
-        .robot_description_kinematics(file_path="config/kinematics.yaml")
+        .robot_description_semantic(file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
+        .robot_description(file_path=f"config/{manipulator_model}/movensys_manipulator.urdf.xacro")
+        .joint_limits(file_path=f"config/{manipulator_model}/joint_limits.yaml")
+        .robot_description_kinematics(file_path=f"config/{manipulator_model}/kinematics.yaml")
         .to_moveit_configs()
     )
 
     pkg_share = get_package_share_directory("movensys_manipulator_moveit_config")
-    moveit2_client_config = os.path.join(pkg_share, "config", "moveit2_client.yaml")
+    moveit2_client_config = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
 
     trajectory_node = Node(
         package="movensys_manipulator_moveit_config",
