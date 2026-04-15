@@ -43,3 +43,19 @@ RUN apt-get update && apt-get install -y \
         ros-jazzy-moveit-setup-assistant \
         ros-jazzy-moveit-configs-utils \
     && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    if [ "$ROS_DISTRO" = "jazzy" ]; then \
+      apt-get install -y \
+        ros-${ROS_DISTRO}-ros-gz-sim \
+        ros-${ROS_DISTRO}-gz-ros2-control \
+        ros-${ROS_DISTRO}-ros-gz-bridge \
+        ros-${ROS_DISTRO}-gz-sim-vendor \
+        ros-${ROS_DISTRO}-gz-transport-vendor; \
+    elif [ "$ROS_DISTRO" = "humble" ]; then \
+      apt-get install -y \
+        ros-${ROS_DISTRO}-ros-ign-gazebo \
+        ros-${ROS_DISTRO}-ign-ros2-control \
+        ros-${ROS_DISTRO}-ros-ign-bridge; \
+    fi && \
+    rm -rf /var/lib/apt/lists/*
