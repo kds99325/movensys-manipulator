@@ -1,17 +1,7 @@
 <?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<robot name="manipulator" xmlns:xacro="http://www.ros.org/wiki/xacro">
-    
-    <xacro:include filename="$(find movensys_manipulator_description)/urdf/cr3a.xacro"/>
-    <xacro:cr3a prefix="" joint_vel="1.0" joint_effort="1000"/>
-
-    <link name="world_manipulator"/>
-    
-    <joint name="world_manipulator_to_table" type="fixed">
-        <parent link="world_manipulator"/>
-        <child  link="table"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-    </joint>
+  <xacro:macro name="stage">
 
     <link name="table">
         <inertial>
@@ -23,7 +13,7 @@
         <visual>
             <origin xyz="-0.5 -0.35 -1.285" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find movensys_manipulator_description)/urdf/assets/table.STL" scale="0.001 0.001 0.001"/>
+                <mesh filename="file://$(find movensys_manipulator_description)/urdf/dobot_cr3a/assets/table.STL" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1" />
@@ -32,16 +22,10 @@
         <collision>
             <origin xyz="-0.5 -0.35 -1.285" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find movensys_manipulator_description)/urdf/assets/table.STL" scale="0.001 0.001 0.001"/>
+                <mesh filename="file://$(find movensys_manipulator_description)/urdf/dobot_cr3a/assets/table.STL" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
-
-    <joint name="stand_joint" type="fixed">
-        <origin xyz="-0.03 0.275 0.05" rpy="0 0 -1.57"/>
-        <parent link="table"/>
-        <child link="Link0"/>
-    </joint>
 
     <link name="jetson_thor">
         <visual>
@@ -90,5 +74,7 @@
         <child link="power_supply"/>
         <origin xyz="-0.3 0.2 0.065" rpy="0 0 1.57"/>
     </joint>
+
+  </xacro:macro>
 
 </robot>

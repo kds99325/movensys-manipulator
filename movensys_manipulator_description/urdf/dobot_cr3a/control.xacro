@@ -75,7 +75,7 @@
 		<plugin filename="${gz_plugin_filename}" name="${gz_plugin_name}">
 			<robot_param>robot_description</robot_param>
 			<robot_param_node>robot_state_publisher</robot_param_node>
-			<parameters>$(find movensys_manipulator_description)/urdf/control.yaml</parameters>
+			<parameters>$(find movensys_manipulator_description)/urdf/dobot_cr3a/control.yaml</parameters>
 		</plugin>
 	</gazebo>
 

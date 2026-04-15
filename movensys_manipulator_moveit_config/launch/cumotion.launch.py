@@ -71,9 +71,14 @@ def cumotion_params():
 def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
     """Launch setup function that properly resolves launch configurations."""
 
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    robot_xrdf = os.path.join(get_package_share_directory('movensys_manipulator_description'), 'urdf', 'movensys_manipulator.xrdf')
-    xacro_path = os.path.join(get_package_share_directory('movensys_manipulator_description'), 'urdf', 'movensys_manipulator.xacro')
+    use_sim_time      = LaunchConfiguration('use_sim_time')
+    manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
+
+    desc_share   = get_package_share_directory('movensys_manipulator_description')
+    config_share = get_package_share_directory('movensys_manipulator_moveit_config')
+
+    robot_xrdf   = os.path.join(desc_share,   'urdf',   manipulator_model, 'movensys_manipulator.xrdf')
+    xacro_path   = os.path.join(desc_share,   'urdf',   manipulator_model, 'movensys_manipulator.xacro')
     rviz_config_file = PathJoinSubstitution([FindPackageShare('movensys_manipulator_moveit_config'), 'rviz', 'movensys_manipulator_moveit.rviz'])
 
     # Process xacro to generate URDF with correct paths at runtime
@@ -84,15 +89,11 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
 
     # Build MoveIt configuration (use xacro for runtime path resolution)
     moveit_config = (MoveItConfigsBuilder(robot_name='movensys_manipulator', package_name='movensys_manipulator_moveit_config')
-                        .robot_description(file_path=os.path.join(get_package_share_directory('movensys_manipulator_description'),
-                            'urdf', 'movensys_manipulator.xacro'))
-                        .robot_description_semantic(file_path=os.path.join(get_package_share_directory('movensys_manipulator_moveit_config'),
-                            'config', 'movensys_manipulator.srdf'))
-                        .robot_description_kinematics(file_path=os.path.join(get_package_share_directory('movensys_manipulator_moveit_config'),
-                            'config', 'kinematics.yaml'))
+                        .robot_description(file_path=os.path.join(desc_share,   'urdf',   manipulator_model, 'movensys_manipulator.xacro'))
+                        .robot_description_semantic(file_path=os.path.join(config_share, 'config', manipulator_model, 'movensys_manipulator.srdf'))
+                        .robot_description_kinematics(file_path=os.path.join(config_share, 'config', manipulator_model, 'kinematics.yaml'))
                         .planning_pipelines(pipelines=['ompl'], default_planning_pipeline='ompl')
-                        .trajectory_execution(file_path=os.path.join(get_package_share_directory('movensys_manipulator_moveit_config'),
-                            'config','moveit_controllers.yaml'))
+                        .trajectory_execution(file_path=os.path.join(config_share, 'config', manipulator_model, 'moveit_controllers.yaml'))
                         .to_moveit_configs())
 
     # Add cuMotion to planning pipelines

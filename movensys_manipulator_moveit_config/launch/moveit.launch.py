@@ -39,15 +39,17 @@ def launch_setup(context, *args, **kwargs):
     # Load the argument
     use_sim_time = LaunchConfiguration("use_sim_time")
 
+    manipulator_model = os.environ.get("MANIPULATOR_MODEL", "dobot_cr3a")
+
     # Build MoveIt config
     # *.srdf -> *.urdf ??
-    # ompl, chomp, pilz_industrial_motion_planner. 
+    # ompl, chomp, pilz_industrial_motion_planner.
     moveit_config = (
         MoveItConfigsBuilder("movensys_manipulator")
-        .robot_description_semantic(file_path="config/movensys_manipulator.srdf")
-        .robot_description(file_path="config/movensys_manipulator.urdf.xacro")
-        .joint_limits(file_path="config/joint_limits.yaml")
-        .trajectory_execution(file_path="config/moveit_controllers.yaml")
+        .robot_description_semantic(file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
+        .robot_description(file_path=f"config/{manipulator_model}/movensys_manipulator.urdf.xacro")
+        .joint_limits(file_path=f"config/{manipulator_model}/joint_limits.yaml")
+        .trajectory_execution(file_path=f"config/{manipulator_model}/moveit_controllers.yaml")
         .planning_scene_monitor(
             publish_robot_description=True, publish_robot_description_semantic=True
         )

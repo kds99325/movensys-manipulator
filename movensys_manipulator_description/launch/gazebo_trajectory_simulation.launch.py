@@ -17,7 +17,7 @@ def generate_launch_description():
     clock_msg =     {'humble': 'ignition.msgs.Clock',  'jazzy': 'gz.msgs.Clock'}[ros_distro]
 
     pkg_share = get_package_share_directory('movensys_manipulator_description')
-    xacro_file = os.path.join(pkg_share, 'urdf', 'movensys_manipulator_gazebo.xacro')
+    xacro_file = os.path.join(pkg_share, 'urdf', os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a'), 'movensys_manipulator.gazebo.xacro')
 
     # Get robot description
     robot_description_content = Command(['xacro ', xacro_file])

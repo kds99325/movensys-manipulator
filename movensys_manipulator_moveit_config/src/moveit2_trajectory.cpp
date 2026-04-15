@@ -6,6 +6,29 @@
 
 bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Client& client);
 
+// Parse a flat [x,y,z,rx,ry,rz, ...] vector into PoseTarget list
+static std::vector<moveit2_client::PoseTarget> parsePoses(const std::vector<double>& flat)
+{
+    std::vector<moveit2_client::PoseTarget> poses;
+    for (size_t i = 0; i + 5 < flat.size(); i += 6)
+        poses.push_back({{flat[i], flat[i+1], flat[i+2]}, {flat[i+3], flat[i+4], flat[i+5]}});
+    return poses;
+}
+
+// Parse a flat [j1,j2,...,jN, j1,j2,...,jN, ...] vector into joint map list
+static std::vector<std::map<std::string, double>> parseJointPoses(
+    const std::vector<double>& flat, const std::vector<std::string>& names)
+{
+    std::vector<std::map<std::string, double>> result;
+    const size_t n = names.size();
+    for (size_t i = 0; i + n <= flat.size(); i += n) {
+        std::map<std::string, double> m;
+        for (size_t j = 0; j < n; ++j) m[names[j]] = flat[i + j];
+        result.push_back(m);
+    }
+    return result;
+}
+
 int main(int argc, char* argv[]){
     rclcpp::init(argc, argv);
 
@@ -15,8 +38,9 @@ int main(int argc, char* argv[]){
     executor.add_node(node);
     std::thread spin_thread([&executor]() { executor.spin(); });
 
+    // MoveIt client config
     node->declare_parameter("base_name",         "world_manipulator");
-    node->declare_parameter("eef_name",         "Link6");
+    node->declare_parameter("eef_name",          "Link6");
     node->declare_parameter("vel_scale",         0.3);
     node->declare_parameter("acc_scale",         0.3);
     node->declare_parameter("delay_exec",        0.1);
@@ -27,6 +51,34 @@ int main(int argc, char* argv[]){
     node->declare_parameter("planning_attempts", 5);
     node->declare_parameter("replan",            true);
     node->declare_parameter("replan_attempts",   5);
+
+    // Trajectory waypoints — each pose: [x, y, z, roll, pitch, yaw]
+    node->declare_parameter("pose_initial",
+        std::vector<double>{0.098, -0.071, 0.45, M_PI, 0.0, M_PI});
+
+    node->declare_parameter("cartesian_poses",
+        std::vector<double>{ 0.098,  0.130, 0.450, M_PI, 0.0, M_PI,
+                            -0.230,  0.000, 0.450, M_PI, 0.0, M_PI});
+
+    node->declare_parameter("relative_base_deltas",
+        std::vector<double>{-0.1, 0.0, 0.0, 0.0, 0.0,  M_PI/8,
+                             0.1, 0.0, 0.0, 0.0, 0.0, -M_PI/8});
+
+    node->declare_parameter("relative_tool_deltas",
+        std::vector<double>{-0.1, 0.0, 0.0, 0.0, 0.0,  M_PI/8,
+                             0.1, 0.0, 0.0, 0.0, 0.0, -M_PI/8});
+
+    // Joint waypoints — flat list: [j1,j2,j3,j4,j5,j6, j1,j2,j3,j4,j5,j6, ...]
+    node->declare_parameter("joint_names",
+        std::vector<std::string>{"joint1","joint2","joint3","joint4","joint5","joint6"});
+
+    node->declare_parameter("joint_poses",
+        std::vector<double>{ 3.5519,  0.1319, 0.9702,  0.4732, -1.5703,  0.4102,
+                             2.1251, -0.0225, 1.1350,  0.4638, -1.5708, -1.0157});
+
+    node->declare_parameter("joint_movement_poses",
+        std::vector<double>{ 0.230, 0.0, 0.450, M_PI, 0.0, M_PI,
+                            -0.230, 0.0, 0.450, M_PI, 0.0, M_PI});
 
     moveit2_client::MoveIt2Client client(node, "movensys_manipulator_arm");
 
@@ -60,12 +112,16 @@ int main(int argc, char* argv[]){
 
 bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Client& client)
 {
-    
+    const auto joint_names         = node->get_parameter("joint_names").as_string_array();
+    const auto pose_initial_flat   = node->get_parameter("pose_initial").as_double_array();
+    const auto cartesian_flat      = node->get_parameter("cartesian_poses").as_double_array();
+    const auto rel_base_flat       = node->get_parameter("relative_base_deltas").as_double_array();
+    const auto rel_tool_flat       = node->get_parameter("relative_tool_deltas").as_double_array();
+    const auto joint_poses_flat    = node->get_parameter("joint_poses").as_double_array();
+    const auto joint_mov_flat      = node->get_parameter("joint_movement_poses").as_double_array();
+
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Joint Movement -------");
-    std::vector<moveit2_client::PoseTarget> joint_movement_poses_initial = {
-                                                                    {{0.098, -0.071, 0.45}, {M_PI, 0.0, M_PI}},
-    };
-    for (const auto& target : joint_movement_poses_initial) {
+    for (const auto& target : parsePoses(pose_initial_flat)) {
         if (!client.absoluteBaseEefJointMovement(target)) {
             RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Joint Movement failed");
             return false;
@@ -73,12 +129,7 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
     }
 
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Cartesian -------");
-    std::vector<moveit2_client::PoseTarget> cartesian_poses = {
-                                                                
-                                                                {{0.098, 0.130, 0.45}, {M_PI, 0.0, M_PI}},
-                                                                {{-0.23, 0.0, 0.450}, {M_PI, 0.0, M_PI}},
-    };
-    for (const auto& target : cartesian_poses) {
+    for (const auto& target : parsePoses(cartesian_flat)) {
         if (!client.absoluteBaseEefCartesian(target)) {
             RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Cartesian move failed");
             return false;
@@ -86,11 +137,7 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
     }
 
     RCLCPP_INFO(node->get_logger(), "------- Relative Base EEF Cartesian -------");
-    std::vector<moveit2_client::PoseTarget> relative_base_deltas = {
-                                                                    {{-0.1, 0.0, 0.0}, {0.0, 0.0, M_PI/8}},
-                                                                    {{0.1, 0.0, 0.0}, {0.0, 0.0, -M_PI/8}},
-    };
-    for (const auto& delta : relative_base_deltas) {
+    for (const auto& delta : parsePoses(rel_base_flat)) {
         if (!client.relativeBaseEefCartesian(delta)) {
             RCLCPP_ERROR(node->get_logger(), "Relative Base EEF Cartesian move failed");
             return false;
@@ -98,11 +145,7 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
     }
 
     RCLCPP_INFO(node->get_logger(), "------- Relative Tool EEF Cartesian -------");
-    std::vector<moveit2_client::PoseTarget> relative_tool_deltas = {
-                                                                    {{-0.1, 0.0, 0.0}, {0.0, 0.0, M_PI/8}},
-                                                                    {{0.1, 0.0, 0.0}, {0.0, 0.0, -M_PI/8}},
-    };
-    for (const auto& delta : relative_tool_deltas) {
+    for (const auto& delta : parsePoses(rel_tool_flat)) {
         if (!client.relativeToolEefCartesian(delta)) {
             RCLCPP_ERROR(node->get_logger(), "Relative Tool EEF Cartesian move failed");
             return false;
@@ -110,14 +153,7 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
     }
 
     RCLCPP_INFO(node->get_logger(), "------- Joint Movement -------");
-    std::vector<std::map<std::string, double>> joint_poses = {
-                                                                {{"joint1", 3.5519}, {"joint2", 0.1319}, {"joint3", 0.9702},
-                                                                {"joint4", 0.4732}, {"joint5", -1.5703}, {"joint6", 0.4102}},
-                                                                
-                                                                {{"joint1", 2.1251}, {"joint2", -0.0225}, {"joint3", 1.135},
-                                                                {"joint4", 0.4638}, {"joint5", -1.5708}, {"joint6", -1.0157}},
-    };
-    for (const auto& joints : joint_poses) {
+    for (const auto& joints : parseJointPoses(joint_poses_flat, joint_names)) {
         if (!client.jointMovement(joints)) {
             RCLCPP_ERROR(node->get_logger(), "Joint Movement move failed");
             return false;
@@ -125,11 +161,7 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
     }
 
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Joint Movement -------");
-    std::vector<moveit2_client::PoseTarget> joint_movement_poses = {
-                                                                    {{0.23, 0.0, 0.450}, {M_PI, 0.0, M_PI}},
-                                                                    {{-0.23, 0.0, 0.450}, {M_PI, 0.0, M_PI}},
-    };
-    for (const auto& target : joint_movement_poses) {
+    for (const auto& target : parsePoses(joint_mov_flat)) {
         if (!client.absoluteBaseEefJointMovement(target)) {
             RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Joint Movement failed");
             return false;

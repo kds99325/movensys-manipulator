@@ -10,7 +10,7 @@ from launch.substitutions import Command, LaunchConfiguration, PythonExpression
 from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
 
-xacro_file = os.path.join(get_package_share_directory('movensys_manipulator_description'), 'urdf', 'movensys_manipulator.xacro')
+xacro_file = os.path.join(get_package_share_directory('movensys_manipulator_description'), 'urdf', os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a'), 'movensys_manipulator.xacro')
 rviz_config_path = os.path.join(get_package_share_directory('movensys_manipulator_description'), 'rviz', 'movensys_manipulator.rviz')
     
 rviz_node = launch_ros.actions.Node(package='rviz2', executable='rviz2', name='rviz2', output='screen', arguments=['-d', rviz_config_path])

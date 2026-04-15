@@ -20,8 +20,8 @@ cspace:
   retract_config:          [3.14, 0.0, 1.57, 0.0, -1.57, 0.0]
   null_space_weight:       [1, 1, 1, 1, 1, 1]
   cspace_distance_weight:  [1, 1, 1, 1, 1, 1]
-  velocity_limits:     [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-  acceleration_limits: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+  velocity_limits:     [3.0, 3.0, 3.0, 3.0, 3.0, 3.0]
+  acceleration_limits: [3.0, 3.0, 3.0, 3.0, 3.0, 3.0]
   jerk_limits: [50, 50, 50, 50, 50, 50]
 
 tool_frames: ["Link6"]
@@ -39,6 +39,7 @@ collision:
     Link4: 0.0
     Link5: 0.0
     Link6: 0.0
+    bracket: 0.0
     gripper: 0.0
     picker_1: 0.0
     picker_2: 0.0
@@ -82,24 +83,35 @@ self_collision:
       - "Link3"
       - "Link4"
       - "Link6"
+      - "bracket"
       - "gripper"
     Link6:
       - "Link4"
       - "Link5"
       - "picker_1"
       - "picker_2"
+      - "bracket"
       - "gripper"
+    bracket:
+      - "Link5"
+      - "Link6"
+      - "gripper"
+      - "picker_1"
+      - "picker_2"
     gripper:
       - "Link5"
       - "Link6"
+      - "bracket"
       - "picker_1"
       - "picker_2"
     picker_1:
       - "Link6"
+      - "bracket"
       - "gripper"
       - "picker_2"
     picker_2:
       - "Link6"
+      - "bracket"
       - "gripper"
       - "picker_1"
 
@@ -147,11 +159,21 @@ geometry:
       Link5: 
         - center: [0.0, 0.0, -0.133]
           radius: 0.1
+      # center is camera-stand
       # z : front, -y : up
       Link6:
         - center: [0.0, 0.0, -0.133]
           radius: 0.1
+      # center is camera-stand
       # z : front, -y : up
+      bracket:
+        # neck sphere
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.09
+        # camera sphere
+        - center: [0.0, -0.065, 0.0]
+          radius: 0.09
+      # center is bracket
       # y : front, z : up
       gripper:
         - center: [0.0, 0.08, 0.0]
