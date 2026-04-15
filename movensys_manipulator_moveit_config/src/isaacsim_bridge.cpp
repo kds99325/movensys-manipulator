@@ -20,12 +20,12 @@ using namespace std::chrono_literals;
 
 class IsaacSimBridge : public rclcpp::Node {
 public:
-    std::vector<std::string> joint_names_{"joint1","joint2","joint3","joint4","joint5","joint6"};
-    std::vector<std::string> gripper_joint_names_{"picker_1_joint","picker_2_joint"};
+    std::vector<std::string> joint_names_;
+    std::vector<std::string> gripper_joint_names_;
 
-    double gripper_state_ = 0.000;
-    double gripper_open_ = 0.000;
-    double gripper_close_ = 0.045;
+    double gripper_state_ = 0.0;
+    double gripper_open_  = 0.0;
+    double gripper_close_ = 0.0;
     sensor_msgs::msg::JointState last_joint_state_;
 
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr    pub_joint_state_;
@@ -52,17 +52,42 @@ private:
 
 IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
 {
-    pub_joint_state_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_command", 10);
-    sub_joint_state_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10,
+    // Declare parameters
+    this->declare_parameter("joint_names",
+        std::vector<std::string>{"joint1","joint2","joint3","joint4","joint5","joint6"});
+    this->declare_parameter("gripper_joint_names",
+        std::vector<std::string>{"picker_1_joint","picker_2_joint"});
+    this->declare_parameter("gripper_open",  0.000);
+    this->declare_parameter("gripper_close", 0.045);
+    this->declare_parameter("joint_command_topic", "/joint_command");
+    this->declare_parameter("joint_states_topic",  "/joint_states");
+    this->declare_parameter("set_gripper_service", "/wmx/set_gripper");
+    this->declare_parameter("action_name",
+        "/movensys_manipulator_arm_controller/follow_joint_trajectory");
+
+    // Fetch parameters
+    joint_names_         = this->get_parameter("joint_names").as_string_array();
+    gripper_joint_names_ = this->get_parameter("gripper_joint_names").as_string_array();
+    gripper_open_        = this->get_parameter("gripper_open").as_double();
+    gripper_close_       = this->get_parameter("gripper_close").as_double();
+
+    const auto joint_command_topic = this->get_parameter("joint_command_topic").as_string();
+    const auto joint_states_topic  = this->get_parameter("joint_states_topic").as_string();
+    const auto set_gripper_service = this->get_parameter("set_gripper_service").as_string();
+    const auto action_name         = this->get_parameter("action_name").as_string();
+
+    // Create interfaces
+    pub_joint_state_ = this->create_publisher<sensor_msgs::msg::JointState>(joint_command_topic, 10);
+    sub_joint_state_ = this->create_subscription<sensor_msgs::msg::JointState>(joint_states_topic, 10,
                                     std::bind(&IsaacSimBridge::cbJointStates, this, std::placeholders::_1));
 
     set_gripper_srv_ = this->create_service<std_srvs::srv::SetBool>(
-        "/wmx/set_gripper",
+        set_gripper_service,
         std::bind(&IsaacSimBridge::setGripper, this,
                   std::placeholders::_1, std::placeholders::_2));
 
     action_server_ = rclcpp_action::create_server<FollowJT>(this,
-        "/movensys_manipulator_arm_controller/follow_joint_trajectory",
+        action_name,
         std::bind(&IsaacSimBridge::handle_goal,     this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&IsaacSimBridge::handle_cancel,   this, std::placeholders::_1),
         std::bind(&IsaacSimBridge::handle_accepted, this, std::placeholders::_1));
