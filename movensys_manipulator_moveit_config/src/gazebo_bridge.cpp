@@ -46,7 +46,7 @@ public:
   GazeboBridge() : Node("gazebo_bridge") {
     // Declare parameters
     this->declare_parameter("arm_joint_names", std::vector<std::string>{"j1","j2","j3","j4","j5","j6"});
-    this->declare_parameter("gripper_joint_names", std::vector<std::string>{"p1","p2"});
+    this->declare_parameter("gripper_joint_names", std::vector<std::string>{});
     this->declare_parameter("gripper_open",  0.000);
     this->declare_parameter("gripper_close", 0.000);
     this->declare_parameter("joint_command_topic", "/joint_command_topic/no_topic");
