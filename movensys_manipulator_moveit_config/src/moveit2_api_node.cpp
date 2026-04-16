@@ -6,17 +6,17 @@
 MoveIt2ApiNode::MoveIt2ApiNode(){
     node_ = std::make_shared<rclcpp::Node>("moveit2_api_node");
 
-    node_->declare_parameter("base_name",         "world_manipulator");
-    node_->declare_parameter("eef_name",         "Link6");
-    node_->declare_parameter("vel_scale",         0.3);
-    node_->declare_parameter("acc_scale",         0.3);
-    node_->declare_parameter("delay_exec",        0.1);
-    node_->declare_parameter("max_step",          0.1);
-    node_->declare_parameter("planning_time",     1.0);
-    node_->declare_parameter("timeout",           1.0);
-    node_->declare_parameter("planning_attempts", 5);
+    node_->declare_parameter("base_name",         "base");
+    node_->declare_parameter("eef_name",         "eef");
+    node_->declare_parameter("vel_scale",         0.0);
+    node_->declare_parameter("acc_scale",         0.0);
+    node_->declare_parameter("delay_exec",        0.0);
+    node_->declare_parameter("max_step",          0.0);
+    node_->declare_parameter("planning_time",     0.0);
+    node_->declare_parameter("timeout",           0.0);
+    node_->declare_parameter("planning_attempts", 0);
     node_->declare_parameter("replan",            true);
-    node_->declare_parameter("replan_attempts",   5);
+    node_->declare_parameter("replan_attempts",   0);
 
     client_ = std::make_shared<moveit2_client::MoveIt2Client>(node_, "movensys_manipulator_arm");
 

@@ -45,24 +45,20 @@ public:
 
   GazeboBridge() : Node("gazebo_bridge") {
     // Declare parameters
-    this->declare_parameter("arm_joint_names",
-      std::vector<std::string>{"joint1","joint2","joint3","joint4","joint5","joint6"});
-    this->declare_parameter("gripper_joint_names",
-      std::vector<std::string>{"picker_1_joint","picker_2_joint"});
+    this->declare_parameter("arm_joint_names", std::vector<std::string>{"j1","j2","j3","j4","j5","j6"});
+    this->declare_parameter("gripper_joint_names", std::vector<std::string>{"p1","p2"});
     this->declare_parameter("gripper_open",  0.000);
-    this->declare_parameter("gripper_close", 0.045);
-    this->declare_parameter("joint_command_topic", "/gazebo_position_controller/commands");
-    this->declare_parameter("joint_states_topic",  "/joint_states");
-    this->declare_parameter("set_gripper_service", "/wmx/set_gripper");
-    this->declare_parameter("action_name",
-      "/movensys_manipulator_arm_controller/follow_joint_trajectory");
+    this->declare_parameter("gripper_close", 0.000);
+    this->declare_parameter("joint_command_topic", "/joint_command_topic/no_topic");
+    this->declare_parameter("joint_states_topic",  "/joint_states_topic/no_topic");
+    this->declare_parameter("set_gripper_service", "/set_gripper_service/no_topic");
+    this->declare_parameter("action_name","/action_name/no_action");
 
     // Fetch parameters
     arm_joint_names_     = this->get_parameter("arm_joint_names").as_string_array();
     gripper_joint_names_ = this->get_parameter("gripper_joint_names").as_string_array();
     gripper_open_        = this->get_parameter("gripper_open").as_double();
     gripper_close_       = this->get_parameter("gripper_close").as_double();
-
     const auto joint_command_topic = this->get_parameter("joint_command_topic").as_string();
     const auto joint_states_topic  = this->get_parameter("joint_states_topic").as_string();
     const auto set_gripper_service = this->get_parameter("set_gripper_service").as_string();

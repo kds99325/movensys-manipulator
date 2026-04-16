@@ -14,12 +14,12 @@ ros2 launch movensys_manipulator_description gazebo_trajectory_simulation.launch
 
 ### Step 2a: Run Isaacsim Bridge [Docker]
 ```
-ros2 launch movensys_manipulator_moveit_config isaacsim_bridge.launch.py --ros-args -p use_sim_time:=true
+ros2 launch movensys_manipulator_moveit_config isaacsim_bridge.launch.py use_sim_time:=true
 ```
 
 ### Step 2b: Run Gazebo Bridge [Docker]
 ```
-ros2 launch movensys_manipulator_moveit_config gazebo_bridge.launch.py --ros-args -p use_sim_time:=true
+ros2 launch movensys_manipulator_moveit_config gazebo_bridge.launch.py use_sim_time:=true
 ```
 
 

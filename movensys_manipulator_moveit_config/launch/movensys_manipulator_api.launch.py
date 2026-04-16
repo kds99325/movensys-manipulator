@@ -24,11 +24,19 @@ def generate_launch_description():
 
     # Build MoveIt config with joint_limits
     moveit_config = (
-        MoveItConfigsBuilder("movensys_manipulator", package_name="movensys_manipulator_moveit_config")
+        MoveItConfigsBuilder("movensys_manipulator")
         .robot_description_semantic(file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
         .robot_description(file_path=f"config/{manipulator_model}/movensys_manipulator.urdf.xacro")
-        .joint_limits(file_path=f"config/{manipulator_model}/joint_limits.yaml")
         .robot_description_kinematics(file_path=f"config/{manipulator_model}/kinematics.yaml")
+        .joint_limits(file_path=f"config/{manipulator_model}/joint_limits.yaml")
+        .trajectory_execution(file_path=f"config/{manipulator_model}/moveit_controllers.yaml")
+        .planning_scene_monitor(
+            publish_robot_description=True, publish_robot_description_semantic=True
+        )
+        .pilz_cartesian_limits(file_path=f"config/{manipulator_model}/pilz_cartesian_limits.yaml")
+        .planning_pipelines(
+            pipelines=["ompl", "chomp", "pilz_industrial_motion_planner"]
+        )
         .to_moveit_configs()
     )
 
