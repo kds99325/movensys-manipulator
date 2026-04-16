@@ -6,7 +6,7 @@
 
 ### Step 1b: Open Gazebo [Docker]
 ```
-ros2 launch movensys_manipulator_description gazebo_trajectory_simulation.launch.py
+ros2 launch movensys_manipulator_description gazebo_trajectory_real.launch.py
 ```
 
 
