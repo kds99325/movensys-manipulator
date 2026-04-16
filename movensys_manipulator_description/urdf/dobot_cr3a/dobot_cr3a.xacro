@@ -134,7 +134,7 @@
       <parent link="Link3" />
       <child link="Link4" />
       <axis xyz="0 0 1" />
-      <limit lower="-3.14" upper="3.14" effort="${joint_effort}" velocity="${joint_vel}" />
+      <limit lower="-2.5" upper="2.5" effort="${joint_effort}" velocity="${joint_vel}" />
       <dynamics damping="10.0" friction="1.0"/>
     </joint>
 
