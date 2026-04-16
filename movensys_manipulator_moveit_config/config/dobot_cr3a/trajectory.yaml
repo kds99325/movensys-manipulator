@@ -3,7 +3,7 @@ moveit2_trajectory_cpp:
     # Trajectory waypoints
     # Pose targets: [x, y, z, roll, pitch, yaw]
     # Joint targets: one value per joint (must match joint_names length)
-    # Add or remove _0, _1, _2 ... entries freely — no count needed.
+    # Each entry corresponds to one move target.
 
     joint_names: [joint1, joint2, joint3, joint4, joint5, joint6]
 
