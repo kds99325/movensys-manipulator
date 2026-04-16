@@ -1,35 +1,25 @@
 moveit2_trajectory_cpp:
   ros__parameters:
     # Trajectory waypoints
-    # Each pose is 6 values: [x, y, z, roll, pitch, yaw]
+    # Pose targets: [x, y, z, roll, pitch, yaw]
+    # Joint targets: one value per joint (must match joint_names length)
+    # Each entry corresponds to one move target.
 
-    pose_initial: [0.098, -0.071, 0.450, 3.14159265, 0.0, 3.14159265]
-
-    cartesian_poses: [
-       0.098,  0.130, 0.450, 3.14159265, 0.0, 3.14159265,
-      -0.230,  0.000, 0.450, 3.14159265, 0.0, 3.14159265
-    ]
-
-    relative_base_deltas: [
-      -0.1, 0.0, 0.0, 0.0, 0.0,  0.39269908,
-       0.1, 0.0, 0.0, 0.0, 0.0, -0.39269908
-    ]
-
-    relative_tool_deltas: [
-      -0.1, 0.0, 0.0, 0.0, 0.0,  0.39269908,
-       0.1, 0.0, 0.0, 0.0, 0.0, -0.39269908
-    ]
-
-    # Joint waypoints
-    # Each set is 6 values: [joint1, joint2, joint3, joint4, joint5, joint6]
     joint_names: [joint1, joint2, joint3, joint4, joint5, joint6]
 
-    joint_poses: [
-       3.5519,  0.1319, 0.9702,  0.4732, -1.5703,  0.4102,
-       2.1251, -0.0225, 1.1350,  0.4638, -1.5708, -1.0157
-    ]
+    pose_initial_0: [0.724, 0.140, 0.469, 3.141, 0.001, -1.572]
 
-    joint_movement_poses: [
-       0.230, 0.0, 0.450, 3.14159265, 0.0, 3.14159265,
-      -0.230, 0.0, 0.450, 3.14159265, 0.0, 3.14159265
-    ]
+    cartesian_poses_0: [0.723, -0.1, 0.257, -3.141, 0.001, -1.573]
+    cartesian_poses_1: [0.723, -0.202, 0.257, -3.141, 0.001, -1.573]
+
+    relative_base_deltas_0: [0.0, 0.1, 0.0, 0.0, 0.0,  0.39269908]
+    relative_base_deltas_1: [0.0,  -0.1, 0.0, 0.0, 0.0, -0.39269908]
+
+    relative_tool_deltas_0: [0.1, 0.0, 0.0, 0.0, 0.0,  0.39269908]
+    relative_tool_deltas_1: [-0.1, 0.0, 0.0, 0.0, 0.0, -0.39269908]
+
+    joint_poses_0: [ 1.9849,  0.3740, 1.7320, -0.5349, -1.5705,  0.4149]
+    joint_poses_1: [ 0.8903,  0.1999, 1.9766, -0.6049, -1.5696, -0.6795]
+
+    joint_movement_poses_0: [0.723,  0.202, 0.257, -3.141, 0.001, -1.573]
+    joint_movement_poses_1: [0.723, -0.202, 0.257, -3.141, 0.001, -1.573]
