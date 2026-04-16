@@ -13,7 +13,7 @@ export HOST_USER_UID=$(id -u)
 export HOST_USER_GID=$(id -g)
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export ISAAC_ROS_WS=~/workspaces/isaac_ros-dev
-export MOVENSYS_MANIPULATOR_PACKAGES=~/workspaces/movensys-manipulator
+export MOVENSYS_MANIPULATOR_PACKAGES=~/workspaces/movensys_ws/src/movensys-manipulator
 ```
 ```
 xhost +local:docker
