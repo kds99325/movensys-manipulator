@@ -2,6 +2,11 @@ format: "xrdf"
 
 format_version: 1.0
 
+# Base link for cuMotion - the root frame of the robot kinematics
+# The robot_segmenter_node uses this to compute robot collision spheres.
+# This should be the first moving link of the robot arm.
+base_link: "Link0"
+
 default_joint_positions:
   joint1: 0.0000
   joint2: 0.0000
@@ -21,8 +26,11 @@ cspace:
 
 tool_frames: ["Link6"]
 
-collision: 
+collision:
   geometry: "auto_generated_collision_sphere_group"
+  # buffer_distance adds a safety margin around collision spheres for obstacle avoidance
+  # This is CRITICAL for cuMotion to plan paths that avoid obstacles
+  # Increased buffer for gripper parts to ensure collision-free trajectories
   buffer_distance:
     Link0: 0.0
     Link1: 0.0
@@ -36,8 +44,9 @@ collision:
     picker_1: 0.0
     picker_2: 0.0
 
-self_collision: 
+self_collision:
   geometry: "auto_generated_collision_sphere_group"
+  # buffer_distance for self-collision (usually smaller than world collision)
   buffer_distance:
     Link0: 0.002
     Link1: 0.002
@@ -106,6 +115,8 @@ self_collision:
       - "gripper"
       - "picker_1"
 
+# Collision sphere's center is based on URDF's joint
+# For simplicty, I call center as Link.
 geometry:
   auto_generated_collision_sphere_group:
     spheres:
