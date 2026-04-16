@@ -11,7 +11,7 @@ services:
     network_mode: host
     ipc: host
     runtime: nvidia
-    working_dir: /home/admin/workspaces
+    working_dir: /home/admin/workspaces/movensys_ws
     entrypoint: ["/usr/local/bin/scripts/workspace-entrypoint.sh"]
     stdin_open: true
     tty: true
@@ -44,7 +44,6 @@ services:
                source /opt/ros/humble/setup.bash && \
 
                echo ====== Build movensys_manipulator ======= && \
-               cd /home/admin/workspaces/movensys_ws && \
                colcon build --symlink-install && \
 
                echo ====== Build Terminated ======= && \

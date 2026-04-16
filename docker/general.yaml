@@ -14,7 +14,7 @@ services:
     privileged: true
     network_mode: host
     ipc: host
-    working_dir: /home/admin/workspaces
+    working_dir: /home/admin/workspaces/movensys_ws
     entrypoint: ["/ros_entrypoint.sh"]
     stdin_open: true
     tty: true
@@ -42,7 +42,6 @@ services:
                source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
                echo ====== Build movensys_manipulator ======= && \
-               cd /home/admin/workspaces/movensys_ws && \
                colcon build --symlink-install && \
 
                echo ====== Build Terminated ======= && \

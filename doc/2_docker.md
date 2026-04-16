@@ -18,7 +18,7 @@ docker logs movensys_manipulator_container -f
 ```
 docker exec -it -u admin movensys_manipulator_container \
 bash -lc 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
-        source /home/admin/ws/install/setup.bash && \
+        source /home/admin/workspaces/movensys_ws/install/setup.bash && \
 exec bash -i'
 ```
 
