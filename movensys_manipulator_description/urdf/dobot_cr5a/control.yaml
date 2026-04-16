@@ -18,8 +18,6 @@ gazebo_position_controller:
             - joint4
             - joint5
             - joint6
-            - picker_1_joint
-            - picker_2_joint
         interface_name: position
         command_interfaces:
             - position
@@ -56,13 +54,3 @@ gazebo_position_controller:
             i: 50.0
             d: 200.0
             i_clamp: 50.0
-        picker_1_joint:
-            p: 1000.0
-            i: 20.0
-            d: 100.0
-            i_clamp: 20.0
-        picker_2_joint:
-            p: 1000.0
-            i: 20.0
-            d: 100.0
-            i_clamp: 20.0

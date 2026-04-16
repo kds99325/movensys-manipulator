@@ -58,17 +58,6 @@
 					<state_interface name="velocity"/>
 				</joint>
 
-			<joint name="picker_1_joint">
-					<command_interface name="position"/>
-					<state_interface name="position"/>
-					<state_interface name="velocity"/>
-				</joint>
-
-			<joint name="picker_2_joint">
-					<command_interface name="position"/>
-					<state_interface name="position"/>
-					<state_interface name="velocity"/>
-				</joint>
 	  	</ros2_control>
 
 	<gazebo>
