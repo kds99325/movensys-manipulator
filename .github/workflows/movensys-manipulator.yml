@@ -38,7 +38,8 @@ jobs:
           sudo rosdep init || true
           rosdep update
           cd ~/movensys_ws
-          rosdep install --from-paths src --ignore-src -y
+          rosdep install --from-paths src --ignore-src -y \
+            --rosdistro ${{ matrix.ros_distro }}
 
       - name: Build
         run: |
