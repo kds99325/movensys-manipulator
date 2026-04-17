@@ -4,7 +4,8 @@ ARG ROS_DISTRO
 USER root
 WORKDIR /workspaces
 
-RUN sed -i 's|http://security.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list && \
+RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 && \
+    sed -i 's|http://security.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     apt-get update
