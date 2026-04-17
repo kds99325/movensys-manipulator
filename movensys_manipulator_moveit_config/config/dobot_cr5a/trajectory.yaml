@@ -7,7 +7,7 @@ moveit2_trajectory_cpp:
 
     joint_names: [joint1, joint2, joint3, joint4, joint5, joint6]
 
-    pose_initial_0: [0.724, 0.140, 0.469, 3.141, 0.001, -1.572]
+    joint_initial_0: [1.57, 0.0, 1.57, 0.0, -1.57, 0.0]
 
     cartesian_poses_0: [0.723, -0.1, 0.257, -3.141, 0.001, -1.573]
     cartesian_poses_1: [0.723, -0.202, 0.257, -3.141, 0.001, -1.573]

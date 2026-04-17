@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
     // Trajectory waypoints
     node->declare_parameter("joint_names",           std::vector<std::string>{"j1","j2","j3","j4","j5","j6"});
 
-    node->declare_parameter("pose_initial_0",        std::vector<double>(1, 0.0));
+    node->declare_parameter("joint_initial_0",        std::vector<double>(1, 0.0));
 
     node->declare_parameter("cartesian_poses_0",     std::vector<double>(1, 0.0));
     node->declare_parameter("cartesian_poses_1",     std::vector<double>(1, 0.0));
@@ -96,9 +96,9 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
 {
     const auto joint_names = node->get_parameter("joint_names").as_string_array();
 
-    RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Joint Movement -------");
-    if (!client.absoluteBaseEefJointMovement(toPose(node->get_parameter("pose_initial_0").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Joint Movement failed"); return false; }
+    RCLCPP_INFO(node->get_logger(), "------- Joint Movement -------");
+    if (!client.jointMovement(toJointMap(node->get_parameter("joint_initial_0").as_double_array(), joint_names))) {
+        RCLCPP_ERROR(node->get_logger(), "Joint Movement failed"); return false; }
 
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Cartesian -------");
     if (!client.absoluteBaseEefCartesian(toPose(node->get_parameter("cartesian_poses_0").as_double_array()))) {

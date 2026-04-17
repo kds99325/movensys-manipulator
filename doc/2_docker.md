@@ -21,7 +21,7 @@ docker logs movensys_manipulator_container -f
 mros
 ```
 
-# 5. Checking URDF [Docker]
+# 5. Checking URDF 
 ```
 mros ros2 launch movensys_manipulator_description movensys_manipulator_rviz.launch.py
 ```
