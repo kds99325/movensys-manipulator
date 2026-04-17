@@ -37,6 +37,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo rosdep init || true
+          rosdep update
           cd ~/movensys_ws
           rosdep install --from-paths src --ignore-src -r -y
 
