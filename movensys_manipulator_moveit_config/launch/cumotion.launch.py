@@ -29,7 +29,8 @@ import tempfile
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, RegisterEventHandler
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessExit
 from launch.launch_context import LaunchContext
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -169,11 +170,23 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
         ],
     )
 
+    api_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare('movensys_manipulator_moveit_config'),
+                'launch',
+                'movensys_manipulator_api.launch.py',
+            ])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items(),
+    )
+
     nodes = [
         robot_state_publisher,
         move_group_node,
         cumotion_planner_node,
         rviz_node,
+        api_launch,
     ]
 
     if static_planning_scene_server is not None:

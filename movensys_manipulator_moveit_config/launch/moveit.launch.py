@@ -1,6 +1,7 @@
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -104,8 +105,20 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
+    api_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("movensys_manipulator_moveit_config"),
+                "launch",
+                "movensys_manipulator_api.launch.py",
+            ])
+        ),
+        launch_arguments={"use_sim_time": use_sim_time}.items(),
+    )
+
     return [
         rviz_node,
         robot_state_publisher,
         run_move_group_node,
+        api_launch,
     ]

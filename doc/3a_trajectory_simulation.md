@@ -12,26 +12,22 @@ mros ros2 launch movensys_manipulator_description gazebo_trajectory_simulation.l
 
 
 
-### Step 2a: Run Isaacsim Bridge
+### Step 2a: Run simulator bridge
 ```
-mros ros2 launch movensys_manipulator_moveit_config isaacsim_bridge.launch.py use_sim_time:=true
+mros ros2 launch movensys_manipulator_moveit_config sim_bridge.launch.py simulator:=isaacsim use_sim_time:=true 
 ```
-
-### Step 2b: Run Gazebo Bridge
-```
-mros ros2 launch movensys_manipulator_moveit_config gazebo_bridge.launch.py use_sim_time:=true
-```
+`simulator:=gazebo` for use gazebo
 
 
 
 
 
-### Step 3a: Launch MoveIt2's OMPL
+### Step 3a: Launch MoveIt2's OMPL + API
 ```
 mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py use_sim_time:=true
 ```
 
-### Step 3b: Launch cuMotion
+### Step 3b: Launch cuMotion + API
 ```
 mros ros2 launch movensys_manipulator_moveit_config cumotion.launch.py use_sim_time:=true
 ```
@@ -41,10 +37,6 @@ mros ros2 launch movensys_manipulator_moveit_config cumotion.launch.py use_sim_t
 
 
 
-### Step 4: Launch API Node
-```
-mros ros2 launch movensys_manipulator_moveit_config movensys_manipulator_api.launch.py use_sim_time:=true
-```
 
 ### Step 5 (optional): Execute Trajectory Test
 ```
