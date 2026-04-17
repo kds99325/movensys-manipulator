@@ -1,0 +1,141 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, devel]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      description: ${{ steps.filter.outputs.description }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            description:
+              - 'movensys_manipulator_description/**'
+            moveit_config:
+              - 'movensys_manipulator_moveit_config/**'
+
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs: changes
+    strategy:
+      fail-fast: false
+      matrix:
+        ros_distro: [jazzy, humble]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build base image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./docker
+          file: ./docker/general.Dockerfile
+          build-args: |
+            ROS_DISTRO=${{ matrix.ros_distro }}
+            HOST_USER_UID=1001
+            HOST_USER_GID=1001
+          tags: movensys-manipulator:ci-${{ matrix.ros_distro }}
+          load: true
+          cache-from: type=gha,scope=${{ matrix.ros_distro }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.ros_distro }}
+
+      - name: Build and test ROS packages
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/ws_src:ro" \
+            -e ROS_DISTRO=${{ matrix.ros_distro }} \
+            -e MANIPULATOR_MODEL=dobot_cr3a \
+            movensys-manipulator:ci-${{ matrix.ros_distro }} \
+            bash -lc "
+              set -e
+              mkdir -p /home/admin/workspaces/movensys_ws/src
+              cp -r /ws_src /home/admin/workspaces/movensys_ws/src/movensys-manipulator
+              cd /home/admin/workspaces/movensys_ws
+              source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+              colcon build --symlink-install
+              colcon test --return-code-on-test-failure
+              colcon test-result --verbose
+            "
+
+      - name: Test gazebo_trajectory_simulation launch file
+        if: needs.changes.outputs.description == 'true'
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/ws_src:ro" \
+            -e ROS_DISTRO=${{ matrix.ros_distro }} \
+            -e MANIPULATOR_MODEL=dobot_cr3a \
+            movensys-manipulator:ci-${{ matrix.ros_distro }} \
+            bash -lc "
+              set -e
+              mkdir -p /home/admin/workspaces/movensys_ws/src
+              cp -r /ws_src /home/admin/workspaces/movensys_ws/src/movensys-manipulator
+              cd /home/admin/workspaces/movensys_ws
+              source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+              colcon build --symlink-install --packages-select movensys_manipulator_description
+              source install/setup.bash
+              for model in dobot_cr3a dobot_cr5a; do
+                echo \"=== launch parse test: \$model ===\"
+                MANIPULATOR_MODEL=\$model ros2 launch --show-args \
+                  movensys_manipulator_description gazebo_trajectory_simulation.launch.py
+                echo \"  OK: \$model launch parsed\"
+              done
+            "
+
+      - name: Test moveit_config launch files
+        if: needs.changes.outputs.moveit_config == 'true'
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/ws_src:ro" \
+            -e ROS_DISTRO=${{ matrix.ros_distro }} \
+            -e MANIPULATOR_MODEL=dobot_cr3a \
+            movensys-manipulator:ci-${{ matrix.ros_distro }} \
+            bash -lc "
+              set -e
+              mkdir -p /home/admin/workspaces/movensys_ws/src
+              cp -r /ws_src /home/admin/workspaces/movensys_ws/src/movensys-manipulator
+              cd /home/admin/workspaces/movensys_ws
+              source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+              colcon build --symlink-install
+              source install/setup.bash
+
+              echo '=== launch test: sim_bridge (isaacsim) ==='
+              timeout 30s ros2 launch movensys_manipulator_moveit_config sim_bridge.launch.py \
+                simulator:=isaacsim use_sim_time:=true || [ $? -eq 124 ] && echo '  OK: sim_bridge isaacsim exited after 30s'
+
+              echo '=== launch test: moveit ==='
+              timeout 30s ros2 launch movensys_manipulator_moveit_config moveit.launch.py \
+                use_sim_time:=true || [ $? -eq 124 ] && echo '  OK: moveit exited after 30s'
+            "
+
+      - name: Test xacro for each manipulator model
+        if: needs.changes.outputs.description == 'true'
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/ws_src:ro" \
+            -e ROS_DISTRO=${{ matrix.ros_distro }} \
+            movensys-manipulator:ci-${{ matrix.ros_distro }} \
+            bash -lc "
+              set -e
+              mkdir -p /home/admin/workspaces/movensys_ws/src
+              cp -r /ws_src /home/admin/workspaces/movensys_ws/src/movensys-manipulator
+              cd /home/admin/workspaces/movensys_ws
+              source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+              colcon build --symlink-install --packages-select movensys_manipulator_description
+              source install/setup.bash
+              for model in dobot_cr3a dobot_cr5a; do
+                echo \"=== xacro test: \$model ===\"
+                xacro src/movensys-manipulator/movensys_manipulator_description/urdf/\$model/movensys_manipulator.xacro \
+                  > /tmp/\$model.urdf
+                echo \"  OK: \$model.urdf generated\"
+              done
+            "
