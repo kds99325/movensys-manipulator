@@ -67,7 +67,7 @@ jobs:
           source install/setup.bash
           for model in dobot_cr3a dobot_cr5a; do
             echo "=== launch test: $model ==="
-            timeout 30s MANIPULATOR_MODEL=$model ros2 launch \
+            env MANIPULATOR_MODEL=$model timeout 30s ros2 launch \
               movensys_manipulator_description gazebo_trajectory_simulation.launch.py \
               || [ $? -eq 124 ] && echo "  OK: $model launch exited after 30s"
           done
