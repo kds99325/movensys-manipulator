@@ -4,12 +4,10 @@ ARG ROS_DISTRO
 USER root
 WORKDIR /workspaces
 
-RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 && \
-    echo 'Acquire::Retries "5";' >> /etc/apt/apt.conf.d/99force-ipv4 && \
-    sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean && \
-    apt-get update
+RUN rm -f /etc/apt/sources.list.d/yarn.list || true
+
+RUN sed -i -E 's|http://(archive\|security)\.ubuntu\.com/ubuntu/|https://\1.ubuntu.com/ubuntu/|g' \
+      /etc/apt/sources.list.d/ubuntu.sources
 
 RUN apt-get update && \
     apt-get install -y \

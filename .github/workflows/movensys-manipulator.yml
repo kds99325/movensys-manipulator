@@ -3,57 +3,51 @@ name: CI - movensys-manipulator
 on:
   pull_request:
     branches: [main, devel]
-  workflow_call:
-    inputs:
-      ros_distro:
-        required: true
-        type: string
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        ros_distro: ${{ inputs.ros_distro && fromJSON(format('["{0}"]', inputs.ros_distro)) || fromJSON('["jazzy","humble"]') }}
+        include:
+          - ros_distro: jazzy
+            os: ubuntu-24.04
+          - ros_distro: humble
+            os: ubuntu-22.04
+
+    runs-on: ${{ matrix.os }}
+    env:
+      MANIPULATOR_MODEL: dobot_cr3a
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup ROS ${{ matrix.ros_distro }}
+        uses: ros-tooling/setup-ros@v0.7
         with:
-          driver-opts: network=host
+          required-ros-distributions: ${{ matrix.ros_distro }}
 
-      - name: Build base image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./docker
-          file: ./docker/general.Dockerfile
-          build-args: |
-            ROS_DISTRO=${{ matrix.ros_distro }}
-            HOST_USER_UID=1001
-            HOST_USER_GID=1001
-          tags: movensys-manipulator:ci-${{ matrix.ros_distro }}
-          load: true
-          cache-from: type=gha,scope=${{ matrix.ros_distro }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.ros_distro }}
-
-      - name: Build and test ROS packages
+      - name: Setup workspace
         run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/ws_src:ro" \
-            -e ROS_DISTRO=${{ matrix.ros_distro }} \
-            -e MANIPULATOR_MODEL=dobot_cr3a \
-            movensys-manipulator:ci-${{ matrix.ros_distro }} \
-            bash -lc "
-              set -e
-              mkdir -p /home/admin/workspaces/movensys_ws/src
-              cp -r /ws_src /home/admin/workspaces/movensys_ws/src/movensys-manipulator
-              cd /home/admin/workspaces/movensys_ws
-              source /opt/ros/${{ matrix.ros_distro }}/setup.bash
-              colcon build --symlink-install
-              colcon test --return-code-on-test-failure
-              colcon test-result --verbose
-            "
+          mkdir -p ~/movensys_ws/src
+          ln -s ${{ github.workspace }} ~/movensys_ws/src/movensys-manipulator
+
+      - name: Install dependencies
+        run: |
+          cd ~/movensys_ws
+          rosdep install --from-paths src --ignore-src -r -y
+
+      - name: Build
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          cd ~/movensys_ws
+          colcon build --symlink-install
+
+      - name: Test
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          cd ~/movensys_ws
+          source install/setup.bash
+          colcon test --return-code-on-test-failure
+          colcon test-result --verbose

@@ -8,6 +8,9 @@ WORKDIR /workspaces
 
 RUN rm -f /etc/apt/sources.list.d/yarn.list || true
 
+RUN sed -i -E 's|http://(archive\|security)\.ubuntu\.com/ubuntu/|https://\1.ubuntu.com/ubuntu/|g' \
+      /etc/apt/sources.list.d/ubuntu.sources
+
 RUN apt-get update && \
     apt-get install -y \
       ros-humble-ament-package \
