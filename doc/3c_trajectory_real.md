@@ -2,43 +2,40 @@
 ## Execution Procedure
 
 ### Step 1a: Open Isaac Sim
-`~/workspaces/robotics_isaac_sim/movensys_manipulator/trajectory_real.usd`
+`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/trajectory_real.usd`
 
-### Step 1b: Open Gazebo [Docker]
+### Step 1b: Open Gazebo
 ```
-ros2 launch movensys_gazebo trajectory_real.launch.py
-```
-
-
-
-
-### Step 2: Run CR3A wmx-ros2
-https://github.com/movensys/wmx-ros2/blob/main/doc/3_launch_cr3a_manipulator.md
-
-
-
-
-
-### Step 3a: Launch Trajectory Planning based on MoveIt2's OMPL [Docker]
-```
-ros2 launch movensys_manipulator_moveit_config movensys_manipulator_moveit.launch.py
-```
-
-### Step 3b: Launch cuMotion [Docker]
-```
-ros2 launch movensys_manipulator_isaac_ros isaac_cumotion.launch.py
+mros ros2 launch movensys_manipulator_description gazebo_trajectory_real.launch.py
 ```
 
 
 
 
-### Step 4: Execute Trajectory Test [Docker]
+### Step 2: Run wmx-ros2 for manipulator
+check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md`
+
+
+
+
+
+
+### Step 3a: Launch MoveIt2's OMPL + API
 ```
-ros2 launch movensys_manipulator_moveit_config movensys_manipulator_trajectory.launch.py
+mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py
+```
+
+### Step 3b: Launch cuMotion + API
+```
+mros ros2 launch movensys_manipulator_moveit_config cumotion.launch.py
 ```
 
 
-#### Get EEF pose [Docker]
+
+
+
+
+### Step 4 (optional): Execute Trajectory Test
 ```
-ros2 run tf2_ros tf2_echo world_manipulator Link6
+mros ros2 launch movensys_manipulator_moveit_config movensys_manipulator_trajectory.launch.py
 ```

@@ -1,0 +1,73 @@
+name: Test - movensys_manipulator_description
+
+on:
+  pull_request:
+    branches: [main, devel]
+    paths:
+      - 'movensys_manipulator_description/**'
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ros_distro: jazzy
+            os: ubuntu-24.04
+          - ros_distro: humble
+            os: ubuntu-22.04
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup ROS ${{ matrix.ros_distro }}
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: ${{ matrix.ros_distro }}
+
+      - name: Setup workspace
+        run: |
+          mkdir -p ~/movensys_ws/src
+          ln -s ${{ github.workspace }} ~/movensys_ws/src/movensys-manipulator
+
+      - name: Install dependencies
+        run: |
+          sudo rosdep init || true
+          rosdep update
+          cd ~/movensys_ws
+          rosdep install --from-paths src/movensys-manipulator/movensys_manipulator_description \
+            --ignore-src -y --rosdistro ${{ matrix.ros_distro }}
+
+      - name: Build
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          cd ~/movensys_ws
+          colcon build --symlink-install \
+            --packages-select movensys_manipulator_description
+
+      - name: Test xacro for each manipulator model
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          cd ~/movensys_ws
+          source install/setup.bash
+          for model in dobot_cr3a dobot_cr5a; do
+            echo "=== xacro test: $model ==="
+            xacro src/movensys-manipulator/movensys_manipulator_description/urdf/$model/movensys_manipulator.xacro \
+              > /tmp/$model.urdf
+            echo "  OK: $model.urdf generated"
+          done
+
+      - name: Test gazebo_trajectory_simulation launch file
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          cd ~/movensys_ws
+          source install/setup.bash
+          for model in dobot_cr3a dobot_cr5a; do
+            echo "=== launch test: $model ==="
+            env MANIPULATOR_MODEL=$model timeout 30s ros2 launch \
+              movensys_manipulator_description gazebo_trajectory_simulation.launch.py \
+              || [ $? -eq 124 ] && echo "  OK: $model launch exited after 30s"
+          done
