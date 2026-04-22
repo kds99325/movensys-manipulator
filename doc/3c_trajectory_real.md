@@ -27,7 +27,7 @@ mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py
 
 ### Step 3b: Launch cuMotion + API
 ```
-mros ros2 launch movensys_manipulator_moveit_config cumotion.launch.py
+mros ros2 launch movensys_manipulator_isaac_config cumotion.launch.py
 ```
 
 
