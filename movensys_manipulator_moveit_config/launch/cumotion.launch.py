@@ -149,6 +149,7 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
             {
                 'robot': robot_xrdf,
                 'urdf_path': urdf_path,
+                'tool_frame': 'Link6',
                 'use_sim_time': use_sim_time,
             }
         ]
