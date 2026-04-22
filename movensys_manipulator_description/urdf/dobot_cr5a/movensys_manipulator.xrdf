@@ -76,15 +76,15 @@ self_collision:
       - "Link4"
       - "Link5"
 
-geometry: 
-  auto_generated_collision_sphere_group: 
-    spheres: 
-      world_manipulator: 
-        - center: [0.241, -0.022, 0.032]
+geometry:
+  auto_generated_collision_sphere_group:
+    spheres:
+      Link0:
+        - center: [-0.022, 0.009, 0.032]
           radius: 0.0415
-        - center: [0.262, 0.022, 0.032]
+        - center: [0.022, -0.012, 0.032]
           radius: 0.0415
-      Link1: 
+      Link1:
         - center: [-0.023, -0.028, -0.03]
           radius: 0.0424
         - center: [0.025, -0.021, -0.033]
