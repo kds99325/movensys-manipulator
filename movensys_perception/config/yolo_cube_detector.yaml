@@ -1,0 +1,21 @@
+yolo_cube_detector:
+  ros__parameters:
+    # model_path is intentionally not set here — override via launch arg,
+    # e.g. model_path:=$(ros2 pkg prefix movensys_perception_models)/share/movensys_perception_models/models/cubes_obb.pt
+    confidence_threshold: 0.5
+
+    # Scene geometry (scan pose). cube_height = floor + cube top surface.
+    cube_height: 0.05
+    cam_z_world: 0.45
+    cam_x_world: 0.0
+    cam_y_world: 0.0
+    # Optical-frame orientation in world, [x, y, z, w] (scan RPY = (π, 0, π))
+    cam_orientation: [0.0, 1.0, 0.0, 0.0]
+
+    publish_debug_image: true
+    # device: cpu | cuda | AUTO | intel:cpu | intel:gpu | intel:npu
+    device: "cpu"
+
+    image_topic: "/camera_hand/realsense2_camera/color/image_raw"
+    camera_info_topic: "/camera_hand/realsense2_camera/color/camera_info"
+    camera_frame: "camera_hand_color_optical_frame"
