@@ -124,9 +124,9 @@ geometry:
       # -y : front, z : up
       Link0:
         - center: [0.0, 0.0, 0.0]
-          radius: 0.1
+          radius: 0.05
         - center: [0.0, 0.0, 0.133]
-          radius: 0.1
+          radius: 0.05
       # center is Link0
       # -y : front, z : up
       # This sphere is dummy to prevent error.
@@ -137,51 +137,51 @@ geometry:
       # z : front, -x : up
       Link2:
         - center: [-0.266, 0.0, 0.133]
-          radius: 0.1
+          radius: 0.04
         - center: [-0.266, 0.0, 0.0]
-          radius: 0.1
+          radius: 0.04
         - center: [-0.133, 0.0, 0.133]
-          radius: 0.1
+          radius: 0.04
         - center: [0.0, 0.0, 0.133]
-          radius: 0.1
+          radius: 0.04
       # center is Link2
       # z : front, -x : up
       Link3:
         - center: [-0.133, 0.0, 0.0]
-          radius: 0.1
+          radius: 0.04
       # center is Link5
       # z : front, -x : up
       Link4:
         - center: [0.0, 0.0, -0.133]
-          radius: 0.1
+          radius: 0.04
       # center is Link 6
       # y : front, -z : up
-      Link5: 
+      Link5:
         - center: [0.0, 0.0, -0.133]
-          radius: 0.1
+          radius: 0.04
       # center is camera-stand
       # z : front, -y : up
       Link6:
         - center: [0.0, 0.0, -0.133]
-          radius: 0.1
+          radius: 0.04
       # center is camera-stand
       # z : front, -y : up
       bracket:
         # neck sphere
         - center: [0.0, 0.0, 0.0]
-          radius: 0.09
+          radius: 0.05
         # camera sphere
         - center: [0.0, -0.065, 0.0]
-          radius: 0.09
+          radius: 0.05
       # center is bracket
       # y : front, z : up
       gripper:
         - center: [0.0, 0.08, 0.0]
-          radius: 0.09
+          radius: 0.05
       picker_1:
         - center: [0.0, 0.0, 0.0]
-          radius: 0.09
+          radius: 0.04
       # picker_2 - gripper finger 2 (CONSERVATIVE - larger radii)
       picker_2:
         - center: [0.0, 0.0, 0.0]
-          radius: 0.09
+          radius: 0.04
