@@ -91,6 +91,16 @@ ament_target_dependencies(moveit2_trajectory_cpp
   std_srvs
 )
 
+add_executable(yolo_trajectory_cpp src/yolo_trajectory.cpp)
+target_link_libraries(yolo_trajectory_cpp moveit2_client_lib)
+ament_target_dependencies(yolo_trajectory_cpp
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+
 add_executable(moveit2_api_node src/moveit2_api_node.cpp)
 target_link_libraries(moveit2_api_node moveit2_client_lib)
 ament_target_dependencies(moveit2_api_node
@@ -103,7 +113,7 @@ ament_target_dependencies(moveit2_api_node
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 target_link_libraries(moveit2_api_node ${cpp_typesupport_target})
 
-install(TARGETS moveit2_trajectory_cpp moveit2_api_node
+install(TARGETS moveit2_trajectory_cpp yolo_trajectory_cpp moveit2_api_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
