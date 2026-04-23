@@ -35,4 +35,5 @@ mros ros2 launch movensys_manipulator_isaac_config cumotion_apriltag.launch.py u
 
 ### Step 4: AprilTag Pick and Place
 ```
+mros ros2 launch movensys_manipulator_moveit_config apriltag_pick_and_place.launch.py use_sim_time:=true target_spawn:=false
 ```

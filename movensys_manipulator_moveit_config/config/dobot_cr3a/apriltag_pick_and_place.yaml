@@ -1,0 +1,30 @@
+apriltag_pick_and_place:
+  ros__parameters:
+    # AprilTag pick-and-place config
+    camera_hand_link:    "camera_hand_color_optical_frame"
+    tag_ids:             ["tag36h11:5", "tag36h11:9", "tag36h11:7", "tag36h11:11"]
+    target_topics:       ["/target1_sub", "/target2_sub", "/target3_sub", "/target4_sub"]
+
+    z_target_pose:       0.07
+    tag_down_z:          0.21
+    tag_tol_pose:        0.03
+    tag_tol_orientation: 0.05
+    tag_to_target_x:     0.01
+    tag_to_target_y:    -0.065
+    tag_to_target_yaw:   0.0
+
+    joint_names:  [joint1, joint2, joint3, joint4, joint5, joint6]
+    initial_pose: [3.14, -0.5928, 1.5576, 0.6173, -1.57, 0.0]
+    scan_pose:    [-0.23, -0.07,  0.500, 3.14159265, 0.0, 3.14159265]
+
+    box_up_0:   [0.191,  -0.1945, 0.500, 3.141, 0.0, 3.108]
+    box_down_0: [0.191,  -0.1945, 0.295, 3.141, 0.0, 3.108]
+
+    box_up_1:   [0.299,  -0.199,  0.500, 3.141, 0.0, 3.108]
+    box_down_1: [0.299,  -0.199,  0.295, 3.141, 0.0, 3.108]
+
+    box_up_2:   [0.1955, -0.039,  0.500, 3.142, 0.0, 3.101]
+    box_down_2: [0.1955, -0.039,  0.295, 3.142, 0.0, 3.101]
+
+    box_up_3:   [0.303,  -0.042,  0.500, 3.142, 0.0, 3.104]
+    box_down_3: [0.303,  -0.042,  0.295, 3.142, 0.0, 3.104]
