@@ -1,4 +1,4 @@
-# Trajectory Planning 
+# AprilTag Pick and Place
 ## Execution Procedure
 
 ### Step 1: Open Isaac Sim
