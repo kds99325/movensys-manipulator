@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>movensys_perception</name>
+  <name>movensys_manipulator_perception</name>
   <version>0.0.0</version>
   <description>Perception nodes (AprilTag + YOLO OBB cube detection) for the Movensys manipulator.</description>
   <maintainer email="mali@movensys.com">Mohsin Ali (MVSK)</maintainer>

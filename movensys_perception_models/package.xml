@@ -3,7 +3,7 @@
 <package format="3">
   <name>movensys_perception_models</name>
   <version>0.0.0</version>
-  <description>Trained model assets (YOLO OBB cube detector, etc.) consumed by movensys_perception.</description>
+  <description>Trained model assets (YOLO OBB cube detector, etc.) consumed by movensys_manipulator_perception.</description>
   <maintainer email="mali@movensys.com">Mohsin Ali (MVSK)</maintainer>
   <license>MIT License</license>
 

@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    pkg_share = get_package_share_directory('movensys_perception')
+    pkg_share = get_package_share_directory('movensys_manipulator_perception')
     realsense_config = os.path.join(pkg_share, 'config', 'realsense_hand.yaml')
 
     declared_arguments = [

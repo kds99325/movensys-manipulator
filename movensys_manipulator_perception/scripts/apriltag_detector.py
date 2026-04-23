@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ROS 2 AprilTag detection node (movensys_perception).
+ROS 2 AprilTag detection node (movensys_manipulator_perception).
 
 Subscribes to camera image and camera_info topics, detects AprilTags,
 and broadcasts TF transforms for each detected tag.

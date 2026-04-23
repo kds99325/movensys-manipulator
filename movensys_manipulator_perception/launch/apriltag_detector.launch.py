@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    pkg_share = get_package_share_directory('movensys_perception')
+    pkg_share = get_package_share_directory('movensys_manipulator_perception')
     default_params = os.path.join(pkg_share, 'config', 'apriltag_detector.yaml')
 
     declared_arguments = [
@@ -19,7 +19,7 @@ def generate_launch_description():
     ]
 
     apriltag_node = Node(
-        package='movensys_perception',
+        package='movensys_manipulator_perception',
         executable='apriltag_detector.py',
         name='apriltag_detector',
         output='screen',

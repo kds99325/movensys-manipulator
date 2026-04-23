@@ -1,6 +1,6 @@
 # movensys_perception_models
 
-Holds trained model assets consumed by `movensys_perception`.
+Holds trained model assets consumed by `movensys_manipulator_perception`.
 
 ## Expected contents
 
@@ -12,7 +12,7 @@ installed to `share/movensys_perception_models/models/` and can be resolved at
 launch time via:
 
 ```bash
-ros2 launch movensys_perception yolo_cube_detector.launch.py \
+ros2 launch movensys_manipulator_perception yolo_cube_detector.launch.py \
     model_path:=$(ros2 pkg prefix movensys_perception_models)/share/movensys_perception_models/models/cubes_obb.pt
 ```
 

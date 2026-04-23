@@ -8,7 +8,7 @@ argument is required — typically resolved to a file installed by the
 sibling `movensys_perception_models` package.
 
 Example:
-    ros2 launch movensys_perception yolo_cube_detector.launch.py \\
+    ros2 launch movensys_manipulator_perception yolo_cube_detector.launch.py \\
         model_path:=$(ros2 pkg prefix movensys_perception_models)\\
 /share/movensys_perception_models/models/cubes_obb.pt
 """
@@ -23,7 +23,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    pkg_share = get_package_share_directory('movensys_perception')
+    pkg_share = get_package_share_directory('movensys_manipulator_perception')
     default_params = os.path.join(pkg_share, 'config', 'yolo_cube_detector.yaml')
 
     declared_arguments = [
@@ -42,7 +42,7 @@ def generate_launch_description():
     ]
 
     detector_node = Node(
-        package='movensys_perception',
+        package='movensys_manipulator_perception',
         executable='yolo_cube_detector.py',
         name='yolo_cube_detector',
         output='screen',

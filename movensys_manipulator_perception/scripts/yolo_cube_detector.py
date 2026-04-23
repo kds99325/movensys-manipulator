@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-yolo_cube_detector.py  —  YOLO OBB cube detection node (movensys_perception)
-============================================================================
+yolo_cube_detector.py  —  YOLO OBB cube detection node (movensys_manipulator_perception)
+========================================================================================
 
 Subscribes to the hand camera, runs YOLO OBB inference, and for every
 detected cube class broadcasts a TF frame relative to the camera optical
