@@ -24,6 +24,7 @@ mros ros2 launch movensys_manipulator_moveit_config sim_bridge.launch.py simulat
 
 ### Step 3b: Launch cuMotion + Isaac Apriltag
 ```
+mros ros2 launch movensys_manipulator_isaac_config cumotion_apriltag.launch.py use_sim_time:=true
 ```
 
 

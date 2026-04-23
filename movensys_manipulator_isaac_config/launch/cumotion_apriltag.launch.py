@@ -49,7 +49,7 @@ def generate_launch_description():
             os.path.join(
                 get_package_share_directory('movensys_manipulator_isaac_config'),
                 'launch',
-                'isaac_cumotion.launch.py'
+                'cumotion.launch.py'
             )
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items()
