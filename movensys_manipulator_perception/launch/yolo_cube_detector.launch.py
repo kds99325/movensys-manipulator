@@ -4,13 +4,9 @@ yolo_cube_detector.launch.py
 Launcher for the YOLO OBB cube detector node.
 
 Loads defaults from config/yolo_cube_detector.yaml. The `model_path`
-argument is required — typically resolved to a file installed by the
-sibling `movensys_perception_models` package.
-
-Example:
-    ros2 launch movensys_manipulator_perception yolo_cube_detector.launch.py \\
-        model_path:=$(ros2 pkg prefix movensys_perception_models)\\
-/share/movensys_perception_models/models/cubes_obb.pt
+argument defaults to the cubes_obb.pt weights shipped inside this
+package's models/ directory; override to point at a different .pt
+file or an OpenVINO export.
 """
 
 import os
@@ -25,6 +21,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     pkg_share = get_package_share_directory('movensys_manipulator_perception')
     default_params = os.path.join(pkg_share, 'config', 'yolo_cube_detector.yaml')
+    default_model = os.path.join(pkg_share, 'models', 'cubes_obb.pt')
 
     declared_arguments = [
         DeclareLaunchArgument(
@@ -32,8 +29,8 @@ def generate_launch_description():
             description='YAML parameter file for the YOLO cube detector',
         ),
         DeclareLaunchArgument(
-            'model_path', default_value='',
-            description='Path to OpenVINO model dir or .pt weights file (REQUIRED)',
+            'model_path', default_value=default_model,
+            description='Path to OpenVINO model dir or .pt weights file',
         ),
         DeclareLaunchArgument(
             'use_sim_time', default_value='false',

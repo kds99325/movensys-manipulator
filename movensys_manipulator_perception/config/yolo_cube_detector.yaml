@@ -1,7 +1,7 @@
 yolo_cube_detector:
   ros__parameters:
-    # model_path is intentionally not set here — override via launch arg,
-    # e.g. model_path:=$(ros2 pkg prefix movensys_perception_models)/share/movensys_perception_models/models/cubes_obb.pt
+    # model_path is resolved by the launch file to this package's
+    # share/models/cubes_obb.pt; override via the model_path launch arg.
     confidence_threshold: 0.5
 
     # Scene geometry (scan pose). cube_height = floor + cube top surface.
