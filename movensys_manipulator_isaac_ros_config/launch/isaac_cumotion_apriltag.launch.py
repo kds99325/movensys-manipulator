@@ -1,5 +1,4 @@
 import os
-
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -16,27 +15,24 @@ def generate_launch_description():
         description="Use simulation clock (/clock)"
     )
 
-    pkg_movensys_isaac_config = get_package_share_directory('movensys_manipulator_isaac_config')
+    pkg = get_package_share_directory('movensys_manipulator_isaac_ros_config')
+
+    apriltag_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg, 'launch', 'isaac_apriltag.launch.py')
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
 
     cumotion_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_movensys_isaac_config, 'launch', 'isaac_cumotion.launch.py')
-        ),
-        launch_arguments={
-            'use_sim_time': use_sim_time,
-            'read_esdf_world': 'true',
-        }.items()
-    )
-
-    nvblox_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_movensys_isaac_config, 'launch', 'isaac_nvblox.launch.py')
+            os.path.join(pkg, 'launch', 'isaac_cumotion.launch.py')
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     return LaunchDescription([
         declare_use_sim_time,
+        apriltag_launch,
         cumotion_launch,
-        nvblox_launch,
     ])

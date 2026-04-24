@@ -18,7 +18,7 @@ def generate_launch_description():
         description="Use simulation clock (/clock)"
     )
 
-    pkg_movensys_isaac_config = get_package_share_directory('movensys_manipulator_isaac_config')
+    pkg_movensys_isaac_config = get_package_share_directory('movensys_manipulator_isaac_ros_config')
     pkg_movensys_description = get_package_share_directory('movensys_manipulator_description')
 
     manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')

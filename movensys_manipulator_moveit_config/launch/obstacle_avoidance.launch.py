@@ -32,6 +32,7 @@ def generate_launch_description():
         .planning_scene_monitor(
             publish_robot_description=True, publish_robot_description_semantic=True
         )
+        .pilz_cartesian_limits(file_path=f"config/{manipulator_model}/pilz_cartesian_limits.yaml")
         .planning_pipelines(
             pipelines=["ompl", "chomp", "pilz_industrial_motion_planner"]
         )
@@ -39,7 +40,7 @@ def generate_launch_description():
     )
 
     pkg_share = get_package_share_directory("movensys_manipulator_moveit_config")
-    moveit2_client_config   = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
+    moveit2_client_config     = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
     obstacle_avoidance_config = os.path.join(pkg_share, "config", manipulator_model, "obstacle_avoidance.yaml")
 
     obstacle_avoidance_node = Node(

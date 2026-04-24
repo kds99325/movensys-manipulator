@@ -74,6 +74,7 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
 
     use_sim_time      = LaunchConfiguration('use_sim_time')
     read_esdf_world   = LaunchConfiguration('read_esdf_world').perform(context) == 'true'
+    rviz_config_file  = LaunchConfiguration('rviz_config').perform(context)
     manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
 
     desc_share   = get_package_share_directory('movensys_manipulator_description')
@@ -81,7 +82,6 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
 
     robot_xrdf   = os.path.join(desc_share,   'urdf',   manipulator_model, 'movensys_manipulator.xrdf')
     xacro_path   = os.path.join(desc_share,   'urdf',   manipulator_model, 'movensys_manipulator.xacro')
-    rviz_config_file = PathJoinSubstitution([FindPackageShare('movensys_manipulator_moveit_config'), 'rviz', 'movensys_manipulator_moveit.rviz'])
 
     # Process xacro to generate URDF with correct paths at runtime
     robot_description_content = xacro.process_file(xacro_path).toxml()
@@ -224,6 +224,14 @@ def generate_launch_description():
             'read_esdf_world',
             default_value='false',
             description='Enable ESDF world reading from nvblox for obstacle avoidance'
+        ),
+        DeclareLaunchArgument(
+            'rviz_config',
+            default_value=os.path.join(
+                get_package_share_directory('movensys_manipulator_moveit_config'),
+                'rviz', 'movensys_manipulator_moveit.rviz'
+            ),
+            description='Path to the RViz config file'
         ),
     ]
 

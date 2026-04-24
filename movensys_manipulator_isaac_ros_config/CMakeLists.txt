@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(movensys_manipulator_isaac_config)
+project(movensys_manipulator_isaac_ros_config)
 
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
