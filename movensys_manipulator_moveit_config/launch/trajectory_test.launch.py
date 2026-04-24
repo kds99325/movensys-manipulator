@@ -46,8 +46,8 @@ def generate_launch_description():
 
     trajectory_node = Node(
         package="movensys_manipulator_moveit_config",
-        executable="moveit2_trajectory_cpp",
-        name="moveit2_trajectory_cpp",
+        executable="trajectory_test",
+        name="trajectory_test",
         output="screen",
         parameters=[
             moveit_config.robot_description,

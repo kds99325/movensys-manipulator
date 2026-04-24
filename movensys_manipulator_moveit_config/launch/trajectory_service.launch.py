@@ -45,8 +45,8 @@ def generate_launch_description():
 
     api_node = Node(
         package="movensys_manipulator_moveit_config",
-        executable="moveit2_api_node",
-        name="moveit2_api_node",
+        executable="trajectory_api",
+        name="trajectory_api",
         output="screen",
         parameters=[
             moveit_config.robot_description,
