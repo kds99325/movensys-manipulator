@@ -73,6 +73,7 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
     """Launch setup function that properly resolves launch configurations."""
 
     use_sim_time      = LaunchConfiguration('use_sim_time')
+    read_esdf_world   = LaunchConfiguration('read_esdf_world').perform(context) == 'true'
     manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
 
     desc_share   = get_package_share_directory('movensys_manipulator_description')
@@ -150,6 +151,22 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
                 'robot': robot_xrdf,
                 'urdf_path': urdf_path,
                 'use_sim_time': use_sim_time,
+                'read_esdf_world': read_esdf_world,
+                'esdf_service_name': '/nvblox_node/get_esdf_and_gradient',
+                'voxel_size': 0.01,
+                'time_dilation_factor': 1.0,
+                'override_moveit_scaling_factors': False,
+                'max_attempts': 10,
+                'num_graph_seeds': 10,
+                'num_trajopt_seeds': 10,
+                'num_trajopt_time_steps': 50,
+                'collision_cache_cuboid': 30,
+                'collision_cache_mesh': 30,
+                'joint_states_topic': '/joint_states',
+                'add_ground_plane': True,
+                'publish_curobo_world_as_voxels': False,
+                'publish_voxel_size': 0.02,
+                'max_publish_voxels': 50000,
             }
         ]
     )
@@ -202,6 +219,11 @@ def generate_launch_description():
             'use_sim_time',
             default_value='false',
             description='Use simulation clock (/clock)'
+        ),
+        DeclareLaunchArgument(
+            'read_esdf_world',
+            default_value='false',
+            description='Enable ESDF world reading from nvblox for obstacle avoidance'
         ),
     ]
 

@@ -1,13 +1,7 @@
 import os
 from launch import LaunchDescription
-from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription, TimerAction
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
-from launch.event_handlers import OnProcessExit
-from ament_index_python.packages import get_package_share_directory
-import launch
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
@@ -44,19 +38,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    cumotion_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory('movensys_manipulator_isaac_config'),
-                'launch',
-                'cumotion.launch.py'
-            )
-        ),
-        launch_arguments={'use_sim_time': use_sim_time}.items()
-    )
-
     return LaunchDescription([
         declare_use_sim_time,
         apriltag_container,
-        cumotion_launch
     ])
