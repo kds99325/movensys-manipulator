@@ -192,7 +192,7 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
             PathJoinSubstitution([
                 FindPackageShare('movensys_manipulator_moveit_config'),
                 'launch',
-                'movensys_manipulator_api.launch.py',
+                'trajectory_service.launch.py',
             ])
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items(),
