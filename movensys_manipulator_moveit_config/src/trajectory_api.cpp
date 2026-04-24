@@ -1,10 +1,10 @@
-#include "moveit2_api_node.hpp"
+#include "trajectory_api.hpp"
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <thread>
 
 MoveIt2ApiNode::MoveIt2ApiNode(){
-    node_ = std::make_shared<rclcpp::Node>("moveit2_api_node");
+    node_ = std::make_shared<rclcpp::Node>("trajectory_api");
 
     node_->declare_parameter("base_name",         "base");
     node_->declare_parameter("eef_name",         "eef");

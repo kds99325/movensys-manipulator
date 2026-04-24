@@ -42,11 +42,12 @@ def generate_launch_description():
 
     pkg_share = get_package_share_directory("movensys_manipulator_moveit_config")
     moveit2_client_config = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
+    trajectory_config     = os.path.join(pkg_share, "config", manipulator_model, "trajectory.yaml")
 
-    api_node = Node(
+    trajectory_node = Node(
         package="movensys_manipulator_moveit_config",
-        executable="moveit2_api_node",
-        name="moveit2_api_node",
+        executable="trajectory_test",
+        name="trajectory_test",
         output="screen",
         parameters=[
             moveit_config.robot_description,
@@ -54,8 +55,9 @@ def generate_launch_description():
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits,
             moveit2_client_config,
+            trajectory_config,
             {"use_sim_time": use_sim_time},
         ],
     )
 
-    return LaunchDescription(declared_arguments + [api_node])
+    return LaunchDescription(declared_arguments + [trajectory_node])
