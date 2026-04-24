@@ -21,7 +21,7 @@ mros ros2 launch movensys_manipulator_moveit_config sim_bridge.launch.py simulat
 
 ### Step 3: Launch cuMotion + NvBlox
 ```
-mros ros2 launch movensys_manipulator_isaac_config isaac_cumotion_nvblox.launch.py use_sim_time:=true
+mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_nvblox.launch.py use_sim_time:=true
 ```
 
 
