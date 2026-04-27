@@ -3,7 +3,7 @@
 <package format="3">
   <name>movensys_manipulator_perception</name>
   <version>0.0.0</version>
-  <description>Perception nodes (AprilTag + YOLO OBB cube detection) for the Movensys manipulator.</description>
+  <description>Perception nodes (AprilTag + YOLO OBB cube/dice detection) for the Movensys manipulator.</description>
   <maintainer email="mali@movensys.com">Mohsin Ali (MVSK)</maintainer>
   <license>MIT License</license>
 

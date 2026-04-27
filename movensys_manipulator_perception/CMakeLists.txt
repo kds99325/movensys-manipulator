@@ -11,6 +11,7 @@ find_package(ament_cmake_python REQUIRED)
 install(PROGRAMS
   scripts/apriltag_detector.py
   scripts/yolo_cube_detector.py
+  scripts/yolo_dice_detector.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
