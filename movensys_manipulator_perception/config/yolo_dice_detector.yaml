@@ -1,0 +1,21 @@
+yolo_dice_detector:
+  ros__parameters:
+    # model_path is resolved by the launch file to this package's
+    # share/models/dice_obb.pt; override via the model_path launch arg.
+    confidence_threshold: 0.5
+
+    # Scene geometry (scan pose). dice_height = floor + die top surface.
+    dice_height: 0.05
+    cam_z_world: 0.45
+    cam_x_world: 0.0
+    cam_y_world: 0.0
+    # Optical-frame orientation in world, [x, y, z, w] (scan RPY = (π, 0, π))
+    cam_orientation: [0.0, 1.0, 0.0, 0.0]
+
+    publish_debug_image: true
+    # device: cpu | cuda | AUTO | intel:cpu | intel:gpu | intel:npu
+    device: "cpu"
+
+    image_topic: "/camera_hand/realsense2_camera/color/image_raw"
+    camera_info_topic: "/camera_hand/realsense2_camera/color/camera_info"
+    camera_frame: "camera_hand_color_optical_frame"
