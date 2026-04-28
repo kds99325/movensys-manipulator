@@ -9,7 +9,7 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
 int main(int argc, char* argv[]){
     rclcpp::init(argc, argv);
 
-    auto node = std::make_shared<rclcpp::Node>("moveit2_trajectory_cpp");
+    auto node = std::make_shared<rclcpp::Node>("trajectory_test");
 
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(node);

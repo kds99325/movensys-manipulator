@@ -38,6 +38,9 @@ RUN apt-get update && \
 COPY fix_cumotion_planner.sh /tmp/fix_cumotion_planner.sh
 RUN chmod +x /tmp/fix_cumotion_planner.sh && /tmp/fix_cumotion_planner.sh && rm /tmp/fix_cumotion_planner.sh
 
+COPY fix_robot_segmenter.sh /tmp/fix_robot_segmenter.sh
+RUN chmod +x /tmp/fix_robot_segmenter.sh && /tmp/fix_robot_segmenter.sh && rm /tmp/fix_robot_segmenter.sh
+
 RUN apt-get update && apt-get install -y \
         ros-jazzy-rclcpp-action \
         ros-jazzy-moveit-ros \

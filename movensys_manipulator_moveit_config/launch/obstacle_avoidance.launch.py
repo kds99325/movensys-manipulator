@@ -22,7 +22,6 @@ def generate_launch_description():
 
     manipulator_model = os.environ.get("MANIPULATOR_MODEL", "dobot_cr3a")
 
-    # Build MoveIt config with joint_limits
     moveit_config = (
         MoveItConfigsBuilder("movensys_manipulator")
         .robot_description_semantic(file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
@@ -41,13 +40,13 @@ def generate_launch_description():
     )
 
     pkg_share = get_package_share_directory("movensys_manipulator_moveit_config")
-    moveit2_client_config = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
-    trajectory_config     = os.path.join(pkg_share, "config", manipulator_model, "trajectory.yaml")
+    moveit2_client_config     = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
+    obstacle_avoidance_config = os.path.join(pkg_share, "config", manipulator_model, "obstacle_avoidance.yaml")
 
-    trajectory_node = Node(
+    obstacle_avoidance_node = Node(
         package="movensys_manipulator_moveit_config",
-        executable="moveit2_trajectory_cpp",
-        name="moveit2_trajectory_cpp",
+        executable="obstacle_avoidance_cpp",
+        name="obstacle_avoidance_cpp",
         output="screen",
         parameters=[
             moveit_config.robot_description,
@@ -55,9 +54,9 @@ def generate_launch_description():
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits,
             moveit2_client_config,
-            trajectory_config,
+            obstacle_avoidance_config,
             {"use_sim_time": use_sim_time},
         ],
     )
 
-    return LaunchDescription(declared_arguments + [trajectory_node])
+    return LaunchDescription(declared_arguments + [obstacle_avoidance_node])

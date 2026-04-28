@@ -27,7 +27,7 @@ mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py
 
 ### Step 3b: Launch cuMotion + API
 ```
-mros ros2 launch movensys_manipulator_moveit_config cumotion.launch.py
+mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion.launch.py
 ```
 
 
@@ -37,5 +37,5 @@ mros ros2 launch movensys_manipulator_moveit_config cumotion.launch.py
 
 ### Step 4 (optional): Execute Trajectory Test
 ```
-mros ros2 launch movensys_manipulator_moveit_config movensys_manipulator_trajectory.launch.py
+mros ros2 launch movensys_manipulator_moveit_config trajectory_test.launch.py
 ```

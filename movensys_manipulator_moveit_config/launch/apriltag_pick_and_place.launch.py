@@ -18,11 +18,19 @@ def generate_launch_description():
         )
     )
 
-    use_sim_time = LaunchConfiguration("use_sim_time")
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "target_spawn",
+            default_value="true",
+            description="Teleport target in Isaac Sim after converging to tag",
+        )
+    )
+
+    use_sim_time  = LaunchConfiguration("use_sim_time")
+    target_spawn  = LaunchConfiguration("target_spawn")
 
     manipulator_model = os.environ.get("MANIPULATOR_MODEL", "dobot_cr3a")
 
-    # Build MoveIt config with joint_limits
     moveit_config = (
         MoveItConfigsBuilder("movensys_manipulator")
         .robot_description_semantic(file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
@@ -41,12 +49,13 @@ def generate_launch_description():
     )
 
     pkg_share = get_package_share_directory("movensys_manipulator_moveit_config")
-    moveit2_client_config = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
+    moveit2_client_config      = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
+    apriltag_pick_place_config = os.path.join(pkg_share, "config", manipulator_model, "apriltag_pick_and_place.yaml")
 
-    api_node = Node(
+    apriltag_node = Node(
         package="movensys_manipulator_moveit_config",
-        executable="moveit2_api_node",
-        name="moveit2_api_node",
+        executable="apriltag_pick_and_place",
+        name="apriltag_pick_and_place",
         output="screen",
         parameters=[
             moveit_config.robot_description,
@@ -54,8 +63,9 @@ def generate_launch_description():
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits,
             moveit2_client_config,
-            {"use_sim_time": use_sim_time},
+            apriltag_pick_place_config,
+            {"use_sim_time": use_sim_time, "target_spawn": target_spawn},
         ],
     )
 
-    return LaunchDescription(declared_arguments + [api_node])
+    return LaunchDescription(declared_arguments + [apriltag_node])

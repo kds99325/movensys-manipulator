@@ -3,4 +3,11 @@
   <xacro:include filename="$(find movensys_manipulator_description)/urdf/dobot_cr5a/movensys_manipulator.xacro"/>
   <xacro:include filename="$(find movensys_manipulator_description)/urdf/dobot_cr5a/control.xacro"/>
   <xacro:include filename="$(find movensys_manipulator_description)/urdf/dobot_cr5a/transmission.xacro"/> 
+
+  <link name="world"/>
+
+  <joint name="world_fixed" type="fixed">
+    <parent link="world"/>
+    <child link="world_manipulator"/>
+  </joint>
 </robot>

@@ -1,4 +1,4 @@
-moveit2_trajectory_cpp:
+trajectory_test:
   ros__parameters:
     # Trajectory waypoints
     # Pose targets: [x, y, z, roll, pitch, yaw]
