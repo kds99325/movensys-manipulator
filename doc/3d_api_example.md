@@ -36,7 +36,7 @@ mros ros2 run tf2_ros tf2_echo world_manipulator Link6
 ```
 mros ros2 service call /wmx/moveit2/absolute_base_eef_cartesian \
         movensys_manipulator_moveit_config/srv/MovePose \
-        '"{pos: [0.098, -0.071, 0.45], ori: [3.14, 0.0, 3.14]}"'
+        '"{pos: [-0.158, -0.071, 0.346], ori: [3.14159265, 0.0, -3.14159265]}"'
 ```
 
 ### Relative cartesian move (base frame)
@@ -57,19 +57,19 @@ mros ros2 service call /wmx/moveit2/relative_tool_eef_cartesian \
 ```
 mros ros2 service call /wmx/moveit2/absolute_base_eef_joint_movement \
         movensys_manipulator_moveit_config/srv/MovePose \
-        '"{pos: [-0.2, -0.071, 0.45], ori: [3.14, 0.0, 3.14]}"'
+        '"{pos: [-0.005, -0.071, 0.346], ori: [3.14159265, 0.0, -3.14159265]}"'
 ```
 
 ### Joint movement (absolute) 
 ```
 mros ros2 service call /wmx/moveit2/joint_movement \
         movensys_manipulator_moveit_config/srv/MoveJoints \
-        '"{joint_names: [joint1, joint2, joint3, joint4, joint5, joint6], joint_values: [1.982, 0.1325, 0.9693, 0.474, -1.5697, 0.4105]}"'
+        '"{joint_names: [joint1, joint2, joint3, joint4, joint5, joint6], joint_values: [0.0, 0.0, -1.57, 0.0, 1.57, 0.0]}"'
 ```
 
 ### Joint movement (relative / increment) 
 ```
 mros ros2 service call /wmx/moveit2/relative_joint_movement \
         movensys_manipulator_moveit_config/srv/MoveJoints \
-        '"{joint_names: [joint1, joint2], joint_values: [0.2, -0.2]}"'
+        '"{joint_names: [joint1, joint2], joint_values: [0.2, 0.2]}"'
 ```
