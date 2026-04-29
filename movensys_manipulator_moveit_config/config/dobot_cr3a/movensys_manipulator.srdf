@@ -8,12 +8,12 @@
 
   <!-- Group states for arm -->
   <group_state group="movensys_manipulator_arm" name="initial">
-    <joint name="joint1" value="3.14"/>
-    <joint name="joint2" value="-0.5928"/>
-    <joint name="joint3" value="1.5576"/>
-    <joint name="joint4" value="0.6173"/>
-    <joint name="joint5" value="-1.57"/>
-    <joint name="joint6" value="-0.0"/>
+    <joint name="joint1" value="0.0"/>
+    <joint name="joint2" value="0.0"/>
+    <joint name="joint3" value="-1.57"/>
+    <joint name="joint4" value="0.0"/>
+    <joint name="joint5" value="1.57"/>
+    <joint name="joint6" value="0.0"/>
   </group_state>
   <group_state group="movensys_manipulator_arm" name="zero">
     <joint name="joint1" value="0"/>
@@ -24,12 +24,20 @@
     <joint name="joint6" value="0"/>
   </group_state>
   <group_state group="movensys_manipulator_arm" name="test">
-    <joint name="joint1" value="1.6431"/>
-    <joint name="joint2" value="-0.1267"/>
-    <joint name="joint3" value="1.241"/>
-    <joint name="joint4" value="0.4612"/>
-    <joint name="joint5" value="-1.5784"/>
-    <joint name="joint6" value="-1.4971"/>
+    <joint name="joint1" value="0.7649"/>
+    <joint name="joint2" value="-0.0398"/>
+    <joint name="joint3" value="-1.5332"/>
+    <joint name="joint4" value="-0.0004"/>
+    <joint name="joint5" value="1.5697"/>
+    <joint name="joint6" value="0.765"/>
+  </group_state>
+  <group_state group="movensys_manipulator_arm" name="stance">
+    <joint name="joint1" value="-0.0003"/>
+    <joint name="joint2" value="0.7041"/>
+    <joint name="joint3" value="-1.9892"/>
+    <joint name="joint4" value="-0.2873"/>
+    <joint name="joint5" value="1.57"/>
+    <joint name="joint6" value="0.0"/>
   </group_state>
 
   <group name="movensys_manipulator_eef">
@@ -41,7 +49,6 @@
   <end_effector group="movensys_manipulator_eef" name="movensys_manipulator_eef" parent_group="movensys_manipulator_arm" parent_link="Link6"/>
 
   <!-- Disable collisions between adjacent and irrelevant links -->
-  <disable_collisions link1="table" link2="power_supply" reason="Adjacent"/>
   <disable_collisions link1="table" link2="jetson_thor" reason="Adjacent"/>
   <disable_collisions link1="table" link2="Link0" reason="Adjacent"/>
   <disable_collisions link1="table" link2="Link1" reason="Never"/>
@@ -54,18 +61,6 @@
   <disable_collisions link1="table" link2="gripper" reason="Never"/>
   <disable_collisions link1="table" link2="picker_1" reason="Never"/>
   <disable_collisions link1="table" link2="picker_2" reason="Never"/>
-
-  <disable_collisions link1="power_supply" link2="Link0" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="Link1" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="Link2" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="Link3" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="Link4" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="Link5" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="Link6" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="bracket" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="gripper" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="picker_1" reason="Never"/>
-  <disable_collisions link1="power_supply" link2="picker_2" reason="Never"/>
 
   <disable_collisions link1="jetson_thor" link2="Link0" reason="Never"/>
   <disable_collisions link1="jetson_thor" link2="Link1" reason="Never"/>

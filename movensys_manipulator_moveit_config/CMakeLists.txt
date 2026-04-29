@@ -91,6 +91,26 @@ ament_target_dependencies(trajectory_test
   std_srvs
 )
 
+add_executable(obstacle_avoidance_cpp src/obstacle_avoidance.cpp)
+target_link_libraries(obstacle_avoidance_cpp moveit2_client_lib)
+ament_target_dependencies(obstacle_avoidance_cpp
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+
+add_executable(apriltag_pick_and_place src/apriltag_pick_and_place.cpp)
+target_link_libraries(apriltag_pick_and_place moveit2_client_lib)
+ament_target_dependencies(apriltag_pick_and_place
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+
 add_executable(yolo_trajectory_cpp src/yolo_trajectory.cpp)
 target_link_libraries(yolo_trajectory_cpp moveit2_client_lib)
 ament_target_dependencies(yolo_trajectory_cpp
@@ -101,19 +121,25 @@ ament_target_dependencies(yolo_trajectory_cpp
   std_srvs
 )
 
-add_executable(moveit2_api_node src/moveit2_api_node.cpp)
-target_link_libraries(moveit2_api_node moveit2_client_lib)
-ament_target_dependencies(moveit2_api_node
+add_executable(trajectory_api src/trajectory_api.cpp)
+target_link_libraries(trajectory_api moveit2_client_lib)
+ament_target_dependencies(trajectory_api
   rclcpp
   moveit_ros_planning_interface
   moveit_msgs
   geometry_msgs
   std_srvs
 )
+
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 target_link_libraries(trajectory_api ${cpp_typesupport_target})
 
-install(TARGETS moveit2_trajectory_cpp yolo_trajectory_cpp moveit2_api_node
+install(TARGETS 
+  trajectory_test 
+  obstacle_avoidance_cpp 
+  apriltag_pick_and_place 
+  trajectory_api 
+  yolo_trajectory_cpp 
   DESTINATION lib/${PROJECT_NAME}
 )
 
