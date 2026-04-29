@@ -29,13 +29,6 @@ def generate_launch_description():
     nvblox_base_config = os.path.join(pkg_movensys_isaac_config, 'config', manipulator_model, 'nvblox_movensys_base.yaml')
     workspace_config = os.path.join(pkg_movensys_isaac_config, 'config', manipulator_model, 'movensys_sim.yaml')
 
-    camera_nvblox_transform = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_movensys_isaac_config, 'launch', 'camera_nvblox_transform.launch.py')
-        ),
-        launch_arguments={'use_sim_time': use_sim_time}.items(),
-    )
-
     manipulation_container = ComposableNodeContainer(
         name='manipulation_container',
         namespace='',
@@ -103,7 +96,6 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_use_sim_time,
-        camera_nvblox_transform,
         manipulation_container,
         robot_segmenter,
         load_nvblox,

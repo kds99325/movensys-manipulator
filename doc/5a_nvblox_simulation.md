@@ -30,7 +30,7 @@ mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_nvblox.lau
 
 
 
-### Step 4: AprilTag Pick and Place
+### Step 4: Obstacle Avoidance
 ```
 mros ros2 launch movensys_manipulator_moveit_config obstacle_avoidance.launch.py use_sim_time:=true
 ```
