@@ -42,7 +42,13 @@ install(DIRECTORY
   config
   launch
   rviz
+  scripts
   DESTINATION share/${PROJECT_NAME}/
+)
+
+install(PROGRAMS
+    scripts/camera_transform_tuning.py
+    DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
