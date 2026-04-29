@@ -224,7 +224,7 @@ bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node, moveit2_client::M
         if (!client.relativeBaseEefCartesian(up_delta)) {
             RCLCPP_ERROR(node->get_logger(), "Move up failed"); return false; }
 
-        if (!client.absoluteBaseEefCartesian(box_up[i])) {
+        if (!client.absoluteBaseEefJointMovement(box_up[i])) {
             RCLCPP_ERROR(node->get_logger(), "Move to box up pose failed"); return false; }
 
         if (!client.absoluteBaseEefCartesian(box_down[i])) {
