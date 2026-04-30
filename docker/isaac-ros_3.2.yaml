@@ -45,13 +45,6 @@ services:
               "sudo chown -R admin:admin /home/admin/workspaces/movensys_ws && \
                source /opt/ros/humble/setup.bash && \
 
-               echo ====== Link for numpy ======= && \
-               sudo mkdir -p /usr/include && \
-               sudo ln -sf /usr/local/lib/python3.10/dist-packages/numpy/core/include/numpy /usr/include/numpy && \
-
-               echo ====== Preparation ======= && \
-               sudo apt-get update && \
-
                echo ====== Isaac ROS Setup ======= && \
                ISAAC_WS=/home/admin/workspaces/isaac_ros-dev && \
                ISAAC_SRC=$ISAAC_WS/src && \
@@ -98,10 +91,7 @@ services:
                colcon build --symlink-install && \
 
                echo ====== Pytorch compatibility on Blackwell GPU ======= && \
-               sudo mkdir -p /home/admin/.cache/torch_extensions && \
-               sudo rm -rf /home/admin/.cache/torch_extensions/py310_cu128 && \
                sudo chown -R $(id -u):$(id -g) /home/admin/.cache/torch_extensions && \
-               sudo mkdir -p /home/admin/.cache/warp && \
                sudo chown -R $(id -u):$(id -g) /home/admin/.cache/warp && \
 
                echo ====== Build Terminated ======= && \

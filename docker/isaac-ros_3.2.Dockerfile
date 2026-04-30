@@ -44,6 +44,13 @@ RUN sudo apt-get update
 RUN rosdep update && \
     rosdep install isaac_ros_nvblox
 
+RUN mkdir -p /usr/include && \
+    ln -sf /usr/local/lib/python3.10/dist-packages/numpy/core/include/numpy /usr/include/numpy
+
+RUN mkdir -p /home/admin/.cache/torch_extensions && \
+    mkdir -p /home/admin/.cache/warp && \
+    rm -rf /home/admin/.cache/torch_extensions/py310_cu128
+
 RUN apt-get update && \
     if [ "$ROS_DISTRO" = "jazzy" ]; then \
       apt-get install -y \
