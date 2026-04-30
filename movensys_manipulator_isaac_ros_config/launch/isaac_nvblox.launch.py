@@ -18,7 +18,7 @@ def generate_launch_description():
         description="Use simulation clock (/clock)"
     )
 
-    pkg_movensys_isaac_config = get_package_share_directory('movensys_manipulator_isaac_ros_config')
+    pkg_movensys_isaac_ros_config = get_package_share_directory('movensys_manipulator_isaac_ros_config')
     pkg_movensys_description = get_package_share_directory('movensys_manipulator_description')
 
     manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
@@ -26,8 +26,8 @@ def generate_launch_description():
     robot_xrdf = os.path.join(pkg_movensys_description, 'urdf', manipulator_model, 'movensys_manipulator.xrdf')
     urdf_path = os.path.join(pkg_movensys_description, 'urdf', manipulator_model, 'movensys_manipulator.urdf')
 
-    nvblox_base_config = os.path.join(pkg_movensys_isaac_config, 'config', manipulator_model, 'nvblox_movensys_base.yaml')
-    workspace_config = os.path.join(pkg_movensys_isaac_config, 'config', manipulator_model, 'movensys_sim.yaml')
+    nvblox_base_config = os.path.join(pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'nvblox_movensys_base.yaml')
+    workspace_config = os.path.join(pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'movensys_sim.yaml')
 
     manipulation_container = ComposableNodeContainer(
         name='manipulation_container',
@@ -63,7 +63,7 @@ def generate_launch_description():
     )
 
     robot_segmenter_config = os.path.join(
-        pkg_movensys_isaac_config, 'config', manipulator_model, 'robot_segmenter_movensys.yaml'
+        pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'robot_segmenter_movensys.yaml'
     )
     robot_segmenter = Node(
         package='isaac_ros_cumotion',
@@ -80,24 +80,29 @@ def generate_launch_description():
         ]
     )
 
-    static_planning_scene = Node(
-        package='isaac_ros_cumotion',
-        executable='static_planning_scene',
-        name='static_planning_scene',
-        output='screen',
-        parameters=[
-            {
-                'robot': robot_xrdf,
-                'urdf_path': urdf_path,
-                'use_sim_time': use_sim_time,
-            }
-        ]
-    )
+    ros_distro = os.environ.get('ROS_DISTRO', 'humble')
 
-    return LaunchDescription([
+    nodes = [
         declare_use_sim_time,
         manipulation_container,
         robot_segmenter,
         load_nvblox,
-        static_planning_scene,
-    ])
+    ]
+
+    if ros_distro == 'jazzy':
+        static_planning_scene = Node(
+            package='isaac_ros_cumotion',
+            executable='static_planning_scene',
+            name='static_planning_scene',
+            output='screen',
+            parameters=[
+                {
+                    'robot': robot_xrdf,
+                    'urdf_path': urdf_path,
+                    'use_sim_time': use_sim_time,
+                }
+            ]
+        )
+        nodes.append(static_planning_scene)
+
+    return LaunchDescription(nodes)

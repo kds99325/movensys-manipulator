@@ -43,8 +43,53 @@ services:
               "sudo chown -R admin:admin /home/admin/workspaces/movensys_ws && \
                source /opt/ros/humble/setup.bash && \
 
+               echo ====== Isaac ROS Setup ======= && \
+               ISAAC_SRC=$$ISAAC_ROS_WS/src && \
+               mkdir -p $$ISAAC_SRC && \
+
+               cd $$ISAAC_SRC && \
+               [ -d isaac_ros_common ]      || git clone -b release-3.2 https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git isaac_ros_common && \
+               [ -d isaac_manipulator ]     || git clone --recursive -b release-3.2 https://github.com/NVIDIA-ISAAC-ROS/isaac_manipulator.git isaac_manipulator && \
+               [ -d isaac_ros_nvblox ]      || git clone --recursive -b release-3.2 https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox.git isaac_ros_nvblox && \
+               [ -d ros2_robotiq_gripper ]      || git clone --recursive https://github.com/NVIDIA-ISAAC-ROS/ros2_robotiq_gripper && \
+               [ -d serial ]                   || git clone -b ros2 https://github.com/tylerjw/serial && \
+
+               echo ====== Configure RealSense ======= && \
+               touch $$ISAAC_SRC/isaac_ros_common/scripts/.isaac_ros_common-config && \
+               echo CONFIG_IMAGE_KEY=ros2_humble.realsense > $$ISAAC_SRC/isaac_ros_common/scripts/.isaac_ros_common-config && \
+
+               echo ====== Patch isaac_manipulator_pick_and_place ======= && \
+               PICK_AND_PLACE=$$ISAAC_SRC/isaac_manipulator/isaac_manipulator_pick_and_place && \
+               REVISE_DIR=/home/admin/workspaces/movensys_ws/src/movensys-manipulator/docker/revise_isaac_manipulator_pick_and_place && \
+               sudo rm -rf $$PICK_AND_PLACE/CMakeLists.txt $$PICK_AND_PLACE/launch/isaac_sim_workflows.launch.py && \
+               sudo cp $$REVISE_DIR/CMakeLists.txt $$PICK_AND_PLACE/CMakeLists.txt && \
+               sudo cp $$REVISE_DIR/isaac_sim_workflows.launch.py $$PICK_AND_PLACE/launch/isaac_sim_workflows.launch.py && \
+               sudo cp $$REVISE_DIR/camera_info_publisher.py $$PICK_AND_PLACE/scripts/camera_info_publisher.py && \
+               sudo chmod +x $$PICK_AND_PLACE/scripts/camera_info_publisher.py && \
+
+               echo ====== Build ROS control pkgs ======= && \
+               cd $$ISAAC_ROS_WS && \
+               rosdep update && \
+               rosdep install -i -r \
+                  --from-paths $$ISAAC_SRC/isaac_manipulator/isaac_manipulator_bringup/ \
+                  --from-paths $$ISAAC_SRC/isaac_ros_nvblox/ \
+                  --rosdistro humble -y || true && \
+               colcon build --symlink-install \
+                  --packages-select-regex robotiq.* serial --cmake-args '-DBUILD_TESTING=OFF' && \
+               source install/setup.bash && \
+               colcon build --symlink-install \
+                  --packages-up-to isaac_manipulator_bringup isaac_manipulator_pick_and_place \
+                                   isaac_manipulator_interfaces isaac_manipulator_servers isaac_ros_nvblox && \
+               source install/setup.bash && \
+
                echo ====== Build movensys_manipulator ======= && \
+               cd /home/admin/workspaces/movensys_ws && \
+               source /opt/ros/humble/setup.bash && \
                colcon build --symlink-install && \
+
+               echo ====== Pytorch compatibility on Blackwell GPU ======= && \
+               sudo chown -R $$(id -u):$$(id -g) /home/admin/.cache/torch_extensions && \
+               sudo chown -R $$(id -u):$$(id -g) /home/admin/.cache/warp && \
 
                echo ====== Build Terminated ======= && \
                source /home/admin/workspaces/movensys_ws/install/setup.bash && \
