@@ -70,3 +70,19 @@ RUN apt-get update && \
         ros-${ROS_DISTRO}-ros-ign-bridge; \
     fi && \
     rm -rf /var/lib/apt/lists/*
+
+    RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /usr/lib/python3/dist-packages/transforms3d \
+           /usr/lib/python3/dist-packages/transforms3d-*.egg-info && \
+    python3 -m pip install --no-cache-dir \
+        --index-url https://download.pytorch.org/whl/cu124 \
+        torch torchvision && \
+    python3 -m pip install --no-cache-dir \
+        "numpy<2" \
+        opencv-python \
+        "transforms3d>=0.4.1" \
+        pyyaml \
+        ultralytics \
+        openvino
