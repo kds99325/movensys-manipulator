@@ -16,6 +16,6 @@ yolo_dice_detector:
     # device: cpu | cuda | AUTO | intel:cpu | intel:gpu | intel:npu
     device: "cpu"
 
-    image_topic: "/camera_hand/realsense2_camera/color/image_raw"
-    camera_info_topic: "/camera_hand/realsense2_camera/color/camera_info"
+    image_topic: "/image_hand/rgb"
+    camera_info_topic: "/image_hand/camera_info"
     camera_frame: "camera_hand_color_optical_frame"

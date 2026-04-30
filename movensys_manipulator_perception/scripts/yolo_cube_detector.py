@@ -78,9 +78,9 @@ class YoloCubeDetector(Node):
         self.declare_parameter('publish_debug_image', True)
         self.declare_parameter('device', 'cpu')
         self.declare_parameter('image_topic',
-                               '/camera_hand/realsense2_camera/color/image_raw')
+                               '/image_hand/rgb')
         self.declare_parameter('camera_info_topic',
-                               '/camera_hand/realsense2_camera/color/camera_info')
+                               '/image_hand/camera_info')
         self.declare_parameter('camera_frame',
                                'camera_hand_color_optical_frame')
 
