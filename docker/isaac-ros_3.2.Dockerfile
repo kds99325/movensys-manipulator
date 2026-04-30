@@ -51,6 +51,9 @@ RUN mkdir -p /home/admin/.cache/torch_extensions && \
     mkdir -p /home/admin/.cache/warp && \
     rm -rf /home/admin/.cache/torch_extensions/py310_cu128
 
+COPY rviz_glsl150/ /opt/ros/humble/share/rviz_rendering/ogre_media/materials/glsl150/
+COPY rviz_scripts150/ /opt/ros/humble/share/rviz_rendering/ogre_media/materials/scripts150/
+
 RUN apt-get update && \
     if [ "$ROS_DISTRO" = "jazzy" ]; then \
       apt-get install -y \

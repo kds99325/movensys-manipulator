@@ -80,24 +80,29 @@ def generate_launch_description():
         ]
     )
 
-    static_planning_scene = Node(
-        package='isaac_ros_cumotion',
-        executable='static_planning_scene',
-        name='static_planning_scene',
-        output='screen',
-        parameters=[
-            {
-                'robot': robot_xrdf,
-                'urdf_path': urdf_path,
-                'use_sim_time': use_sim_time,
-            }
-        ]
-    )
+    ros_distro = os.environ.get('ROS_DISTRO', 'humble')
 
-    return LaunchDescription([
+    nodes = [
         declare_use_sim_time,
         manipulation_container,
         robot_segmenter,
         load_nvblox,
-        static_planning_scene,
-    ])
+    ]
+
+    if ros_distro == 'jazzy':
+        static_planning_scene = Node(
+            package='isaac_ros_cumotion',
+            executable='static_planning_scene',
+            name='static_planning_scene',
+            output='screen',
+            parameters=[
+                {
+                    'robot': robot_xrdf,
+                    'urdf_path': urdf_path,
+                    'use_sim_time': use_sim_time,
+                }
+            ]
+        )
+        nodes.append(static_planning_scene)
+
+    return LaunchDescription(nodes)
