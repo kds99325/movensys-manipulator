@@ -18,7 +18,7 @@ def generate_launch_description():
         description="Use simulation clock (/clock)"
     )
 
-    pkg_movensys_isaac_config = get_package_share_directory('movensys_manipulator_isaac_ros_config')
+    pkg_movensys_isaac_ros_config = get_package_share_directory('movensys_manipulator_isaac_ros_config')
     pkg_movensys_description = get_package_share_directory('movensys_manipulator_description')
 
     manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
@@ -26,8 +26,8 @@ def generate_launch_description():
     robot_xrdf = os.path.join(pkg_movensys_description, 'urdf', manipulator_model, 'movensys_manipulator.xrdf')
     urdf_path = os.path.join(pkg_movensys_description, 'urdf', manipulator_model, 'movensys_manipulator.urdf')
 
-    nvblox_base_config = os.path.join(pkg_movensys_isaac_config, 'config', manipulator_model, 'nvblox_movensys_base.yaml')
-    workspace_config = os.path.join(pkg_movensys_isaac_config, 'config', manipulator_model, 'movensys_sim.yaml')
+    nvblox_base_config = os.path.join(pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'nvblox_movensys_base.yaml')
+    workspace_config = os.path.join(pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'movensys_sim.yaml')
 
     manipulation_container = ComposableNodeContainer(
         name='manipulation_container',
@@ -63,7 +63,7 @@ def generate_launch_description():
     )
 
     robot_segmenter_config = os.path.join(
-        pkg_movensys_isaac_config, 'config', manipulator_model, 'robot_segmenter_movensys.yaml'
+        pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'robot_segmenter_movensys.yaml'
     )
     robot_segmenter = Node(
         package='isaac_ros_cumotion',
