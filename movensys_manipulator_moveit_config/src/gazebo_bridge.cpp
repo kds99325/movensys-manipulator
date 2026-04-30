@@ -3,6 +3,7 @@
 #include <thread>
 #include <vector>
 #include <string>
+#include <algorithm>
 // for using std::bind
 #include <functional>
 // std::ostringstream
@@ -104,9 +105,13 @@ private:
     std_msgs::msg::Float64MultiArray joint_command;
     joint_command.data.resize(n_total);
 
-    // Copy current positions from last_joint_state
-    for (size_t i = 0; i < n_arm && i < last_joint_state.position.size(); ++i) {
-      joint_command.data[i] = last_joint_state.position[i];
+    // Copy current positions from last_joint_state by name to handle distro-specific joint ordering
+    for (size_t i = 0; i < n_arm; ++i) {
+      auto it = std::find(last_joint_state.name.begin(), last_joint_state.name.end(), arm_joint_names_[i]);
+      if (it != last_joint_state.name.end()) {
+        size_t idx = std::distance(last_joint_state.name.begin(), it);
+        joint_command.data[i] = last_joint_state.position[idx];
+      }
     }
 
     // Set gripper positions
