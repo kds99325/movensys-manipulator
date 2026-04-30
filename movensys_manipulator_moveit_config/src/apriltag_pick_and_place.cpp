@@ -147,7 +147,7 @@ bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node, moveit2_client::M
         RCLCPP_INFO(node->get_logger(), "[%zu/%zu] Running target id = %s",
             i + 1, tag_ids.size(), tag_ids[i].c_str());
 
-        if (!client.absoluteBaseEefCartesian(scan_pose)) {
+        if (!client.absoluteBaseEefJointMovement(scan_pose)) {
             RCLCPP_ERROR(node->get_logger(), "Move to scan pose failed"); return false; }
 
         double x_tag = 0.0, y_tag = 0.0, yaw_tag = 0.0;
@@ -224,7 +224,7 @@ bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node, moveit2_client::M
         if (!client.relativeBaseEefCartesian(up_delta)) {
             RCLCPP_ERROR(node->get_logger(), "Move up failed"); return false; }
 
-        if (!client.absoluteBaseEefCartesian(box_up[i])) {
+        if (!client.absoluteBaseEefJointMovement(box_up[i])) {
             RCLCPP_ERROR(node->get_logger(), "Move to box up pose failed"); return false; }
 
         if (!client.absoluteBaseEefCartesian(box_down[i])) {
