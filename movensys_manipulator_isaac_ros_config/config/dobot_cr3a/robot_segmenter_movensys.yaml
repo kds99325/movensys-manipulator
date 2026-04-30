@@ -27,7 +27,7 @@ robot_segmenter_node:
 
     debug_robot_topic: /robot_segmenter/robot_spheres
 
-    distance_threshold: 0.15     # Maximum distance from a given collision sphere (in meters) at which to mask points
+    distance_threshold: 0.1     # Maximum distance from a given collision sphere (in meters) at which to mask points
 
     time_sync_slop: 1.0 
     tf_lookup_duration: 5.0 

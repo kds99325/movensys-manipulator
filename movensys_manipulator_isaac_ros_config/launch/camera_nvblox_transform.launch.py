@@ -21,9 +21,9 @@ def generate_launch_description() -> LaunchDescription:
         arguments=[
             "--frame-id", "world_manipulator",
             "--child-frame-id", "camera_nvblox_color_optical_frame",
-            "--x", "1.0",
-            "--y", "-0.25",
-            "--z", "0.8",
+            "--x", "-0.7",
+            "--y", "-0.7",
+            "--z", "0.8318",
             "--roll", "-2.078",
             "--pitch", "-0.0121",
             "--yaw", "-0.7338",

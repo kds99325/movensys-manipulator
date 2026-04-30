@@ -2,7 +2,7 @@
 ## Execution Procedure
 
 ### Step 1: Open Isaac Sim
-`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/obstacle_avoidance_simulation.usd`
+`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/apriltag_obstacle_avoidance_simulation.usd`
 
 
 
