@@ -159,7 +159,7 @@ ros2 run movensys_manipulator_perception yolo_cube_detector.py \
 
 - `/tf` (`tf2_msgs/TFMessage`) — one transform per detected class:
   - cube: `yolo_cube_green`, `yolo_cube_yellow`, `yolo_cube_blue`, `yolo_cube_red`
-  - dice: `yolo_dice_one` … `yolo_dice_six`
+  - dice: `1` … `6`
 - `~/debug_image` (`sensor_msgs/Image`) when `publish_debug_image=true`
 
 Only the highest-confidence detection per class is broadcast each frame.

@@ -29,12 +29,12 @@ of the normalised ray direction:
     p_cam   = t * [x_norm, y_norm, 1.0]          # in optical frame
 
 TF frames published (on /tf):
-    <camera_frame>  ->  yolo_dice_one
-    <camera_frame>  ->  yolo_dice_two
-    <camera_frame>  ->  yolo_dice_three
-    <camera_frame>  ->  yolo_dice_four
-    <camera_frame>  ->  yolo_dice_five
-    <camera_frame>  ->  yolo_dice_six
+    <camera_frame>  ->  1
+    <camera_frame>  ->  2
+    <camera_frame>  ->  3
+    <camera_frame>  ->  4
+    <camera_frame>  ->  5
+    <camera_frame>  ->  6
 
 Model class mapping (matches dataset.yaml):
     0: Five  1: Four  2: One  3: Six  4: Three  5: Two
@@ -54,7 +54,7 @@ from tf2_ros import TransformBroadcaster
 
 
 CLASS_NAMES = ['Five', 'Four', 'One', 'Six', 'Three', 'Two']
-CLASS_SHORT = ['five',  'four',  'one', 'six', 'three', 'two']
+CLASS_SHORT = ['5',     '4',     '1',   '6',   '3',     '2']
 CLASS_COLORS = {
     'Five':  (0,   0,   255),
     'Four':  (0,   165, 255),
@@ -237,7 +237,7 @@ class YoloDiceDetector(Node):
             t = TransformStamped()
             t.header.stamp    = msg.header.stamp
             t.header.frame_id = self.camera_frame
-            t.child_frame_id  = f'yolo_dice_{CLASS_SHORT[cls_id]}'
+            t.child_frame_id  = CLASS_SHORT[cls_id]
             t.transform.translation.x = float(p_cam[0])
             t.transform.translation.y = float(p_cam[1])
             t.transform.translation.z = float(p_cam[2])
