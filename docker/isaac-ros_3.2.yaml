@@ -45,7 +45,7 @@ services:
       - |
         set -e
         set -x
-        source ~/.bashrc
+        [ -f ~/.bashrc ] && source ~/.bashrc || true
         sudo chown -R admin:admin /home/admin/workspaces/movensys_ws
         source /opt/ros/humble/setup.bash
 
