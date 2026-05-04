@@ -28,13 +28,10 @@ of the normalised ray direction:
     t       = (dice_height - cam_z_world) / d_world[2]
     p_cam   = t * [x_norm, y_norm, 1.0]          # in optical frame
 
-TF frames published (on /tf):
-    <camera_frame>  ->  1
-    <camera_frame>  ->  2
-    <camera_frame>  ->  3
-    <camera_frame>  ->  4
-    <camera_frame>  ->  5
-    <camera_frame>  ->  6
+TF frame published (on /tf), at most one per image — the single
+highest-confidence detection across all classes:
+
+    <camera_frame>  ->  <1|2|3|4|5|6>
 
 Model class mapping (matches dataset.yaml):
     0: Five  1: Four  2: One  3: Six  4: Three  5: Two
@@ -190,7 +187,7 @@ class YoloDiceDetector(Node):
             self.get_logger().error(f'Inference failed: {exc}')
             return
 
-        best: dict[int, tuple] = {}
+        best: tuple | None = None  # (conf, cls_id, corners)
         for result in results:
             if result.obb is None:
                 continue
@@ -199,18 +196,21 @@ class YoloDiceDetector(Node):
                 conf   = float(result.obb.conf[i].item())
                 if cls_id >= len(CLASS_NAMES):
                     continue
-                if cls_id not in best or conf > best[cls_id][0]:
+                if best is None or conf > best[0]:
                     corners = result.obb.xyxyxyxy[i].cpu().numpy().reshape(4, 2)
-                    best[cls_id] = (conf, corners)
+                    best = (conf, cls_id, corners)
 
-        self.get_logger().info(
-            f'Detections: {len(best)} class(es) — '
-            f'{", ".join(CLASS_NAMES[c] for c in best)}' if best else 'Detections: none')
+        if best is None:
+            self.get_logger().info('Detections: none')
+        else:
+            self.get_logger().info(
+                f'Detections: {CLASS_NAMES[best[1]]} (conf={best[0]:.2f})')
 
         tf_msgs = []
         annotations = []
 
-        for cls_id, (conf, corners) in best.items():
+        if best is not None:
+            conf, cls_id, corners = best
             cx_px = float(np.mean(corners[:, 0]))
             cy_px = float(np.mean(corners[:, 1]))
             image_yaw = self._smart_yaw(corners)
@@ -224,37 +224,36 @@ class YoloDiceDetector(Node):
             if p_cam is None:
                 self.get_logger().info(
                     f'{CLASS_NAMES[cls_id]}: projection failed — skipping')
-                continue
+            else:
+                p_world = self._cam_to_world(p_cam)
+                self.get_logger().info(
+                    f'{CLASS_NAMES[cls_id]}: '
+                    f'cam=({p_cam[0]:.3f},{p_cam[1]:.3f},{p_cam[2]:.3f})  '
+                    f'world=({p_world[0]:.3f},{p_world[1]:.3f},{p_world[2]:.3f})')
 
-            p_world = self._cam_to_world(p_cam)
-            self.get_logger().info(
-                f'{CLASS_NAMES[cls_id]}: '
-                f'cam=({p_cam[0]:.3f},{p_cam[1]:.3f},{p_cam[2]:.3f})  '
-                f'world=({p_world[0]:.3f},{p_world[1]:.3f},{p_world[2]:.3f})')
+                quat = Rotation.from_euler('z', image_yaw).as_quat()
 
-            quat = Rotation.from_euler('z', image_yaw).as_quat()
+                t = TransformStamped()
+                t.header.stamp    = msg.header.stamp
+                t.header.frame_id = self.camera_frame
+                t.child_frame_id  = CLASS_SHORT[cls_id]
+                t.transform.translation.x = float(p_cam[0])
+                t.transform.translation.y = float(p_cam[1])
+                t.transform.translation.z = float(p_cam[2])
+                t.transform.rotation.x    = float(quat[0])
+                t.transform.rotation.y    = float(quat[1])
+                t.transform.rotation.z    = float(quat[2])
+                t.transform.rotation.w    = float(quat[3])
+                tf_msgs.append(t)
 
-            t = TransformStamped()
-            t.header.stamp    = msg.header.stamp
-            t.header.frame_id = self.camera_frame
-            t.child_frame_id  = CLASS_SHORT[cls_id]
-            t.transform.translation.x = float(p_cam[0])
-            t.transform.translation.y = float(p_cam[1])
-            t.transform.translation.z = float(p_cam[2])
-            t.transform.rotation.x    = float(quat[0])
-            t.transform.rotation.y    = float(quat[1])
-            t.transform.rotation.z    = float(quat[2])
-            t.transform.rotation.w    = float(quat[3])
-            tf_msgs.append(t)
-
-            annotations.append({
-                'corners':    corners,
-                'centroid':   (int(cx_px), int(cy_px)),
-                'cls_name':   CLASS_NAMES[cls_id],
-                'conf':       conf,
-                'image_yaw':  image_yaw,
-                'p_cam':      p_cam,
-            })
+                annotations.append({
+                    'corners':    corners,
+                    'centroid':   (int(cx_px), int(cy_px)),
+                    'cls_name':   CLASS_NAMES[cls_id],
+                    'conf':       conf,
+                    'image_yaw':  image_yaw,
+                    'p_cam':      p_cam,
+                })
 
         for tf_msg in tf_msgs:
             self.tf_broadcaster.sendTransform(tf_msg)
