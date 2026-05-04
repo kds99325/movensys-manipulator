@@ -16,6 +16,10 @@ def generate_launch_description():
             'params_file', default_value=default_params,
             description='YAML parameter file for the AprilTag detector',
         ),
+        DeclareLaunchArgument(
+            'use_sim_time', default_value='false',
+            description='Use simulation clock (/clock)',
+        ),
     ]
 
     apriltag_node = Node(
@@ -23,7 +27,10 @@ def generate_launch_description():
         executable='apriltag_detector.py',
         name='apriltag_detector',
         output='screen',
-        parameters=[LaunchConfiguration('params_file')],
+        parameters=[
+            LaunchConfiguration('params_file'),
+            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+        ],
     )
 
     return LaunchDescription(declared_arguments + [apriltag_node])

@@ -1,9 +1,9 @@
 apriltag_detector:
   ros__parameters:
     tag_family: "tag36h11"
-    tag_size: 0.04  # meters (40 mm)
-    image_topic: "/camera_hand/realsense2_camera/color/image_raw"
-    camera_info_topic: "/camera_hand/realsense2_camera/color/camera_info"
+    tag_size: 0.05  # meters (50 mm)
+    image_topic: "/image_hand/rgb"
+    camera_info_topic: "/image_hand/camera_info"
     camera_frame: "camera_hand_color_optical_frame"
     nthreads: 1
     quad_decimate: 2.0
