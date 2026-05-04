@@ -15,23 +15,32 @@ RUN sed -i 's|http://security.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu
 
 RUN apt-get update && \
     apt-get install -y \
-      ros-humble-ament-package \
-      ros-humble-ament-index-cpp \
-      ros-humble-ament-cmake-core \
-      ros-humble-ament-index-python \
-      python3-colcon-common-extensions \
-      python3-setuptools \
-      ros-humble-pal-statistics \
-      ros-humble-pal-statistics-msgs \
-      ros-humble-rmw-cyclonedds-cpp \
-      ros-humble-tf-transformations \
-      ros-humble-isaac-ros-cumotion-examples \
-      ros-humble-isaac-ros-apriltag \
-      ros-humble-isaac-ros-nvblox \
-      ros-humble-isaac-ros-examples \
-      ros-humble-isaac-ros-realsense \
-      ros-humble-isaac-ros-ess \
-      ros-humble-isaac-ros-ess-models-install && \
+        ros-humble-ament-package \
+        ros-humble-ament-index-cpp \
+        ros-humble-ament-cmake-core \
+        ros-humble-ament-index-python \
+        python3-colcon-common-extensions \
+        python3-setuptools \
+        ros-humble-pal-statistics \
+        ros-humble-pal-statistics-msgs \
+        ros-humble-rmw-cyclonedds-cpp \
+        ros-humble-tf-transformations \
+        ros-humble-isaac-ros-cumotion-examples \
+        ros-humble-isaac-ros-apriltag \
+        ros-humble-isaac-ros-nvblox \
+        ros-humble-isaac-ros-examples \
+        ros-humble-isaac-ros-realsense \
+        ros-humble-isaac-ros-ess \
+        ros-humble-isaac-ros-ess-models-install \
+        ros-humble-joint-state-publisher \
+        ros-humble-joint-state-publisher-gui \
+        ros-humble-xacro \
+        ros-humble-rqt* \
+        ros-humble-ros2-control \
+        ros-humble-ros2-controllers \
+        ros-humble-controller-manager \
+        ros-humble-moveit* \
+        curl jq tar && \
     rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install --only-upgrade -y \
