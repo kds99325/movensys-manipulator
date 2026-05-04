@@ -16,8 +16,7 @@ robot_segmenter_node:
       - /image_nvblox/camera_info
 
     # Output topics
-    # NOTE: Isaac ROS 4.1 ignores these and hardcodes _ros/_bridge suffixes
-    # Actual published topics: /robot_segmenter/world_depth_ros, /robot_segmenter/robot_mask_ros
+    # Actual published topics match configured names (no _ros suffix added)
     robot_mask_publish_topics:
       - /robot_segmenter/robot_mask
     world_depth_publish_topics:

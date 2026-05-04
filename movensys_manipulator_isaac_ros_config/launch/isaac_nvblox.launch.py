@@ -46,7 +46,7 @@ def generate_launch_description():
         remappings=[
             ('/camera_0/color/image', '/image_nvblox/rgb'),
             ('/camera_0/color/camera_info', '/image_nvblox/camera_info'),
-            ('/camera_0/depth/image', '/robot_segmenter/world_depth_ros'),
+            ('/camera_0/depth/image', '/robot_segmenter/world_depth'),
             ('/camera_0/depth/camera_info', '/image_nvblox/camera_info'),
         ],
         parameters=[
