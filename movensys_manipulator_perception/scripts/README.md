@@ -74,8 +74,8 @@ The launch files resolve them automatically. Override with the
 ## 2. Run via launch files (recommended)
 
 ```bash
-ros2 launch movensys_manipulator_perception yolo_cube_detector.launch.py
-ros2 launch movensys_manipulator_perception yolo_dice_detector.launch.py
+mros ros2 launch movensys_manipulator_perception yolo_cube_detector.launch.py
+mros ros2 launch movensys_manipulator_perception yolo_dice_detector.launch.py
 ```
 
 This loads defaults from
