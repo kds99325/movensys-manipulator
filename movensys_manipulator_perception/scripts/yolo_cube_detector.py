@@ -83,6 +83,11 @@ class YoloCubeDetector(Node):
                                '/image_hand/camera_info')
         self.declare_parameter('camera_frame',
                                'camera_hand_color_optical_frame')
+        self.declare_parameter('mask_left_fraction',   0.0)
+        self.declare_parameter('mask_right_fraction',  0.0)
+        self.declare_parameter('mask_top_fraction',    0.0)
+        self.declare_parameter('mask_bottom_fraction', 0.0)
+        self.declare_parameter('mask_color', [0, 0, 0])
 
         model_path            = self.get_parameter('model_path').value
         self.conf_threshold   = self.get_parameter('confidence_threshold').value
@@ -96,6 +101,12 @@ class YoloCubeDetector(Node):
         image_topic           = self.get_parameter('image_topic').value
         camera_info_topic     = self.get_parameter('camera_info_topic').value
         self.camera_frame     = self.get_parameter('camera_frame').value
+        self.mask_left        = float(self.get_parameter('mask_left_fraction').value)
+        self.mask_right       = float(self.get_parameter('mask_right_fraction').value)
+        self.mask_top         = float(self.get_parameter('mask_top_fraction').value)
+        self.mask_bottom      = float(self.get_parameter('mask_bottom_fraction').value)
+        self.mask_color       = self._validate_mask(
+            list(self.get_parameter('mask_color').value))
 
         self.R_cam = self._quat_to_rot(cam_quat)
 
@@ -127,7 +138,11 @@ class YoloCubeDetector(Node):
             f'  cam_z_world : {self.cam_z_world} m\n'
             f'  cam_quat    : {cam_quat}\n'
             f'  conf        : {self.conf_threshold}\n'
-            f'  camera      : {self.camera_frame}')
+            f'  camera      : {self.camera_frame}\n'
+            f'  mask LRTB   : '
+            f'{self.mask_left:.2f}/{self.mask_right:.2f}/'
+            f'{self.mask_top:.2f}/{self.mask_bottom:.2f}  '
+            f'color={tuple(self.mask_color)}')
 
     def _load_model(self, model_path: str):
         try:
@@ -173,6 +188,7 @@ class YoloCubeDetector(Node):
         except Exception as exc:
             self.get_logger().error(f'cv_bridge failed: {exc}')
             return
+        self._apply_mask(cv_image)
         self.get_logger().info('Image received, running inference...',
                                throttle_duration_sec=5.0)
 
@@ -260,6 +276,36 @@ class YoloCubeDetector(Node):
             out_msg = self.bridge.cv2_to_imgmsg(debug, 'bgr8')
             out_msg.header = msg.header
             self.debug_pub.publish(out_msg)
+
+    def _validate_mask(self, color_raw: list) -> tuple:
+        for name in ('left', 'right', 'top', 'bottom'):
+            attr = f'mask_{name}'
+            v = getattr(self, attr)
+            if not 0.0 <= v < 1.0:
+                self.get_logger().warn(
+                    f'mask_{name}_fraction={v} out of [0,1); clamping.')
+            setattr(self, attr, max(0.0, min(v, 0.99)))
+        if (self.mask_left + self.mask_right >= 1.0 or
+                self.mask_top + self.mask_bottom >= 1.0):
+            self.get_logger().error(
+                'Mask fractions cover entire image; YOLO will see nothing.')
+        if len(color_raw) != 3:
+            self.get_logger().warn(
+                f'mask_color must be [B,G,R]; got {color_raw} — using black.')
+            return (0, 0, 0)
+        return tuple(int(max(0, min(255, c))) for c in color_raw)
+
+    def _apply_mask(self, image: np.ndarray) -> None:
+        h, w = image.shape[:2]
+        nl = int(round(w * self.mask_left))
+        nr = int(round(w * self.mask_right))
+        nt = int(round(h * self.mask_top))
+        nb = int(round(h * self.mask_bottom))
+        color = self.mask_color
+        if nl: image[:, :nl]      = color
+        if nr: image[:, w - nr:]  = color
+        if nt: image[:nt, :]      = color
+        if nb: image[h - nb:, :]  = color
 
     def _project_to_camera_frame(
             self, px: float, py: float) -> np.ndarray | None:
