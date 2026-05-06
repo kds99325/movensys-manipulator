@@ -31,3 +31,13 @@ mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_nvblox.lau
 ```
 mros ros2 launch movensys_manipulator_moveit_config obstacle_avoidance.launch.py
 ```
+
+
+
+
+### Step 5: Tuning Nvblox camera (optional)
+```
+mros ros2 launch movensys_manipulator_perception camera_transform_tuning.launch.py
+    parent_frame:=world_manipulator
+    child_frame:=camera_nvblox_link
+```
