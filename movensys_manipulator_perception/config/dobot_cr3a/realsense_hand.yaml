@@ -13,13 +13,12 @@
 
     rgb_camera:
       profile: '640x480x15'
-
     color_qos: "SYSTEM_DEFAULT"
 
     camera_resolution:
       width: 640
       height: 480
-    camera_name: 'camera_hand_link'
+    camera_name: 'camera_hand'
     focal_length:
       f_x: 380.0
       f_y: 380.0
