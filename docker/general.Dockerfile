@@ -81,7 +81,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     python3 -m pip install --no-cache-dir --upgrade pip && \
     rm -rf /usr/lib/python3/dist-packages/transforms3d \
-           /usr/lib/python3/dist-packages/transforms3d-*.egg-info && \
+           /usr/lib/python3/dist-packages/transforms3d-*.egg-info \
+           /usr/lib/python3/dist-packages/sympy \
+           /usr/lib/python3/dist-packages/sympy-*.egg-info && \
     python3 -m pip install --no-cache-dir --break-system-packages \
         --index-url https://download.pytorch.org/whl/cu124 \
         torch torchvision && \
