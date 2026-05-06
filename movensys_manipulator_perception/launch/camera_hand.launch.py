@@ -9,7 +9,8 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('movensys_manipulator_perception')
-    realsense_config = os.path.join(pkg_share, 'config', 'realsense_hand.yaml')
+    manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
+    realsense_config = os.path.join(pkg_share, 'config', manipulator_model, 'realsense_hand.yaml')
 
     declared_arguments = [
         DeclareLaunchArgument(

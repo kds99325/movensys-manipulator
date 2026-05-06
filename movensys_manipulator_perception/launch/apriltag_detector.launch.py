@@ -10,7 +10,8 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('movensys_manipulator_perception')
-    default_params = os.path.join(pkg_share, 'config', 'apriltag_detector.yaml')
+    manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
+    default_params = os.path.join(pkg_share, 'config', manipulator_model, 'apriltag_detector.yaml')
 
     use_sim_time = LaunchConfiguration('use_sim_time')
 
