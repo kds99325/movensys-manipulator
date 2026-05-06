@@ -2,7 +2,7 @@
 ## Execution Procedure
 
 ### Step 1a: Open Isaac Sim
-`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/trajectory_hil.usd`
+`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/3b_trajectory_hil.usd`
 
 ### Step 1b: Open Gazebo
 ```
