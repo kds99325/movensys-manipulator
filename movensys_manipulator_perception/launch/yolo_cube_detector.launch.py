@@ -3,7 +3,7 @@ yolo_cube_detector.launch.py
 ============================
 Launcher for the YOLO OBB cube detector node.
 
-Loads defaults from config/yolo_cube_detector.yaml. The `model_path`
+Loads defaults from config/$MANIPULATOR_MODEL/yolo_cube_detector.yaml. The `model_path`
 argument defaults to the cubes_obb.pt weights shipped inside this
 package's models/ directory; override to point at a different .pt
 file or an OpenVINO export.
@@ -20,7 +20,8 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('movensys_manipulator_perception')
-    default_params = os.path.join(pkg_share, 'config', 'yolo_cube_detector.yaml')
+    manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
+    default_params = os.path.join(pkg_share, 'config', manipulator_model, 'yolo_cube_detector.yaml')
     default_model = os.path.join(pkg_share, 'models', 'cubes_obb.pt')
 
     declared_arguments = [
