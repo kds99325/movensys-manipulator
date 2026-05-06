@@ -31,7 +31,10 @@ of the normalised ray direction:
 TF frame published (on /tf), at most one per image — the single
 highest-confidence detection across all classes:
 
-    <camera_frame>  ->  <1|2|3|4|5|6>
+    <camera_frame>  ->  dice
+
+The detected face value (1..6) is published separately as a
+std_msgs/Int32 on ~/dice_number.
 
 Model class mapping (matches dataset.yaml):
     0: Five  1: Four  2: One  3: Six  4: Three  5: Two
@@ -47,6 +50,7 @@ from geometry_msgs.msg import TransformStamped
 from rclpy.node import Node
 from scipy.spatial.transform import Rotation
 from sensor_msgs.msg import CameraInfo, Image
+from std_msgs.msg import Int32
 from tf2_ros import TransformBroadcaster
 
 
@@ -106,6 +110,7 @@ class YoloDiceDetector(Node):
         self.fx = self.fy = self.cx = self.cy = None
 
         self.tf_broadcaster = TransformBroadcaster(self)
+        self.number_pub = self.create_publisher(Int32, '~/dice_number', 10)
 
         if not model_path:
             self.get_logger().error(
@@ -236,7 +241,7 @@ class YoloDiceDetector(Node):
                 t = TransformStamped()
                 t.header.stamp    = msg.header.stamp
                 t.header.frame_id = self.camera_frame
-                t.child_frame_id  = CLASS_SHORT[cls_id]
+                t.child_frame_id  = 'dice'
                 t.transform.translation.x = float(p_cam[0])
                 t.transform.translation.y = float(p_cam[1])
                 t.transform.translation.z = float(p_cam[2])
@@ -245,6 +250,8 @@ class YoloDiceDetector(Node):
                 t.transform.rotation.z    = float(quat[2])
                 t.transform.rotation.w    = float(quat[3])
                 tf_msgs.append(t)
+
+                self.number_pub.publish(Int32(data=int(CLASS_SHORT[cls_id])))
 
                 annotations.append({
                     'corners':    corners,
