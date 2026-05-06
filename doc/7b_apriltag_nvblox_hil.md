@@ -2,7 +2,7 @@
 ## Execution Procedure
 
 ### Step 1: Open Isaac Sim
-`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/obstacle_avoidance_hil.usd`
+`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/apriltag_obstacle_avoidance_hil.usd`
 
 
 
@@ -17,6 +17,7 @@ set `use_sim_time:=true`
 
 
 
+
 ### Step 3: Launch cuMotion + NvBlox
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_nvblox.launch.py use_sim_time:=true
@@ -26,9 +27,17 @@ mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_nvblox.lau
 
 
 
-
-
-### Step 4: Obstacle Avoidance
+### Step 4: Launch Isaac Apriltag
 ```
-mros ros2 launch movensys_manipulator_moveit_config obstacle_avoidance.launch.py use_sim_time:=true
+mros ros2 launch movensys_manipulator_isaac_ros_config isaac_apriltag.launch.py use_sim_time:=true
+```
+
+
+
+
+
+
+### Step 5: AprilTag + Obstacle Avoidance
+```
+mros ros2 launch movensys_manipulator_moveit_config apriltag_pick_and_place.launch.py use_sim_time:=true target_spawn:=false
 ```
