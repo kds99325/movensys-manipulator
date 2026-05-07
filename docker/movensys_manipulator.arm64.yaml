@@ -8,3 +8,5 @@ services:
     volumes:
       - /run/user/1000/gdm:/run/user/1000/gdm:ro
     gpus: all
+    group_add:
+      - "0"   # root group — nvidia-container-toolkit ≥1.18 mounts Jetson GPU devices as root:root (not root:video)
