@@ -12,6 +12,7 @@ install(PROGRAMS
   scripts/apriltag_detector.py
   scripts/yolo_cube_detector.py
   scripts/yolo_dice_detector.py
+  scripts/camera_transform_tuning.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -19,6 +20,8 @@ install(DIRECTORY
   launch
   config
   models
+  scripts
+  rviz
   DESTINATION share/${PROJECT_NAME}/
 )
 

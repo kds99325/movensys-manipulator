@@ -3,6 +3,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -26,6 +27,13 @@ def generate_launch_description():
         ),
     ]
 
+    camera_hand_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_share, 'launch', 'camera_hand.launch.py')
+        ),
+        condition=UnlessCondition(use_sim_time),
+    )
+
     moveit_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
@@ -47,4 +55,4 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription(declared_arguments + [moveit_launch, apriltag_node])
+    return LaunchDescription(declared_arguments + [camera_hand_launch, moveit_launch, apriltag_node])

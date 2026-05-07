@@ -21,9 +21,9 @@ def generate_launch_description():
 
     nvblox_rviz = os.path.join(pkg_movensys_isaac_ros_config, 'rviz', 'nvblox.rviz')
 
-    camera_nvblox_transform = IncludeLaunchDescription(
+    camera_nvblox = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_movensys_manipulator_perception, 'launch', 'camera_nvblox_transform.launch.py')
+            os.path.join(pkg_movensys_manipulator_perception, 'launch', 'camera_nvblox.launch.py')
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items(),
     )
@@ -48,7 +48,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_use_sim_time,
-        camera_nvblox_transform,
+        camera_nvblox,
         cumotion_launch,
         nvblox_launch,
     ])

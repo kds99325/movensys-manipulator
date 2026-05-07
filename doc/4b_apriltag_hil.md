@@ -2,18 +2,16 @@
 ## Execution Procedure
 
 ### Step 1: Open Isaac Sim
-`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/4a_apriltag_pick_and_place_simulation.usd`
+`~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/4b_apriltag_pick_and_place_hil.usd`
 
 
 
 
 
 
-### Step 2: Run simulator bridge
-```
-mros ros2 launch movensys_manipulator_moveit_config sim_bridge.launch.py simulator:=isaacsim use_sim_time:=true 
-```
-
+### Step 2: Run wmx-ros2 for manipulator
+check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md` 
+set `use_sim_time:=true`
 
 
 
