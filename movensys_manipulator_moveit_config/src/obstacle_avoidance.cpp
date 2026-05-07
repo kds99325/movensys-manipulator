@@ -83,6 +83,11 @@ bool runNvbloxDemo(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
         return false;
     }
 
+    if (!client.absoluteBaseEefJointMovement(toPose(node->get_parameter("joint_movement_poses_2").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Move A failed");
+        return false;
+    }
+
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(delay_nvblox * 1000)));
 
     for (int i = 0; i < 2; i++) {

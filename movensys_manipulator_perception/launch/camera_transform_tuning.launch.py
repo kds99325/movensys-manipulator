@@ -34,7 +34,7 @@ def generate_launch_description():
     child_frame = LaunchConfiguration('child_frame')
     declare_child_frame = DeclareLaunchArgument(
         'child_frame',
-        default_value='camera_nvblox_link'
+        default_value='camera_nvblox_link',
         description='Child frame for camera transform'
     )
 
