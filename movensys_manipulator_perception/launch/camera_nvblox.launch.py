@@ -26,8 +26,10 @@ def generate_launch_description() -> LaunchDescription:
         output='screen',
         condition=UnlessCondition(LaunchConfiguration('use_sim_time')),
         remappings=[
-            ('/realsense2_camera/color/image_raw', '/image_nvblox/rgb'),
-            ('/realsense2_camera/color/camera_info', '/image_nvblox/camera_info')
+            ('realsense2_camera/color/image_raw', '/image_nvblox/rgb'),
+            ('realsense2_camera/color/camera_info', '/image_nvblox/camera_info'),
+            ('realsense2_camera/aligned_depth_to_color/image_raw', '/image_nvblox/depth'),
+            ('realsense2_camera/aligned_depth_to_color/camera_info', '/image_nvblox/depth/camera_info'),
         ],
     )
 

@@ -20,8 +20,8 @@ def generate_launch_description():
         parameters=[realsense_config],
         output='screen',
         remappings=[
-            ('/realsense2_camera/color/image_raw', '/image_hand/rgb'),
-            ('/realsense2_camera/color/camera_info', '/image_hand/camera_info')
+            ('realsense2_camera/color/image_raw', '/image_hand/rgb'),
+            ('realsense2_camera/color/camera_info', '/image_hand/camera_info')
         ]
     )
 

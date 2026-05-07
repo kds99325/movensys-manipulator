@@ -43,6 +43,16 @@ RUN apt-get update && \
         curl jq tar && \
     rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y curl gpg && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -sSf "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xFB0B24895113F120" | \
+        gpg --dearmor > /etc/apt/keyrings/librealsense.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/librealsense.gpg] https://librealsense.intel.com/Debian/apt-repo jammy main" \
+        > /etc/apt/sources.list.d/librealsense.list && \
+    apt-get update && \
+    apt-get install -y librealsense2-utils ros-humble-realsense2-camera && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update && apt-get install --only-upgrade -y \
         ros-humble-rclcpp-action \
         ros-humble-moveit* \
