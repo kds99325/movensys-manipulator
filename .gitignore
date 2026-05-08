@@ -23,4 +23,5 @@ tools/training/datasets/
 tools/training/obb_assets/
 tools/training/runs/
 tools/training/yolo*.pt
+tools/data_collection/output/
 **/runs/
