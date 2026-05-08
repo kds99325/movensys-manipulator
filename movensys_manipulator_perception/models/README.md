@@ -15,5 +15,7 @@ resolve `cubes_obb.pt` / `dice_obb.pt` from that path by default; override
 with the `model_path` launch argument to point at an OpenVINO export or a
 different `.pt` file.
 
-Training scripts live in the reference program at
-`reference_program/movensys_intel_manipulator/sample_yolo_programe/scripts/train_model.py`.
+Training scripts live at [`tools/training/`](../../../tools/training/)
+at the repo root. See that directory's `README.md` for dataset layout,
+how to run `train_model.py`, and how to drop the resulting `best.pt`
+back into this folder.
