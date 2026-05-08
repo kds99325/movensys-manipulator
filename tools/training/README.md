@@ -61,6 +61,27 @@ Set `ULTRALYTICS_HOME` so base weights are cached in a known location
 export ULTRALYTICS_HOME=$HOME/ml_assets/weights
 ```
 
+## Bake the runtime border mask into the dataset (recommended)
+
+Both runtime detectors paint a fixed border mask on every frame before
+inference (`mask_*_fraction` / `mask_color` in their ROS YAML). For
+training to match inference, run the same mask over the dataset before
+training:
+
+```bash
+python3 apply_runtime_mask.py \
+  --source $HOME/ml_assets/datasets/dice_funnel_v1 \
+  --detector_config ../../movensys_manipulator_perception/config/dobot_cr3a/yolo_dice_detector.yaml \
+  --dest   $HOME/ml_assets/datasets/dice_funnel_v1_masked
+```
+
+Then point `--dataset` below at the `_masked` dir. Boxes whose centroid
+falls in the masked region are dropped; images with no surviving boxes
+are skipped. `classes.txt` is copied through.
+
+If you change the detector's mask values, re-run this step against the
+same raw source — no recapture needed.
+
 ## Train
 
 Cubes:
