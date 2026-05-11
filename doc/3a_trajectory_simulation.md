@@ -38,7 +38,7 @@ mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion.launch.py 
 
 
 
-### Step 5 (optional): Execute Trajectory Test
+### Step 4 (optional): Execute Trajectory Test
 ```
 mros ros2 launch movensys_manipulator_moveit_config trajectory_test.launch.py use_sim_time:=true
 ```
