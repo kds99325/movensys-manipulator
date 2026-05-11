@@ -91,6 +91,16 @@ ament_target_dependencies(trajectory_test
   std_srvs
 )
 
+add_executable(coverage_pose src/coverage_pose.cpp)
+target_link_libraries(coverage_pose moveit2_client_lib)
+ament_target_dependencies(coverage_pose
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+
 add_executable(obstacle_avoidance_cpp src/obstacle_avoidance.cpp)
 target_link_libraries(obstacle_avoidance_cpp moveit2_client_lib)
 ament_target_dependencies(obstacle_avoidance_cpp
@@ -134,12 +144,13 @@ ament_target_dependencies(trajectory_api
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 target_link_libraries(trajectory_api ${cpp_typesupport_target})
 
-install(TARGETS 
-  trajectory_test 
-  obstacle_avoidance_cpp 
-  apriltag_pick_and_place 
-  trajectory_api 
-  yolo_trajectory_cpp 
+install(TARGETS
+  trajectory_test
+  coverage_pose
+  obstacle_avoidance_cpp
+  apriltag_pick_and_place
+  trajectory_api
+  yolo_trajectory_cpp
   DESTINATION lib/${PROJECT_NAME}
 )
 
