@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+
+# ROS / colcon build artifacts (in case anyone runs colcon from this dir)
+build/
+install/
+log/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Training data and outputs — must NOT be committed.
+# The shipped model weights under movensys_manipulator_perception/models/
+# are NOT covered by these globs (different paths).
+tools/training/datasets/
+tools/training/obb_assets/
+tools/training/runs/
+tools/training/yolo*.pt
+tools/data_collection/output/
+**/runs/
+
+venv/
