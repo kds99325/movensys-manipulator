@@ -10,7 +10,9 @@ bool runCoverage(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Cli
 int main(int argc, char* argv[]){
     rclcpp::init(argc, argv);
 
-    auto node = std::make_shared<rclcpp::Node>("coverage_pose");
+    rclcpp::NodeOptions node_options;
+    node_options.automatically_declare_parameters_from_overrides(true);
+    auto node = std::make_shared<rclcpp::Node>("coverage_pose", node_options);
 
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(node);
@@ -30,16 +32,8 @@ int main(int argc, char* argv[]){
     node->declare_parameter("replan",            true);
     node->declare_parameter("replan_attempts",   0);
 
-    // Coverage waypoints
-    node->declare_parameter("joint_names",      std::vector<std::string>{"j1","j2","j3","j4","j5","j6"});
-    node->declare_parameter("joint_initial_0",  std::vector<double>(6, 0.0));
-
-    node->declare_parameter("coverage_poses_0", std::vector<double>(6, 0.0));
-    node->declare_parameter("coverage_poses_1", std::vector<double>(6, 0.0));
-    node->declare_parameter("coverage_poses_2", std::vector<double>(6, 0.0));
-    node->declare_parameter("coverage_poses_3", std::vector<double>(6, 0.0));
-    node->declare_parameter("coverage_poses_4", std::vector<double>(6, 0.0));
-    node->declare_parameter("coverage_poses_5", std::vector<double>(6, 0.0));
+    // Coverage waypoints (joint_names, joint_initial_0, and coverage_poses_N
+    // are auto-declared from the yaml overrides).
 
     moveit2_client::MoveIt2Client client(node, "movensys_manipulator_arm");
 
@@ -92,13 +86,10 @@ bool runCoverage(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Cli
     if (!client.jointMovement(toJointMap(node->get_parameter("joint_initial_0").as_double_array(), joint_names))) {
         RCLCPP_ERROR(node->get_logger(), "Initial Joint Movement failed"); return false; }
 
-    const std::vector<std::string> pose_params = {
-        "coverage_poses_0", "coverage_poses_1", "coverage_poses_2",
-        "coverage_poses_3", "coverage_poses_4", "coverage_poses_5"
-    };
-
     RCLCPP_INFO(node->get_logger(), "------- Coverage Cartesian Sweep -------");
-    for (const auto& name : pose_params) {
+    for (size_t i = 0; ; ++i) {
+        const std::string name = "coverage_poses_" + std::to_string(i);
+        if (!node->has_parameter(name)) break;
         RCLCPP_INFO(node->get_logger(), "Moving to %s", name.c_str());
         if (!client.absoluteBaseEefCartesian(toPose(node->get_parameter(name).as_double_array()))) {
             RCLCPP_ERROR(node->get_logger(), "Coverage move to %s failed", name.c_str()); return false;

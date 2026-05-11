@@ -2,7 +2,7 @@ coverage_pose:
   ros__parameters:
     # Coverage sweep waypoints (executed in index order 0..5)
     # Pose targets: [x, y, z, roll, pitch, yaw]
-    # Sequence: back right -> front right -> front left -> between 2 -> between 1 -> back left
+    # Sequence: back right -> front right -> front left -> between 2 -> between 1 -> back left -> back right
 
     joint_names:     [joint1, joint2, joint3, joint4, joint5, joint6]
     joint_initial_0: [0.0, 0.0, -1.57, 0.0, 1.57, 0.0]
@@ -13,3 +13,4 @@ coverage_pose:
     coverage_poses_3: [ 0.33, -0.05, 0.32, 3.14, 0.0, -3.1411]   # between 2
     coverage_poses_4: [ 0.15, -0.05, 0.32, 3.14, 0.0, -3.1411]   # between 1
     coverage_poses_5: [ 0.15,  0.12, 0.32, 3.14, 0.0, -3.1411]   # back left
+    coverage_poses_6: [-0.4,   0.12, 0.32, 3.14, 0.0, -3.1411]   # back right (close loop)
