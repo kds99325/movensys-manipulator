@@ -18,22 +18,8 @@ int main(int argc, char* argv[]){
     executor.add_node(node);
     std::thread spin_thread([&executor]() { executor.spin(); });
 
-    // MoveIt client config
-    node->declare_parameter("base_name",         "base");
-    node->declare_parameter("eef_name",          "eef");
-    node->declare_parameter("vel_scale",         0.0);
-    node->declare_parameter("acc_scale",         0.0);
-    node->declare_parameter("delay_exec",        0.0);
-    node->declare_parameter("delay_gripper",     0.0);
-    node->declare_parameter("max_step",          0.0);
-    node->declare_parameter("planning_time",     0.0);
-    node->declare_parameter("timeout",           0.0);
-    node->declare_parameter("planning_attempts", 0);
-    node->declare_parameter("replan",            true);
-    node->declare_parameter("replan_attempts",   0);
-
-    // Coverage waypoints (joint_names, joint_initial_0, and coverage_poses_N
-    // are auto-declared from the yaml overrides).
+    // All parameters (MoveIt client config + coverage waypoints + stamp config)
+    // are auto-declared from yaml overrides (moveit2_client.yaml and coverage_pose.yaml).
 
     moveit2_client::MoveIt2Client client(node, "movensys_manipulator_arm");
 
@@ -65,9 +51,11 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
-static moveit2_client::PoseTarget toPose(const std::vector<double>& v)
+struct StampPose { double x, y, z, R, P, Y; };
+
+static moveit2_client::PoseTarget toPose(const StampPose& p)
 {
-    return {{v[0], v[1], v[2]}, {v[3], v[4], v[5]}};
+    return {{p.x, p.y, p.z}, {p.R, p.P, p.Y}};
 }
 
 static std::map<std::string, double> toJointMap(
@@ -86,13 +74,58 @@ bool runCoverage(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Cli
     if (!client.jointMovement(toJointMap(node->get_parameter("joint_initial_0").as_double_array(), joint_names))) {
         RCLCPP_ERROR(node->get_logger(), "Initial Joint Movement failed"); return false; }
 
-    RCLCPP_INFO(node->get_logger(), "------- Coverage Cartesian Sweep -------");
+    // Read waypoints
+    std::vector<StampPose> waypoints;
     for (size_t i = 0; ; ++i) {
         const std::string name = "coverage_poses_" + std::to_string(i);
         if (!node->has_parameter(name)) break;
-        RCLCPP_INFO(node->get_logger(), "Moving to %s", name.c_str());
-        if (!client.absoluteBaseEefCartesian(toPose(node->get_parameter(name).as_double_array()))) {
-            RCLCPP_ERROR(node->get_logger(), "Coverage move to %s failed", name.c_str()); return false;
+        const auto v = node->get_parameter(name).as_double_array();
+        waypoints.push_back({v[0], v[1], v[2], v[3], v[4], v[5]});
+    }
+    if (waypoints.empty()) {
+        RCLCPP_ERROR(node->get_logger(), "No coverage_poses_N parameters found"); return false;
+    }
+
+    const double stamp_step   = node->get_parameter("stamp_step_size").as_double();
+    const double stamp_z_down = node->get_parameter("stamp_z_down").as_double();
+
+    // Build full sequence of stamp positions: each waypoint, plus intermediate
+    // positions every stamp_step along each segment.
+    std::vector<StampPose> stamps;
+    for (size_t i = 0; i < waypoints.size(); ++i) {
+        stamps.push_back(waypoints[i]);
+        if (i + 1 >= waypoints.size()) break;
+        const auto& a = waypoints[i];
+        const auto& b = waypoints[i + 1];
+        const double dx = b.x - a.x;
+        const double dy = b.y - a.y;
+        const double dist = std::sqrt(dx*dx + dy*dy);
+        const int n = std::max(1, static_cast<int>(std::ceil(dist / stamp_step)));
+        for (int k = 1; k < n; ++k) {
+            const double f = static_cast<double>(k) / n;
+            stamps.push_back({a.x + dx*f, a.y + dy*f, a.z, a.R, a.P, a.Y});
+        }
+    }
+
+    RCLCPP_INFO(node->get_logger(),
+        "------- Stamping Coverage: %zu waypoints expanded to %zu stamp positions "
+        "(step=%.3f m, z_down=%.3f m) -------",
+        waypoints.size(), stamps.size(), stamp_step, stamp_z_down);
+
+    // Pattern: move to (xy, z_up) -> down to z_down -> up to z_up -> next.
+    for (size_t i = 0; i < stamps.size(); ++i) {
+        const auto& s = stamps[i];
+        RCLCPP_INFO(node->get_logger(),
+            "Stamp %zu/%zu @ (%.3f, %.3f) z_up=%.3f", i + 1, stamps.size(), s.x, s.y, s.z);
+
+        if (!client.absoluteBaseEefCartesian(toPose({s.x, s.y, s.z, s.R, s.P, s.Y}))) {
+            RCLCPP_ERROR(node->get_logger(), "Move to stamp %zu (up) failed", i); return false;
+        }
+        if (!client.absoluteBaseEefCartesian(toPose({s.x, s.y, stamp_z_down, s.R, s.P, s.Y}))) {
+            RCLCPP_ERROR(node->get_logger(), "Drop at stamp %zu failed", i); return false;
+        }
+        if (!client.absoluteBaseEefCartesian(toPose({s.x, s.y, s.z, s.R, s.P, s.Y}))) {
+            RCLCPP_ERROR(node->get_logger(), "Lift at stamp %zu failed", i); return false;
         }
     }
 

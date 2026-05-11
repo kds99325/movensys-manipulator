@@ -7,6 +7,12 @@ coverage_pose:
     joint_names:     [joint1, joint2, joint3, joint4, joint5, joint6]
     joint_initial_0: [0.0, 0.0, -1.57, 0.0, 1.57, 0.0]
 
+    # Stamping pattern (between every pair of consecutive waypoints):
+    #   move to (xy, waypoint_z) -> drop to stamp_z_down -> lift to waypoint_z
+    # Repeated every stamp_step_size meters along each segment.
+    stamp_step_size: 0.05   # 5 cm
+    stamp_z_down:    0.15
+
     coverage_poses_0: [-0.4,   0.12, 0.32, 3.14, 0.0, -3.1411]   # back right
     coverage_poses_1: [-0.4,  -0.15, 0.32, 3.14, 0.0, -3.1411]   # front right
     coverage_poses_2: [ 0.33, -0.15, 0.32, 3.14, 0.0, -3.1411]   # front left
