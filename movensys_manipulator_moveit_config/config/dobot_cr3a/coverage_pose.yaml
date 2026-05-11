@@ -13,10 +13,10 @@ coverage_pose:
     stamp_step_size: 0.05   # 5 cm
     stamp_z_down:    0.28
 
-    coverage_poses_0: [-0.4,   0.1, 0.32, 3.14, 0.0, -3.1411]   # back right
-    coverage_poses_1: [ 0.15,  0.1, 0.32, 3.14, 0.0, -3.1411]   # back left
-    coverage_poses_2: [ 0.15, -0.05, 0.32, 3.14, 0.0, -3.1411]   # between 1
-    coverage_poses_3: [ 0.33, -0.05, 0.32, 3.14, 0.0, -3.1411]   # between 2
-    coverage_poses_4: [ 0.33, -0.15, 0.32, 3.14, 0.0, -3.1411]   # front left
-    coverage_poses_5: [-0.4,  -0.15, 0.32, 3.14, 0.0, -3.1411]   # front right
-    coverage_poses_6: [-0.4,   0.1, 0.32, 3.14, 0.0, -3.1411]   # back right (close loop)
+    coverage_poses_0: [-0.4,   0.05, 0.32, 3.14, 0.0, -1.57]   # back right
+    coverage_poses_1: [ 0.15,  0.05, 0.32, 3.14, 0.0, -1.57]   # back left
+    coverage_poses_2: [ 0.15, -0.05, 0.32, 3.14, 0.0, -1.57]   # between 1
+    coverage_poses_3: [ 0.33, -0.05, 0.32, 3.14, 0.0, -1.57]   # between 2
+    coverage_poses_4: [ 0.33, -0.15, 0.32, 3.14, 0.0, -1.57]   # front left
+    coverage_poses_5: [-0.4,  -0.15, 0.32, 3.14, 0.0, -1.57]   # front right
+    coverage_poses_6: [-0.4,   0.1, 0.32, 3.14, 0.0, -1.57]   # back right (close loop)
