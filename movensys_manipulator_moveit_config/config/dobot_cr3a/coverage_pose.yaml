@@ -19,4 +19,4 @@ coverage_pose:
     coverage_poses_3: [ 0.33, -0.05, 0.32, 3.14, 0.0, -3.1411]   # between 2
     coverage_poses_4: [ 0.33, -0.15, 0.32, 3.14, 0.0, -3.1411]   # front left
     coverage_poses_5: [-0.4,  -0.15, 0.32, 3.14, 0.0, -3.1411]   # front right
-    coverage_poses_6: [-0.4,   0.12, 0.32, 3.14, 0.0, -3.1411]   # back right (close loop)
+    coverage_poses_6: [-0.4,   0.1, 0.32, 3.14, 0.0, -3.1411]   # back right (close loop)
