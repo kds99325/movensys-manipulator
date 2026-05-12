@@ -5,8 +5,8 @@ yolo_cube_detector:
     confidence_threshold: 0.5
 
     # Scene geometry (scan pose). cube_height = floor + cube top surface.
-    cube_height: 0.043
-    cam_z_world: 0.046
+    cube_height: 0.044 # origin value => 0.038, total height => board height + cube height
+    cam_z_world: 0.45   # original value => 0.45
     cam_x_world: 0.0
     cam_y_world: 0.0
     # Optical-frame orientation in world, [x, y, z, w] (scan RPY = (π, 0, π))
