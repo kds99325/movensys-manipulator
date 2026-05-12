@@ -76,8 +76,8 @@ class YoloDiceDetector(Node):
 
         self.declare_parameter('model_path', '')
         self.declare_parameter('confidence_threshold', 0.5)
-        self.declare_parameter('dice_height', 0.05)
-        self.declare_parameter('cam_z_world', 0.45)
+        self.declare_parameter('dice_height', 0.06)
+        self.declare_parameter('cam_z_world', 0.35)
         self.declare_parameter('cam_x_world', 0.0)
         self.declare_parameter('cam_y_world', 0.0)
         self.declare_parameter('cam_orientation', [0.0, 1.0, 0.0, 0.0])

@@ -40,14 +40,23 @@ mros ros2 launch movensys_manipulator_perception camera_hand.launch.py
 
 
 ### Step 5: Launch the YOLO cube detector
-```
+```bash
+cd ~/workspaces/movensys_ws/src/movensys-manpulator/movensys_manipulator_perception
 mros ros2 launch movensys_manipulator_perception yolo_cube_detector.launch.py
 ```
-Broadcasts TF frames `yolo_cube_{green,blue,yellow,red}` relative to
-`camera_hand_link_color_optical_frame`. See `6d_yolo_example.md` for
-model/device overrides and verification commands.
 
+### Step 6: Launch the YOLO dice detector
+```bash
+cd ~/workspaces/movensys_ws/src/movensys-manpulator/movensys_manipulator_perception
+mros ros2 launch movensys_manipulator_perception yolo_dice_detector.launch.py
+```
 
+#### Debug YOLO result (Optional)
+```bash
+ros2 run rqt_image_view rqt_image_view /yolo_dice_detector/debug_image
+
+ros2 run rqt_image_view rqt_image_view /yolo_cube_detector/debug_image
+```
 
 
 ### Step 6: Execute YOLO pick-and-place

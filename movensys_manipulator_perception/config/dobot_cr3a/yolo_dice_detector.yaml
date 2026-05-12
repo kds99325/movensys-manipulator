@@ -5,8 +5,8 @@ yolo_dice_detector:
     confidence_threshold: 0.5
 
     # Scene geometry (scan pose). dice_height = floor + die top surface.
-    dice_height: 0.05
-    cam_z_world: 0.45
+    dice_height: 0.06
+    cam_z_world: 0.35   # orignal Value => 0.45
     cam_x_world: 0.0
     cam_y_world: 0.0
     # Optical-frame orientation in world, [x, y, z, w] (scan RPY = (π, 0, π))
@@ -26,8 +26,8 @@ yolo_dice_detector:
     # geometry is preserved, so camera intrinsics / pixel projection are
     # unaffected. Dice workspace excludes the left edge of the frame.
     mask_left_fraction:   0.20
-    mask_right_fraction:  0.0
-    mask_top_fraction:    0.0
-    mask_bottom_fraction: 0.0
+    mask_right_fraction:  0.35
+    mask_top_fraction:    0.2
+    mask_bottom_fraction: 0.05
     # Fill colour for masked pixels, BGR, each channel in [0, 255].
     mask_color: [0, 0, 0]
