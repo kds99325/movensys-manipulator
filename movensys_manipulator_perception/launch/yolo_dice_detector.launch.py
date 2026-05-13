@@ -22,7 +22,7 @@ def generate_launch_description():
     pkg_share = get_package_share_directory('movensys_manipulator_perception')
     manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
     default_params = os.path.join(pkg_share, 'config', manipulator_model, 'yolo_dice_detector.yaml')
-    default_model = os.path.join(pkg_share, 'models', 'dice_obb.pt')
+    default_model = os.path.join(pkg_share, 'models', 'dice_obb.pt_with_3D_Tray')
 
     declared_arguments = [
         DeclareLaunchArgument(
