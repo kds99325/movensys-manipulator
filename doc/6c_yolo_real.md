@@ -1,13 +1,9 @@
 # YOLO Pick-and-Place (Real Hardware)
 ## Execution Procedure
 
-### Step 1a: Open Isaac Sim
+### Step 1: Open Isaac Sim
 `~/workspaces/movensys-simulation/<MANIPULATOR_MODEL>/trajectory_real.usd`
 
-### Step 1b: Open Gazebo
-```
-mros ros2 launch movensys_manipulator_description gazebo_trajectory_real.launch.py
-```
 
 
 
@@ -31,25 +27,21 @@ mros ros2 launch movensys_manipulator_moveit_config cumotion.launch.py
 
 
 
-### Step 4: Launch the hand camera
+### Step 4: Launch the YOLO cube and dice detector
 ```
-mros ros2 launch movensys_manipulator_perception camera_hand.launch.py
-```
-
-
-
-
-### Step 5: Launch the YOLO cube detector
-```bash
-cd ~/workspaces/movensys_ws/src/movensys-manpulator/movensys_manipulator_perception
-mros ros2 launch movensys_manipulator_perception yolo_cube_detector.launch.py
+mros ros2 launch movensys_manipulator_perception yolo_dice_and_cube_detector.launch.py
 ```
 
-### Step 6: Launch the YOLO dice detector
-```bash
-cd ~/workspaces/movensys_ws/src/movensys-manpulator/movensys_manipulator_perception
-mros ros2 launch movensys_manipulator_perception yolo_dice_detector.launch.py
-```
+
+
+
+
+
+
+
+
+
+
 
 #### Debug YOLO result (Optional)
 ```bash
@@ -59,9 +51,9 @@ ros2 run rqt_image_view rqt_image_view /yolo_cube_detector/debug_image
 ```
 
 
-### Step 6: Execute YOLO pick-and-place
+### Step 6: Execute YOLO pick-and-place (Optional)
 ```
-mros ros2 launch movensys_manipulator_moveit_config movensys_manipulator_yolo_trajectory.launch.py
+mros ros2 launch movensys_manipulator_moveit_config yolo_pick_and_place.launch.py
 ```
 Loads pick/drop poses from `config/<MANIPULATOR_MODEL>/yolo_trajectory.yaml`.
 The node moves to the scan pose, visually servos over each cube in

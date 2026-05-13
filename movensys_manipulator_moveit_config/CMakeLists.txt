@@ -121,9 +121,9 @@ ament_target_dependencies(apriltag_pick_and_place
   std_srvs
 )
 
-add_executable(yolo_trajectory_cpp src/yolo_trajectory.cpp)
-target_link_libraries(yolo_trajectory_cpp moveit2_client_lib)
-ament_target_dependencies(yolo_trajectory_cpp
+add_executable(yolo_pick_and_place_cpp src/yolo_pick_and_place.cpp)
+target_link_libraries(yolo_pick_and_place_cpp moveit2_client_lib)
+ament_target_dependencies(yolo_pick_and_place_cpp
   rclcpp
   moveit_ros_planning_interface
   moveit_msgs
@@ -150,7 +150,7 @@ install(TARGETS
   obstacle_avoidance_cpp
   apriltag_pick_and_place
   trajectory_api
-  yolo_trajectory_cpp
+  yolo_pick_and_place_cpp
   DESTINATION lib/${PROJECT_NAME}
 )
 
