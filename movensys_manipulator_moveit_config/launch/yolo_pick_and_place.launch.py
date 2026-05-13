@@ -47,7 +47,7 @@ def generate_launch_description():
         raise FileNotFoundError(
             f"yolo_trajectory.yaml not found for manipulator model '{manipulator_model}'. "
             f"Expected: {yolo_trajectory_config}. "
-            f"Set MANIPULATOR_MODEL to a model that has YOLO configuration (e.g. dobot_cr5a)."
+            f"Set MANIPULATOR_MODEL to a model that has YOLO configuration (e.g. dobot_cr3a)."
         )
 
     yolo_pick_and_place_node = Node(
