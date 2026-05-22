@@ -6,6 +6,7 @@
 
 ### Step 1b: Open Gazebo
 ```
+mros ros2 launch movensys_manipulator_description gazebo_trajectory_real.launch.py
 ```
 
 
