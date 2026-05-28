@@ -26,6 +26,7 @@ RUN apt-get update && \
       ros-jazzy-isaac-ros-image-proc \
       python3-colcon-common-extensions \
       python3-setuptools \
+      ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && \
