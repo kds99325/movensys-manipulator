@@ -1,7 +1,4 @@
-"""
-yolo_dice_detector.launch.py
-============================
-Launcher for the YOLO OBB dice detector node.
+"""Launcher for the YOLO OBB dice detector node.
 
 Loads defaults from config/$MANIPULATOR_MODEL/yolo_dice_detector.yaml. The `model_path`
 argument defaults to the dice_obb.pt weights shipped inside this

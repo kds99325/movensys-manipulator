@@ -45,7 +45,7 @@ jobs:
       - name: ament_flake8 (all Python)
         run: |
           source /opt/ros/${{ matrix.ros_distro }}/setup.bash
-          ament_flake8 \
+          ament_flake8 --config ament_flake8.ini \
             movensys_manipulator_description/launch \
             movensys_manipulator_moveit_config/launch \
             movensys_manipulator_isaac_ros_config/launch \

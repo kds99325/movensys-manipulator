@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-yolo_cube_detector.py  —  YOLO OBB cube detection node (movensys_manipulator_perception)
-========================================================================================
+"""YOLO OBB cube detection node (movensys_manipulator_perception).
 
 Subscribes to the hand camera, runs YOLO OBB inference, and for every
 detected cube class broadcasts a TF frame relative to the camera optical
@@ -40,10 +38,10 @@ Model class mapping (matches dataset.yaml / classes.txt):
 import math
 
 import cv2
-import numpy as np
-import rclpy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import TransformStamped
+import numpy as np
+import rclpy
 from rclpy.node import Node
 from scipy.spatial.transform import Rotation
 from sensor_msgs.msg import CameraInfo, Image
@@ -61,9 +59,7 @@ CLASS_COLORS = {
 
 
 class YoloCubeDetector(Node):
-    """
-    ROS 2 node: YOLO OBB cube detection with camera-frame TF broadcast.
-    """
+    """ROS 2 node: YOLO OBB cube detection with camera-frame TF broadcast."""
 
     def __init__(self):
         super().__init__('yolo_cube_detector')
@@ -83,35 +79,35 @@ class YoloCubeDetector(Node):
                                '/image_hand/camera_info')
         self.declare_parameter('camera_frame',
                                'camera_hand_color_optical_frame')
-        self.declare_parameter('mask_left_fraction',   0.0)
-        self.declare_parameter('mask_right_fraction',  0.0)
-        self.declare_parameter('mask_top_fraction',    0.0)
+        self.declare_parameter('mask_left_fraction', 0.0)
+        self.declare_parameter('mask_right_fraction', 0.0)
+        self.declare_parameter('mask_top_fraction', 0.0)
         self.declare_parameter('mask_bottom_fraction', 0.0)
         self.declare_parameter('mask_color', [0, 0, 0])
 
-        model_path            = self.get_parameter('model_path').value
-        self.conf_threshold   = self.get_parameter('confidence_threshold').value
-        self.cube_height      = self.get_parameter('cube_height').value
-        self.cam_z_world      = self.get_parameter('cam_z_world').value
-        self.cam_x_world      = self.get_parameter('cam_x_world').value
-        self.cam_y_world      = self.get_parameter('cam_y_world').value
-        cam_quat              = self.get_parameter('cam_orientation').value
-        self.publish_debug    = self.get_parameter('publish_debug_image').value
-        self.device           = self.get_parameter('device').value
-        image_topic           = self.get_parameter('image_topic').value
-        camera_info_topic     = self.get_parameter('camera_info_topic').value
-        self.camera_frame     = self.get_parameter('camera_frame').value
-        self.mask_left        = float(self.get_parameter('mask_left_fraction').value)
-        self.mask_right       = float(self.get_parameter('mask_right_fraction').value)
-        self.mask_top         = float(self.get_parameter('mask_top_fraction').value)
-        self.mask_bottom      = float(self.get_parameter('mask_bottom_fraction').value)
-        self.mask_color       = self._validate_mask(
+        model_path = self.get_parameter('model_path').value
+        self.conf_threshold = self.get_parameter('confidence_threshold').value
+        self.cube_height = self.get_parameter('cube_height').value
+        self.cam_z_world = self.get_parameter('cam_z_world').value
+        self.cam_x_world = self.get_parameter('cam_x_world').value
+        self.cam_y_world = self.get_parameter('cam_y_world').value
+        cam_quat = self.get_parameter('cam_orientation').value
+        self.publish_debug = self.get_parameter('publish_debug_image').value
+        self.device = self.get_parameter('device').value
+        image_topic = self.get_parameter('image_topic').value
+        camera_info_topic = self.get_parameter('camera_info_topic').value
+        self.camera_frame = self.get_parameter('camera_frame').value
+        self.mask_left = float(self.get_parameter('mask_left_fraction').value)
+        self.mask_right = float(self.get_parameter('mask_right_fraction').value)
+        self.mask_top = float(self.get_parameter('mask_top_fraction').value)
+        self.mask_bottom = float(self.get_parameter('mask_bottom_fraction').value)
+        self.mask_color = self._validate_mask(
             list(self.get_parameter('mask_color').value))
 
         self.R_cam = self._quat_to_rot(cam_quat)
 
         self.bridge = CvBridge()
-        self.model  = None
+        self.model = None
         self.fx = self.fy = self.cx = self.cy = None
 
         self.tf_broadcaster = TransformBroadcaster(self)
@@ -207,7 +203,7 @@ class YoloCubeDetector(Node):
                 continue
             for i in range(len(result.obb)):
                 cls_id = int(result.obb.cls[i].item())
-                conf   = float(result.obb.conf[i].item())
+                conf = float(result.obb.conf[i].item())
                 if cls_id >= len(CLASS_NAMES):
                     continue
                 if cls_id not in best or conf > best[cls_id][0]:
@@ -246,25 +242,25 @@ class YoloCubeDetector(Node):
             quat = Rotation.from_euler('z', image_yaw).as_quat()
 
             t = TransformStamped()
-            t.header.stamp    = msg.header.stamp
+            t.header.stamp = msg.header.stamp
             t.header.frame_id = self.camera_frame
-            t.child_frame_id  = f'yolo_cube_{CLASS_SHORT[cls_id]}'
+            t.child_frame_id = f'yolo_cube_{CLASS_SHORT[cls_id]}'
             t.transform.translation.x = float(p_cam[0])
             t.transform.translation.y = float(p_cam[1])
             t.transform.translation.z = float(p_cam[2])
-            t.transform.rotation.x    = float(quat[0])
-            t.transform.rotation.y    = float(quat[1])
-            t.transform.rotation.z    = float(quat[2])
-            t.transform.rotation.w    = float(quat[3])
+            t.transform.rotation.x = float(quat[0])
+            t.transform.rotation.y = float(quat[1])
+            t.transform.rotation.z = float(quat[2])
+            t.transform.rotation.w = float(quat[3])
             tf_msgs.append(t)
 
             annotations.append({
-                'corners':    corners,
-                'centroid':   (int(cx_px), int(cy_px)),
-                'cls_name':   CLASS_NAMES[cls_id],
-                'conf':       conf,
-                'image_yaw':  image_yaw,
-                'p_cam':      p_cam,
+                'corners': corners,
+                'centroid': (int(cx_px), int(cy_px)),
+                'cls_name': CLASS_NAMES[cls_id],
+                'conf': conf,
+                'image_yaw': image_yaw,
+                'p_cam': p_cam,
             })
 
         for tf_msg in tf_msgs:
@@ -302,16 +298,20 @@ class YoloCubeDetector(Node):
         nt = int(round(h * self.mask_top))
         nb = int(round(h * self.mask_bottom))
         color = self.mask_color
-        if nl: image[:, :nl]      = color
-        if nr: image[:, w - nr:]  = color
-        if nt: image[:nt, :]      = color
-        if nb: image[h - nb:, :]  = color
+        if nl:
+            image[:, :nl] = color
+        if nr:
+            image[:, w - nr:] = color
+        if nt:
+            image[:nt, :] = color
+        if nb:
+            image[h - nb:, :] = color
 
     def _project_to_camera_frame(
             self, px: float, py: float) -> np.ndarray | None:
         x_norm = (px - self.cx) / self.fx
         y_norm = (py - self.cy) / self.fy
-        d_opt  = np.array([x_norm, y_norm, 1.0])
+        d_opt = np.array([x_norm, y_norm, 1.0])
 
         d_world = self.R_cam @ d_opt
 
@@ -332,10 +332,10 @@ class YoloCubeDetector(Node):
         return self.R_cam @ p_cam + t_cam
 
     def _smart_yaw(self, corners: np.ndarray) -> float:
-        """
-        OBB yaw relative to the vertical image axis. For rectangular
-        objects with 180° symmetry, finds the long-edge angle closest
-        to vertical and normalises to [-π/2, π/2].
+        """Compute OBB yaw relative to the vertical image axis.
+
+        For rectangular objects with 180° symmetry, finds the long-edge angle
+        closest to vertical and normalises to [-π/2, π/2].
         """
         edge_info = []
         for i in range(4):
@@ -344,7 +344,7 @@ class YoloCubeDetector(Node):
             dx = float(p2[0] - p1[0])
             dy = float(p2[1] - p1[1])
             length = math.hypot(dx, dy)
-            angle  = math.atan2(dx, -dy)
+            angle = math.atan2(dx, -dy)
             edge_info.append((length, angle))
 
         if edge_info[0][0] <= edge_info[1][0]:
@@ -354,7 +354,7 @@ class YoloCubeDetector(Node):
 
         yaw = min((e[1] for e in short_edges), key=abs)
 
-        while yaw >  math.pi / 2:
+        while yaw > math.pi / 2:
             yaw -= math.pi
         while yaw < -math.pi / 2:
             yaw += math.pi
@@ -375,11 +375,11 @@ class YoloCubeDetector(Node):
     def _draw(self, image: np.ndarray, annotations: list) -> np.ndarray:
         vis = image.copy()
         for ann in annotations:
-            color    = CLASS_COLORS.get(ann['cls_name'], (255, 255, 255))
-            corners  = ann['corners'].astype(np.int32)
+            color = CLASS_COLORS.get(ann['cls_name'], (255, 255, 255))
+            corners = ann['corners'].astype(np.int32)
             centroid = ann['centroid']
-            yaw      = ann['image_yaw']
-            p_cam    = ann['p_cam']
+            yaw = ann['image_yaw']
+            p_cam = ann['p_cam']
 
             cv2.polylines(vis, [corners], True, color, 2)
             cv2.circle(vis, centroid, 5, color, -1)

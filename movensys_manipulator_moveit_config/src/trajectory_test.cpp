@@ -1,7 +1,14 @@
-#include <rclcpp/rclcpp.hpp>
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
+
 #include <cmath>
-#include <vector>
 #include <map>
+#include <string>
+#include <thread>
+#include <vector>
+
+#include <rclcpp/rclcpp.hpp>
+
 #include "moveit2_client.hpp"
 
 bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Client& client);
@@ -30,7 +37,8 @@ int main(int argc, char* argv[]){
     node->declare_parameter("replan_attempts",   0);
 
     // Trajectory waypoints
-    node->declare_parameter("joint_names",           std::vector<std::string>{"j1","j2","j3","j4","j5","j6"});
+    node->declare_parameter("joint_names",
+        std::vector<std::string>{"j1", "j2", "j3", "j4", "j5", "j6"});
 
     node->declare_parameter("joint_initial_0",        std::vector<double>(1, 0.0));
 
@@ -97,38 +105,65 @@ bool runTrajectory(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
     const auto joint_names = node->get_parameter("joint_names").as_string_array();
 
     RCLCPP_INFO(node->get_logger(), "------- Joint Movement -------");
-    if (!client.jointMovement(toJointMap(node->get_parameter("joint_initial_0").as_double_array(), joint_names))) {
+    if (!client.jointMovement(toJointMap(
+            node->get_parameter("joint_initial_0").as_double_array(), joint_names))) {
         RCLCPP_ERROR(node->get_logger(), "Joint Movement failed"); return false; }
 
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Cartesian -------");
-    if (!client.absoluteBaseEefCartesian(toPose(node->get_parameter("cartesian_poses_0").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Cartesian move failed"); return false; }
-    if (!client.absoluteBaseEefCartesian(toPose(node->get_parameter("cartesian_poses_1").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Cartesian move failed"); return false; }
+    if (!client.absoluteBaseEefCartesian(toPose(
+            node->get_parameter("cartesian_poses_0").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Cartesian move failed");
+        return false;
+    }
+    if (!client.absoluteBaseEefCartesian(toPose(
+            node->get_parameter("cartesian_poses_1").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Cartesian move failed");
+        return false;
+    }
 
     RCLCPP_INFO(node->get_logger(), "------- Relative Base EEF Cartesian -------");
-    if (!client.relativeBaseEefCartesian(toPose(node->get_parameter("relative_base_deltas_0").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Relative Base EEF Cartesian move failed"); return false; }
-    if (!client.relativeBaseEefCartesian(toPose(node->get_parameter("relative_base_deltas_1").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Relative Base EEF Cartesian move failed"); return false; }
+    if (!client.relativeBaseEefCartesian(toPose(
+            node->get_parameter("relative_base_deltas_0").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Relative Base EEF Cartesian move failed");
+        return false;
+    }
+    if (!client.relativeBaseEefCartesian(toPose(
+            node->get_parameter("relative_base_deltas_1").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Relative Base EEF Cartesian move failed");
+        return false;
+    }
 
     RCLCPP_INFO(node->get_logger(), "------- Relative Tool EEF Cartesian -------");
-    if (!client.relativeToolEefCartesian(toPose(node->get_parameter("relative_tool_deltas_0").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Relative Tool EEF Cartesian move failed"); return false; }
-    if (!client.relativeToolEefCartesian(toPose(node->get_parameter("relative_tool_deltas_1").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Relative Tool EEF Cartesian move failed"); return false; }
+    if (!client.relativeToolEefCartesian(toPose(
+            node->get_parameter("relative_tool_deltas_0").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Relative Tool EEF Cartesian move failed");
+        return false;
+    }
+    if (!client.relativeToolEefCartesian(toPose(
+            node->get_parameter("relative_tool_deltas_1").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Relative Tool EEF Cartesian move failed");
+        return false;
+    }
 
     RCLCPP_INFO(node->get_logger(), "------- Joint Movement -------");
-    if (!client.jointMovement(toJointMap(node->get_parameter("joint_poses_0").as_double_array(), joint_names))) {
+    if (!client.jointMovement(toJointMap(
+            node->get_parameter("joint_poses_0").as_double_array(), joint_names))) {
         RCLCPP_ERROR(node->get_logger(), "Joint Movement failed"); return false; }
-    if (!client.jointMovement(toJointMap(node->get_parameter("joint_poses_1").as_double_array(), joint_names))) {
+    if (!client.jointMovement(toJointMap(
+            node->get_parameter("joint_poses_1").as_double_array(), joint_names))) {
         RCLCPP_ERROR(node->get_logger(), "Joint Movement failed"); return false; }
 
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Joint Movement -------");
-    if (!client.absoluteBaseEefJointMovement(toPose(node->get_parameter("joint_movement_poses_0").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Joint Movement failed"); return false; }
-    if (!client.absoluteBaseEefJointMovement(toPose(node->get_parameter("joint_movement_poses_1").as_double_array()))) {
-        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Joint Movement failed"); return false; }
+    if (!client.absoluteBaseEefJointMovement(toPose(
+            node->get_parameter("joint_movement_poses_0").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Joint Movement failed");
+        return false;
+    }
+    if (!client.absoluteBaseEefJointMovement(toPose(
+            node->get_parameter("joint_movement_poses_1").as_double_array()))) {
+        RCLCPP_ERROR(node->get_logger(), "Absolute Base EEF Joint Movement failed");
+        return false;
+    }
 
     RCLCPP_INFO(node->get_logger(), "------- Gripper Service -------");
     client.setGripper(true);

@@ -1,10 +1,10 @@
 import os
 
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
@@ -16,8 +16,10 @@ def generate_launch_description():
         description="Use simulation clock (/clock)"
     )
 
-    pkg_movensys_isaac_ros_config = get_package_share_directory('movensys_manipulator_isaac_ros_config')
-    pkg_movensys_manipulator_perception = get_package_share_directory('movensys_manipulator_perception')
+    pkg_movensys_isaac_ros_config = get_package_share_directory(
+        'movensys_manipulator_isaac_ros_config')
+    pkg_movensys_manipulator_perception = get_package_share_directory(
+        'movensys_manipulator_perception')
 
     nvblox_rviz = os.path.join(pkg_movensys_isaac_ros_config, 'rviz', 'nvblox.rviz')
 

@@ -1,12 +1,11 @@
 import os
 
-from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node, ComposableNodeContainer, LoadComposableNodes
-from launch_ros.descriptions import ComposableNode
 from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes, Node
+from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description():
@@ -18,16 +17,21 @@ def generate_launch_description():
         description="Use simulation clock (/clock)"
     )
 
-    pkg_movensys_isaac_ros_config = get_package_share_directory('movensys_manipulator_isaac_ros_config')
+    pkg_movensys_isaac_ros_config = get_package_share_directory(
+        'movensys_manipulator_isaac_ros_config')
     pkg_movensys_description = get_package_share_directory('movensys_manipulator_description')
 
     manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
 
-    robot_xrdf = os.path.join(pkg_movensys_description, 'urdf', manipulator_model, 'movensys_manipulator.xrdf')
-    urdf_path = os.path.join(pkg_movensys_description, 'urdf', manipulator_model, 'movensys_manipulator.urdf')
+    robot_xrdf = os.path.join(
+        pkg_movensys_description, 'urdf', manipulator_model, 'movensys_manipulator.xrdf')
+    urdf_path = os.path.join(
+        pkg_movensys_description, 'urdf', manipulator_model, 'movensys_manipulator.urdf')
 
-    nvblox_base_config = os.path.join(pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'nvblox_movensys_base.yaml')
-    workspace_config = os.path.join(pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'movensys_sim.yaml')
+    nvblox_base_config = os.path.join(
+        pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'nvblox_movensys_base.yaml')
+    workspace_config = os.path.join(
+        pkg_movensys_isaac_ros_config, 'config', manipulator_model, 'movensys_sim.yaml')
 
     manipulation_container = ComposableNodeContainer(
         name='manipulation_container',

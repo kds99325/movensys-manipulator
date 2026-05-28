@@ -1,14 +1,18 @@
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
+
 // std::chrono::nanoseconds
 #include <chrono>
-#include <thread>
-#include <vector>
-#include <string>
-#include <algorithm>
 // for using std::bind
 #include <functional>
+#include <iomanip>
+#include <memory>
 // std::ostringstream
 #include <sstream>
-#include <iomanip>
+#include <string>
+#include <thread>
+#include <vector>
+#include <algorithm>
 
 // topic, service, action
 #include "rclcpp/rclcpp.hpp"
@@ -46,14 +50,15 @@ public:
 
   GazeboBridge() : Node("gazebo_bridge") {
     // Declare parameters
-    this->declare_parameter("arm_joint_names", std::vector<std::string>{"j1","j2","j3","j4","j5","j6"});
+    this->declare_parameter("arm_joint_names",
+        std::vector<std::string>{"j1", "j2", "j3", "j4", "j5", "j6"});
     this->declare_parameter("gripper_joint_names", std::vector<std::string>{});
     this->declare_parameter("gripper_open",  0.000);
     this->declare_parameter("gripper_close", 0.000);
     this->declare_parameter("joint_command_topic", "/joint_command_topic/no_topic");
     this->declare_parameter("joint_states_topic",  "/joint_states_topic/no_topic");
     this->declare_parameter("set_gripper_service", "/set_gripper_service/no_topic");
-    this->declare_parameter("action_name","/action_name/no_action");
+    this->declare_parameter("action_name", "/action_name/no_action");
 
     // Fetch parameters
     arm_joint_names_     = this->get_parameter("arm_joint_names").as_string_array();
@@ -66,9 +71,11 @@ public:
     const auto action_name         = this->get_parameter("action_name").as_string();
 
     // Create interfaces
-    pub_joint_command_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(joint_command_topic, 10);
-    sub_joint_state_   = this->create_subscription<sensor_msgs::msg::JointState>(joint_states_topic,
-                          10, std::bind(&GazeboBridge::cb, this, std::placeholders::_1));
+    pub_joint_command_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(
+        joint_command_topic, 10);
+    sub_joint_state_   = this->create_subscription<sensor_msgs::msg::JointState>(
+        joint_states_topic,
+        10, std::bind(&GazeboBridge::cb, this, std::placeholders::_1));
 
     setGripperService_ = this->create_service<std_srvs::srv::SetBool>(set_gripper_service,
                                 std::bind(&GazeboBridge::setGripper, this,
@@ -77,7 +84,8 @@ public:
     action_server_ = rclcpp_action::create_server<FollowJT>(
         this,
         action_name,
-        std::bind(&GazeboBridge::handle_goal,     this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&GazeboBridge::handle_goal,     this,
+                  std::placeholders::_1, std::placeholders::_2),
         std::bind(&GazeboBridge::handle_cancel,   this, std::placeholders::_1),
         std::bind(&GazeboBridge::handle_accepted, this, std::placeholders::_1));
 
@@ -105,9 +113,10 @@ private:
     std_msgs::msg::Float64MultiArray joint_command;
     joint_command.data.resize(n_total);
 
-    // Copy current positions from last_joint_state by name to handle distro-specific joint ordering
+    // Copy current positions from last_joint_state by name to handle distro-specific joint order
     for (size_t i = 0; i < n_arm; ++i) {
-      auto it = std::find(last_joint_state.name.begin(), last_joint_state.name.end(), arm_joint_names_[i]);
+      auto it = std::find(
+          last_joint_state.name.begin(), last_joint_state.name.end(), arm_joint_names_[i]);
       if (it != last_joint_state.name.end()) {
         size_t idx = std::distance(last_joint_state.name.begin(), it);
         joint_command.data[i] = last_joint_state.position[idx];
@@ -149,7 +158,9 @@ private:
     // Log joint names
     std::ostringstream jn;
     for (size_t i = 0; i < traj.joint_names.size(); ++i) {
-      if (i) jn << ", ";
+      if (i) {
+        jn << ", ";
+      }
       jn << traj.joint_names[i];
     }
     RCLCPP_INFO(this->get_logger(), "Joint Names: [%s]", jn.str().c_str());
@@ -158,25 +169,35 @@ private:
     for (size_t i = 0; i < traj.points.size(); ++i) {
       const auto &pt = traj.points[i];
       std::ostringstream pos, vel, acc;
-      for (size_t k = 0; k < pt.positions.size(); ++k) { if (k) pos << ", "; pos << pt.positions[k]; }
-      for (size_t k = 0; k < pt.velocities.size(); ++k) { if (k) vel << ", "; vel << pt.velocities[k]; }
-      for (size_t k = 0; k < pt.accelerations.size(); ++k) { if (k) acc << ", "; acc << pt.accelerations[k]; }
+      for (size_t k = 0; k < pt.positions.size(); ++k) {
+        if (k) { pos << ", "; }
+        pos << pt.positions[k];
+      }
+      for (size_t k = 0; k < pt.velocities.size(); ++k) {
+        if (k) { vel << ", "; }
+        vel << pt.velocities[k];
+      }
+      for (size_t k = 0; k < pt.accelerations.size(); ++k) {
+        if (k) { acc << ", "; }
+        acc << pt.accelerations[k];
+      }
       RCLCPP_INFO(
         this->get_logger(),
-        "Point %zu: Positions: [%s], Velocities: [%s], Accelerations: [%s], TimeFromStart: %d s %u ns",
+        "Point %zu: Positions: [%s], Velocities: [%s], Accelerations: [%s], "
+        "TimeFromStart: %d s %u ns",
         i, pos.str().c_str(), vel.str().c_str(), acc.str().c_str(),
         pt.time_from_start.sec, pt.time_from_start.nanosec);
-      if(i!=0) {
+      if (i != 0) {
         rclcpp::Duration duration_cur(traj.points[i].time_from_start);
         rclcpp::Duration duration_pre(traj.points[i-1].time_from_start);
         // we can get moving time (current - previous joint)
         RCLCPP_INFO(
           this->get_logger(),
           "Time interval: %f",
-          (duration_cur-duration_pre).seconds());        
+          (duration_cur-duration_pre).seconds());
       }
     }
-    
+
     const size_t n_arm   = arm_joint_names_.size();
     const size_t n_total = n_arm + gripper_joint_names_.size();
 

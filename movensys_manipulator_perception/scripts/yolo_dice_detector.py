@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-yolo_dice_detector.py  —  YOLO OBB dice detection node (movensys_manipulator_perception)
-=========================================================================================
+"""YOLO OBB dice detection node (movensys_manipulator_perception).
 
 Subscribes to the hand camera, runs YOLO OBB inference, and for every
 detected dice face class broadcasts a TF frame relative to the camera
@@ -43,10 +41,10 @@ Model class mapping (matches dataset.yaml):
 import math
 
 import cv2
-import numpy as np
-import rclpy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import TransformStamped
+import numpy as np
+import rclpy
 from rclpy.node import Node
 from scipy.spatial.transform import Rotation
 from sensor_msgs.msg import CameraInfo, Image
@@ -67,9 +65,7 @@ CLASS_COLORS = {
 
 
 class YoloDiceDetector(Node):
-    """
-    ROS 2 node: YOLO OBB dice detection with camera-frame TF broadcast.
-    """
+    """ROS 2 node: YOLO OBB dice detection with camera-frame TF broadcast."""
 
     def __init__(self):
         super().__init__('yolo_dice_detector')
@@ -89,35 +85,35 @@ class YoloDiceDetector(Node):
                                '/image_hand/camera_info')
         self.declare_parameter('camera_frame',
                                'camera_hand_color_optical_frame')
-        self.declare_parameter('mask_left_fraction',   0.0)
-        self.declare_parameter('mask_right_fraction',  0.0)
-        self.declare_parameter('mask_top_fraction',    0.0)
+        self.declare_parameter('mask_left_fraction', 0.0)
+        self.declare_parameter('mask_right_fraction', 0.0)
+        self.declare_parameter('mask_top_fraction', 0.0)
         self.declare_parameter('mask_bottom_fraction', 0.0)
         self.declare_parameter('mask_color', [0, 0, 0])
 
-        model_path            = self.get_parameter('model_path').value
-        self.conf_threshold   = self.get_parameter('confidence_threshold').value
-        self.dice_height      = self.get_parameter('dice_height').value
-        self.cam_z_world      = self.get_parameter('cam_z_world').value
-        self.cam_x_world      = self.get_parameter('cam_x_world').value
-        self.cam_y_world      = self.get_parameter('cam_y_world').value
-        cam_quat              = self.get_parameter('cam_orientation').value
-        self.publish_debug    = self.get_parameter('publish_debug_image').value
-        self.device           = self.get_parameter('device').value
-        image_topic           = self.get_parameter('image_topic').value
-        camera_info_topic     = self.get_parameter('camera_info_topic').value
-        self.camera_frame     = self.get_parameter('camera_frame').value
-        self.mask_left        = float(self.get_parameter('mask_left_fraction').value)
-        self.mask_right       = float(self.get_parameter('mask_right_fraction').value)
-        self.mask_top         = float(self.get_parameter('mask_top_fraction').value)
-        self.mask_bottom      = float(self.get_parameter('mask_bottom_fraction').value)
-        self.mask_color       = self._validate_mask(
+        model_path = self.get_parameter('model_path').value
+        self.conf_threshold = self.get_parameter('confidence_threshold').value
+        self.dice_height = self.get_parameter('dice_height').value
+        self.cam_z_world = self.get_parameter('cam_z_world').value
+        self.cam_x_world = self.get_parameter('cam_x_world').value
+        self.cam_y_world = self.get_parameter('cam_y_world').value
+        cam_quat = self.get_parameter('cam_orientation').value
+        self.publish_debug = self.get_parameter('publish_debug_image').value
+        self.device = self.get_parameter('device').value
+        image_topic = self.get_parameter('image_topic').value
+        camera_info_topic = self.get_parameter('camera_info_topic').value
+        self.camera_frame = self.get_parameter('camera_frame').value
+        self.mask_left = float(self.get_parameter('mask_left_fraction').value)
+        self.mask_right = float(self.get_parameter('mask_right_fraction').value)
+        self.mask_top = float(self.get_parameter('mask_top_fraction').value)
+        self.mask_bottom = float(self.get_parameter('mask_bottom_fraction').value)
+        self.mask_color = self._validate_mask(
             list(self.get_parameter('mask_color').value))
 
         self.R_cam = self._quat_to_rot(cam_quat)
 
         self.bridge = CvBridge()
-        self.model  = None
+        self.model = None
         self.fx = self.fy = self.cx = self.cy = None
 
         self.tf_broadcaster = TransformBroadcaster(self)
@@ -214,7 +210,7 @@ class YoloDiceDetector(Node):
                 continue
             for i in range(len(result.obb)):
                 cls_id = int(result.obb.cls[i].item())
-                conf   = float(result.obb.conf[i].item())
+                conf = float(result.obb.conf[i].item())
                 if cls_id >= len(CLASS_NAMES):
                     continue
                 if best is None or conf > best[0]:
@@ -255,27 +251,27 @@ class YoloDiceDetector(Node):
                 quat = Rotation.from_euler('z', image_yaw).as_quat()
 
                 t = TransformStamped()
-                t.header.stamp    = msg.header.stamp
+                t.header.stamp = msg.header.stamp
                 t.header.frame_id = self.camera_frame
-                t.child_frame_id  = 'dice'
+                t.child_frame_id = 'dice'
                 t.transform.translation.x = float(p_cam[0])
                 t.transform.translation.y = float(p_cam[1])
                 t.transform.translation.z = float(p_cam[2])
-                t.transform.rotation.x    = float(quat[0])
-                t.transform.rotation.y    = float(quat[1])
-                t.transform.rotation.z    = float(quat[2])
-                t.transform.rotation.w    = float(quat[3])
+                t.transform.rotation.x = float(quat[0])
+                t.transform.rotation.y = float(quat[1])
+                t.transform.rotation.z = float(quat[2])
+                t.transform.rotation.w = float(quat[3])
                 tf_msgs.append(t)
 
                 self.number_pub.publish(Int32(data=int(CLASS_SHORT[cls_id])))
 
                 annotations.append({
-                    'corners':    corners,
-                    'centroid':   (int(cx_px), int(cy_px)),
-                    'cls_name':   CLASS_NAMES[cls_id],
-                    'conf':       conf,
-                    'image_yaw':  image_yaw,
-                    'p_cam':      p_cam,
+                    'corners': corners,
+                    'centroid': (int(cx_px), int(cy_px)),
+                    'cls_name': CLASS_NAMES[cls_id],
+                    'conf': conf,
+                    'image_yaw': image_yaw,
+                    'p_cam': p_cam,
                 })
 
         for tf_msg in tf_msgs:
@@ -313,16 +309,20 @@ class YoloDiceDetector(Node):
         nt = int(round(h * self.mask_top))
         nb = int(round(h * self.mask_bottom))
         color = self.mask_color
-        if nl: image[:, :nl]      = color
-        if nr: image[:, w - nr:]  = color
-        if nt: image[:nt, :]      = color
-        if nb: image[h - nb:, :]  = color
+        if nl:
+            image[:, :nl] = color
+        if nr:
+            image[:, w - nr:] = color
+        if nt:
+            image[:nt, :] = color
+        if nb:
+            image[h - nb:, :] = color
 
     def _project_to_camera_frame(
             self, px: float, py: float) -> np.ndarray | None:
         x_norm = (px - self.cx) / self.fx
         y_norm = (py - self.cy) / self.fy
-        d_opt  = np.array([x_norm, y_norm, 1.0])
+        d_opt = np.array([x_norm, y_norm, 1.0])
 
         d_world = self.R_cam @ d_opt
 
@@ -343,11 +343,11 @@ class YoloDiceDetector(Node):
         return self.R_cam @ p_cam + t_cam
 
     def _smart_yaw(self, corners: np.ndarray) -> float:
-        """
-        OBB yaw relative to the vertical image axis. For a die's square
-        footprint (4-fold / 90° symmetry), every edge is equivalent —
-        fold each edge angle into [-π/4, π/4] and pick the one closest
-        to vertical.
+        """Compute OBB yaw relative to the vertical image axis.
+
+        For a die's square footprint (4-fold / 90° symmetry), every edge is
+        equivalent — fold each edge angle into [-π/4, π/4] and pick the one
+        closest to vertical.
         """
         folded = []
         for i in range(4):
@@ -356,7 +356,7 @@ class YoloDiceDetector(Node):
             dx = float(p2[0] - p1[0])
             dy = float(p2[1] - p1[1])
             angle = math.atan2(dx, -dy)
-            while angle >  math.pi / 4:
+            while angle > math.pi / 4:
                 angle -= math.pi / 2
             while angle < -math.pi / 4:
                 angle += math.pi / 2
@@ -378,11 +378,11 @@ class YoloDiceDetector(Node):
     def _draw(self, image: np.ndarray, annotations: list) -> np.ndarray:
         vis = image.copy()
         for ann in annotations:
-            color    = CLASS_COLORS.get(ann['cls_name'], (255, 255, 255))
-            corners  = ann['corners'].astype(np.int32)
+            color = CLASS_COLORS.get(ann['cls_name'], (255, 255, 255))
+            corners = ann['corners'].astype(np.int32)
             centroid = ann['centroid']
-            yaw      = ann['image_yaw']
-            p_cam    = ann['p_cam']
+            yaw = ann['image_yaw']
+            p_cam = ann['p_cam']
 
             cv2.polylines(vis, [corners], True, color, 2)
             cv2.circle(vis, centroid, 5, color, -1)

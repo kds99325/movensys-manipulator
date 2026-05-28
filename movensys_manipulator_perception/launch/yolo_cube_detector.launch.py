@@ -1,7 +1,4 @@
-"""
-yolo_cube_detector.launch.py
-============================
-Launcher for the YOLO OBB cube detector node.
+"""Launcher for the YOLO OBB cube detector node.
 
 Loads defaults from config/$MANIPULATOR_MODEL/yolo_cube_detector.yaml. The `model_path`
 argument defaults to the cubes_obb.pt weights shipped inside this

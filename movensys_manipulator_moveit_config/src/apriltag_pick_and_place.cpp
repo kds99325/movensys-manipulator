@@ -1,14 +1,21 @@
-#include <rclcpp/rclcpp.hpp>
-#include <cmath>
-#include <vector>
-#include <string>
-#include <map>
-#include <thread>
-#include <chrono>
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
+
 #include <cstdlib>
+
+#include <chrono>
+#include <cmath>
+#include <map>
+#include <string>
+#include <thread>
+#include <vector>
+
+#include <rclcpp/rclcpp.hpp>
+
 #include "moveit2_client.hpp"
 
-bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Client& client);
+bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node,
+                          moveit2_client::MoveIt2Client& client);
 
 int main(int argc, char* argv[]) {
     rclcpp::init(argc, argv);
@@ -36,8 +43,10 @@ int main(int argc, char* argv[]) {
     // AprilTag pick-and-place config
     node->declare_parameter<bool>("target_spawn",  true);
     node->declare_parameter("camera_hand_link",    std::string("camera_hand_color_optical_frame"));
-    node->declare_parameter("tag_ids",             std::vector<std::string>{"tag36h11:5", "tag36h11:9", "tag36h11:7", "tag36h11:11"});
-    node->declare_parameter("target_topics",       std::vector<std::string>{"/target1_sub", "/target2_sub", "/target3_sub", "/target4_sub"});
+    node->declare_parameter("tag_ids",
+        std::vector<std::string>{"tag36h11:5", "tag36h11:9", "tag36h11:7", "tag36h11:11"});
+    node->declare_parameter("target_topics",
+        std::vector<std::string>{"/target1_sub", "/target2_sub", "/target3_sub", "/target4_sub"});
 
     node->declare_parameter("z_target_pose_spawn",       0.0);
     node->declare_parameter("tag_down_z",          0.0);
@@ -47,7 +56,8 @@ int main(int argc, char* argv[]) {
     node->declare_parameter("tag_to_target_y",     0.0);
     node->declare_parameter("tag_to_target_yaw",   0.0);
 
-    node->declare_parameter("joint_names",  std::vector<std::string>{"j1","j2","j3","j4","j5","j6"});
+    node->declare_parameter("joint_names",
+        std::vector<std::string>{"j1", "j2", "j3", "j4", "j5", "j6"});
     node->declare_parameter("initial_pose", std::vector<double>(6, 0.0));
     node->declare_parameter("scan_pose",    std::vector<double>(6, 0.0));
 
@@ -103,14 +113,15 @@ static std::map<std::string, double> toJointMap(
     return m;
 }
 
-bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Client& client)
+bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node,
+                          moveit2_client::MoveIt2Client& client)
 {
     const bool   target_spawn        = node->get_parameter("target_spawn").as_bool();
     const auto   camera_hand_link    = node->get_parameter("camera_hand_link").as_string();
     const auto   tag_ids             = node->get_parameter("tag_ids").as_string_array();
     const auto   target_topic_name   = node->get_parameter("target_topics").as_string_array();
 
-    const double z_target_pose_spawn       = node->get_parameter("z_target_pose_spawn").as_double();
+    const double z_target_pose_spawn = node->get_parameter("z_target_pose_spawn").as_double();
     const double tag_down_z          = node->get_parameter("tag_down_z").as_double();
     const double tag_tol_pose        = node->get_parameter("tag_tol_pose").as_double();
     const double tag_tol_orientation = node->get_parameter("tag_tol_orientation").as_double();
@@ -119,7 +130,8 @@ bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node, moveit2_client::M
     const double tag_to_target_yaw   = node->get_parameter("tag_to_target_yaw").as_double();
 
     const auto joint_names  = node->get_parameter("joint_names").as_string_array();
-    const auto initial_pose = toJointMap(node->get_parameter("initial_pose").as_double_array(), joint_names);
+    const auto initial_pose = toJointMap(
+        node->get_parameter("initial_pose").as_double_array(), joint_names);
     const auto scan_pose    = toPose(node->get_parameter("scan_pose").as_double_array());
 
     const std::vector<moveit2_client::PoseTarget> box_up = {
@@ -205,7 +217,8 @@ bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node, moveit2_client::M
                 ", z: "              + std::to_string(eef_tf->qz) +
                 ", w: "              + std::to_string(eef_tf->qw) + "}}";
 
-            RCLCPP_INFO(node->get_logger(), "Teleport target pose in Isaac Sim: %s", pose_str.c_str());
+            RCLCPP_INFO(node->get_logger(),
+                "Teleport target pose in Isaac Sim: %s", pose_str.c_str());
 
             std::string cmd = "ros2 topic pub -1 " + target_topic_name[i] +
                               " geometry_msgs/msg/Pose \"" + pose_str + "\"";
@@ -234,7 +247,8 @@ bool runAprilTagPickPlace(const rclcpp::Node::SharedPtr& node, moveit2_client::M
             RCLCPP_ERROR(node->get_logger(), "Failed to open gripper"); return false; }
 
         if (!client.absoluteBaseEefCartesian(box_up[i])) {
-            RCLCPP_ERROR(node->get_logger(), "Move to box up pose (return) failed"); return false; }
+            RCLCPP_ERROR(node->get_logger(),
+                "Move to box up pose (return) failed"); return false; }
     }
 
     RCLCPP_INFO(node->get_logger(), "------- STOP CYCLE -------");

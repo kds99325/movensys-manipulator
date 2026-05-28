@@ -9,15 +9,15 @@ TF frames published (on /tf):
     <camera_frame> -> tag36h11:<tag_id>
 """
 
+import cv2
+from cv_bridge import CvBridge
+from geometry_msgs.msg import TransformStamped
+from pyapriltags import Detector
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image, CameraInfo
-from geometry_msgs.msg import TransformStamped
-from tf2_ros import TransformBroadcaster
-from cv_bridge import CvBridge
-import cv2
-from pyapriltags import Detector
 from scipy.spatial.transform import Rotation
+from sensor_msgs.msg import CameraInfo, Image
+from tf2_ros import TransformBroadcaster
 
 
 class AprilTagDetectorNode(Node):
@@ -27,7 +27,8 @@ class AprilTagDetectorNode(Node):
         self.declare_parameter('tag_family', 'tag36h11')
         self.declare_parameter('tag_size', 0.04)
         self.declare_parameter('image_topic', '/camera_hand/realsense2_camera/color/image_raw')
-        self.declare_parameter('camera_info_topic', '/camera_hand/realsense2_camera/color/camera_info')
+        self.declare_parameter(
+            'camera_info_topic', '/camera_hand/realsense2_camera/color/camera_info')
         self.declare_parameter('camera_frame', 'camera_hand_color_optical_frame')
         self.declare_parameter('nthreads', 1)
         self.declare_parameter('quad_decimate', 2.0)
@@ -105,7 +106,9 @@ class AprilTagDetectorNode(Node):
             rpy = Rotation.from_matrix(tag.pose_R).as_euler('xyz', degrees=True)
             self.get_logger().info(
                 f'Tag {tag.tag_id} | '
-                f'xyz=({t.transform.translation.x:.4f}, {t.transform.translation.y:.4f}, {t.transform.translation.z:.4f}) m | '
+                f'xyz=({t.transform.translation.x:.4f}, '
+                f'{t.transform.translation.y:.4f}, '
+                f'{t.transform.translation.z:.4f}) m | '
                 f'rpy=({rpy[0]:.2f}, {rpy[1]:.2f}, {rpy[2]:.2f}) deg'
             )
 

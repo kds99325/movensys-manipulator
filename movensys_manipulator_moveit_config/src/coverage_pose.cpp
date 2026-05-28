@@ -1,8 +1,14 @@
-#include <rclcpp/rclcpp.hpp>
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
+
 #include <cmath>
-#include <vector>
 #include <map>
 #include <string>
+#include <thread>
+#include <vector>
+
+#include <rclcpp/rclcpp.hpp>
+
 #include "moveit2_client.hpp"
 
 bool runCoverage(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Client& client);
@@ -71,7 +77,8 @@ bool runCoverage(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Cli
     const auto joint_names = node->get_parameter("joint_names").as_string_array();
 
     RCLCPP_INFO(node->get_logger(), "------- Initial Joint Movement -------");
-    if (!client.jointMovement(toJointMap(node->get_parameter("joint_initial_0").as_double_array(), joint_names))) {
+    if (!client.jointMovement(toJointMap(
+            node->get_parameter("joint_initial_0").as_double_array(), joint_names))) {
         RCLCPP_ERROR(node->get_logger(), "Initial Joint Movement failed"); return false; }
 
     // Read waypoints

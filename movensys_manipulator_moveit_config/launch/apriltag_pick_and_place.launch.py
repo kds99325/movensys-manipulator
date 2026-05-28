@@ -1,10 +1,11 @@
+import os
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
-from ament_index_python.packages import get_package_share_directory
-import os
 
 
 def generate_launch_description():
@@ -26,14 +27,15 @@ def generate_launch_description():
         )
     )
 
-    use_sim_time  = LaunchConfiguration("use_sim_time")
-    target_spawn  = LaunchConfiguration("target_spawn")
+    use_sim_time = LaunchConfiguration("use_sim_time")
+    target_spawn = LaunchConfiguration("target_spawn")
 
     manipulator_model = os.environ.get("MANIPULATOR_MODEL", "dobot_cr3a")
 
     moveit_config = (
         MoveItConfigsBuilder("movensys_manipulator")
-        .robot_description_semantic(file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
+        .robot_description_semantic(
+            file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
         .robot_description(file_path=f"config/{manipulator_model}/movensys_manipulator.urdf.xacro")
         .robot_description_kinematics(file_path=f"config/{manipulator_model}/kinematics.yaml")
         .joint_limits(file_path=f"config/{manipulator_model}/joint_limits.yaml")
@@ -49,8 +51,10 @@ def generate_launch_description():
     )
 
     pkg_share = get_package_share_directory("movensys_manipulator_moveit_config")
-    moveit2_client_config      = os.path.join(pkg_share, "config", manipulator_model, "moveit2_client.yaml")
-    apriltag_pick_place_config = os.path.join(pkg_share, "config", manipulator_model, "apriltag_pick_and_place.yaml")
+    moveit2_client_config = os.path.join(
+        pkg_share, "config", manipulator_model, "moveit2_client.yaml")
+    apriltag_pick_place_config = os.path.join(
+        pkg_share, "config", manipulator_model, "apriltag_pick_and_place.yaml")
 
     apriltag_node = Node(
         package="movensys_manipulator_moveit_config",

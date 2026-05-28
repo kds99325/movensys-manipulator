@@ -1,18 +1,23 @@
-#include <chrono>
-#include <thread>
-#include <vector>
-#include <string>
-#include <functional>
-#include <sstream>
-#include <iomanip>
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
 
+#include <chrono>
+#include <functional>
+#include <iomanip>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <thread>
+#include <utility>
+#include <vector>
+
+#include "control_msgs/action/follow_joint_trajectory.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
-#include "control_msgs/action/follow_joint_trajectory.hpp"
-#include "trajectory_msgs/msg/joint_trajectory.hpp"
-#include "trajectory_msgs/msg/joint_trajectory_point.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_srvs/srv/set_bool.hpp"
+#include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "trajectory_msgs/msg/joint_trajectory_point.hpp"
 
 using FollowJT = control_msgs::action::FollowJointTrajectory;
 using GoalHandleFJT = rclcpp_action::ServerGoalHandle<FollowJT>;
@@ -53,14 +58,15 @@ private:
 IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
 {
     // Declare parameters
-    this->declare_parameter("joint_names", std::vector<std::string>{"j1","j2","j3","j4","j5","j6"});
+    this->declare_parameter("joint_names",
+        std::vector<std::string>{"j1", "j2", "j3", "j4", "j5", "j6"});
     this->declare_parameter("gripper_joint_names", std::vector<std::string>{});
     this->declare_parameter("gripper_open",  0.000);
     this->declare_parameter("gripper_close", 0.000);
     this->declare_parameter("joint_command_topic", "/joint_command_topic/no_topic");
     this->declare_parameter("joint_states_topic",  "/joint_states_topic/no_topic");
     this->declare_parameter("set_gripper_service", "/set_gripper_service/no_topic");
-    this->declare_parameter("action_name","/action_name/no_action");
+    this->declare_parameter("action_name", "/action_name/no_action");
 
     // Fetch parameters
     joint_names_         = this->get_parameter("joint_names").as_string_array();
@@ -73,9 +79,11 @@ IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
     const auto action_name         = this->get_parameter("action_name").as_string();
 
     // Create interfaces
-    pub_joint_state_ = this->create_publisher<sensor_msgs::msg::JointState>(joint_command_topic, 10);
-    sub_joint_state_ = this->create_subscription<sensor_msgs::msg::JointState>(joint_states_topic, 10,
-                                    std::bind(&IsaacSimBridge::cbJointStates, this, std::placeholders::_1));
+    pub_joint_state_ = this->create_publisher<sensor_msgs::msg::JointState>(
+        joint_command_topic, 10);
+    sub_joint_state_ = this->create_subscription<sensor_msgs::msg::JointState>(
+        joint_states_topic, 10,
+        std::bind(&IsaacSimBridge::cbJointStates, this, std::placeholders::_1));
 
     set_gripper_srv_ = this->create_service<std_srvs::srv::SetBool>(
         set_gripper_service,
@@ -84,7 +92,8 @@ IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
 
     action_server_ = rclcpp_action::create_server<FollowJT>(this,
         action_name,
-        std::bind(&IsaacSimBridge::handle_goal,     this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&IsaacSimBridge::handle_goal,     this,
+                  std::placeholders::_1, std::placeholders::_2),
         std::bind(&IsaacSimBridge::handle_cancel,   this, std::placeholders::_1),
         std::bind(&IsaacSimBridge::handle_accepted, this, std::placeholders::_1));
 
@@ -101,12 +110,13 @@ void IsaacSimBridge::setGripper(const std::shared_ptr<std_srvs::srv::SetBool::Re
     response->success  = true;
 
     sensor_msgs::msg::JointState joint_command = last_joint_state_;
-    
-    const size_t gripper_joint_start_index = joint_command.position.size() - gripper_joint_names_.size();
+
+    const size_t gripper_joint_start_index =
+        joint_command.position.size() - gripper_joint_names_.size();
     for (size_t i = 0; i < gripper_joint_names_.size(); ++i) {
         joint_command.position[gripper_joint_start_index + i] = gripper_state_;
     }
-    
+
     joint_command.header.stamp   = this->get_clock()->now();
     pub_joint_state_->publish(joint_command);
 
@@ -142,7 +152,9 @@ void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
     // Log joint names
     std::ostringstream jn;
     for (size_t i = 0; i < traj.joint_names.size(); ++i) {
-        if (i) jn << ", ";
+        if (i) {
+            jn << ", ";
+        }
         jn << traj.joint_names[i];
     }
     RCLCPP_INFO(this->get_logger(), "Joint names: [%s]", jn.str().c_str());
@@ -151,9 +163,18 @@ void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
     for (size_t i = 0; i < traj.points.size(); ++i) {
         const auto& pt = traj.points[i];
         std::ostringstream pos, vel, acc;
-        for (size_t k = 0; k < pt.positions.size();     ++k) { if (k) pos << ", "; pos << pt.positions[k]; }
-        for (size_t k = 0; k < pt.velocities.size();    ++k) { if (k) vel << ", "; vel << pt.velocities[k]; }
-        for (size_t k = 0; k < pt.accelerations.size(); ++k) { if (k) acc << ", "; acc << pt.accelerations[k]; }
+        for (size_t k = 0; k < pt.positions.size();     ++k) {
+            if (k) { pos << ", "; }
+            pos << pt.positions[k];
+        }
+        for (size_t k = 0; k < pt.velocities.size();    ++k) {
+            if (k) { vel << ", "; }
+            vel << pt.velocities[k];
+        }
+        for (size_t k = 0; k < pt.accelerations.size(); ++k) {
+            if (k) { acc << ", "; }
+            acc << pt.accelerations[k];
+        }
         RCLCPP_INFO(this->get_logger(),
                     "Point %zu: pos=[%s] vel=[%s] acc=[%s] t=%ds %uns",
                     i, pos.str().c_str(), vel.str().c_str(), acc.str().c_str(),
@@ -172,7 +193,8 @@ void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
 
         sensor_msgs::msg::JointState joint_command;
         joint_command.name = joint_names_;
-        joint_command.name.insert(joint_command.name.end(), gripper_joint_names_.begin(), gripper_joint_names_.end());
+        joint_command.name.insert(joint_command.name.end(),
+            gripper_joint_names_.begin(), gripper_joint_names_.end());
 
         std::vector<double> pos = pt.positions;
         std::vector<double> vel = pt.velocities;

@@ -1,21 +1,26 @@
-#ifndef MOVEIT2_API_NODE_HPP
-#define MOVEIT2_API_NODE_HPP
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
 
-#include <rclcpp/rclcpp.hpp>
+#ifndef TRAJECTORY_API_HPP_
+#define TRAJECTORY_API_HPP_
+
+#include <map>
+#include <memory>
+
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/vector3_stamped.hpp>
-#include <map>
-#include "moveit2_client.hpp"
-#include <movensys_manipulator_moveit_config/srv/move_pose.hpp>
-#include <movensys_manipulator_moveit_config/srv/move_joints.hpp>
 #include <movensys_manipulator_moveit_config/srv/get_eef_pose.hpp>
+#include <movensys_manipulator_moveit_config/srv/move_joints.hpp>
+#include <movensys_manipulator_moveit_config/srv/move_pose.hpp>
+#include <rclcpp/rclcpp.hpp>
+
+#include "moveit2_client.hpp"
 
 using MovePose   = movensys_manipulator_moveit_config::srv::MovePose;
 using MoveJoints = movensys_manipulator_moveit_config::srv::MoveJoints;
 using GetEefPose = movensys_manipulator_moveit_config::srv::GetEefPose;
 
 class MoveIt2ApiNode{
-
 public:
     MoveIt2ApiNode();
     rclcpp::Node::SharedPtr get_node();
@@ -64,4 +69,4 @@ private:
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_handle_;
 };
 
-#endif  // MOVEIT2_API_NODE_HPP
+#endif  // TRAJECTORY_API_HPP_
