@@ -28,7 +28,7 @@ def generate_launch_description():
         name='robot_state_publisher',
         output='both',
         parameters=[{
-            'use_sim_time': False,
+            'use_sim_time': True,
             'robot_description': robot_description_content,
             'publish_frequency': 100.0
         }]
