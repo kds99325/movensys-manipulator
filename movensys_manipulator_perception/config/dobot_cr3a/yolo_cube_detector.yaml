@@ -25,9 +25,9 @@ yolo_cube_detector:
     # to overwrite with mask_color before the frame is fed to YOLO. Image
     # geometry is preserved, so camera intrinsics / pixel projection are
     # unaffected. Cube workspace excludes the right edge of the frame.
-    mask_left_fraction:   0.0
-    mask_right_fraction:  0.20
-    mask_top_fraction:    0.20
-    mask_bottom_fraction: 0.14
+    mask_left_fraction:   0.115
+    mask_right_fraction:  0.24
+    mask_top_fraction:    0.14
+    mask_bottom_fraction: 0.22
     # Fill colour for masked pixels, BGR, each channel in [0, 255].
     mask_color: [0, 0, 0]
