@@ -1,0 +1,69 @@
+name: Lint
+
+on:
+  pull_request:
+    branches: [main, devel]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint:
+    name: Lint (${{ matrix.ros_distro }})
+    runs-on: ${{ matrix.os }}
+    container: ros:${{ matrix.ros_distro }}-ros-base
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ros_distro: humble
+            os: ubuntu-22.04
+          - ros_distro: jazzy
+            os: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install lint tooling
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            ros-${{ matrix.ros_distro }}-ament-cpplint \
+            ros-${{ matrix.ros_distro }}-ament-flake8 \
+            ros-${{ matrix.ros_distro }}-ament-pep257 \
+            ros-${{ matrix.ros_distro }}-ament-xmllint \
+            cppcheck
+
+      - name: ament_cpplint (moveit_config C++ sources)
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          ament_cpplint \
+            movensys_manipulator_moveit_config/src \
+            movensys_manipulator_moveit_config/include
+
+      - name: ament_flake8 (all Python)
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          ament_flake8 \
+            movensys_manipulator_description/launch \
+            movensys_manipulator_moveit_config/launch \
+            movensys_manipulator_isaac_ros_config/launch \
+            movensys_manipulator_isaac_ros_config/movensys_manipulator_isaac_ros_config \
+            movensys_manipulator_perception/launch \
+            movensys_manipulator_perception/scripts
+
+      - name: ament_xmllint (package.xml + URDF/xacro)
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          ament_xmllint \
+            movensys_manipulator_description/package.xml \
+            movensys_manipulator_isaac_ros_config/package.xml \
+            movensys_manipulator_moveit_config/package.xml \
+            movensys_manipulator_perception/package.xml
+
+      - name: cppcheck (warnings only, never fails)
+        run: |
+          cppcheck --enable=warning,style --inline-suppr \
+            --suppress=missingIncludeSystem --error-exitcode=0 \
+            movensys_manipulator_moveit_config/src

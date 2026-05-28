@@ -36,6 +36,14 @@ if(BUILD_TESTING)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_srv_interfaces test/test_srv_interfaces.cpp)
+  if(TARGET test_srv_interfaces)
+    rosidl_get_typesupport_target(cpp_typesupport_target
+      ${PROJECT_NAME} rosidl_typesupport_cpp)
+    target_link_libraries(test_srv_interfaces "${cpp_typesupport_target}")
+  endif()
 endif()
 
 rosidl_generate_interfaces(${PROJECT_NAME}
