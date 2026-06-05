@@ -32,6 +32,7 @@ from launch.actions import (
     IncludeLaunchDescription,
     OpaqueFunction,
 )
+from launch.conditions import IfCondition
 from launch.launch_context import LaunchContext
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -120,6 +121,7 @@ def launch_setup(context: LaunchContext, *args, **kwargs) -> List[Node]:
         executable='robot_state_publisher',
         name='robot_state_publisher',
         output='screen',
+        condition=IfCondition(LaunchConfiguration('rsp')),
         parameters=[
             moveit_config.robot_description,
             {'use_sim_time': use_sim_time},
@@ -241,6 +243,12 @@ def generate_launch_description():
                 'rviz', 'movensys_manipulator_moveit.rviz'
             ),
             description='Path to the RViz config file'
+        ),
+        DeclareLaunchArgument(
+            'rsp',
+            default_value='true',
+            description='Start robot_state_publisher here (set false to defer to a '
+                        'backend launch that publishes /robot_description)'
         ),
     ]
 
