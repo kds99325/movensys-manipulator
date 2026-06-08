@@ -22,6 +22,7 @@ set `use_sim_time:=true`
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_nvblox.launch.py use_sim_time:=true
 ```
+add `rsp:=false` if use gazebo or ros2_control.
 
 
 

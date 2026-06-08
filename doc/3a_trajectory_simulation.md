@@ -26,11 +26,13 @@ mros ros2 launch movensys_manipulator_moveit_config sim_bridge.launch.py simulat
 ```
 mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py use_sim_time:=true
 ```
+add `rsp:=false` if use gazebo or ros2_control.
 
 ### Step 3b: Launch cuMotion + API
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion.launch.py use_sim_time:=true
 ```
+add `rsp:=false` if use gazebo or ros2_control.
 
 
 

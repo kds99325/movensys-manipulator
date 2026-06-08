@@ -24,6 +24,7 @@ set `use_sim_time:=true`
 ```
 mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py use_sim_time:=true
 ```
+add `rsp:=false` if use gazebo or ros2_control.
 
 ### Step 3b: Launch cuMotion + API
 ```

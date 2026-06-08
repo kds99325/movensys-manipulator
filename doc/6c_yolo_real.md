@@ -18,6 +18,7 @@ check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_mani
 ```
 mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py
 ```
+add `rsp:=false` if use gazebo or ros2_control.
 
 ### Step 3b: Launch cuMotion + API
 ```
