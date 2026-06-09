@@ -1,9 +1,14 @@
-#include <rclcpp/rclcpp.hpp>
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
+
+#include <chrono>
 #include <cmath>
-#include <vector>
 #include <string>
 #include <thread>
-#include <chrono>
+#include <vector>
+
+#include <rclcpp/rclcpp.hpp>
+
 #include "moveit2_client.hpp"
 
 bool runNvbloxDemo(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2Client& client);
@@ -78,12 +83,14 @@ bool runNvbloxDemo(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
     double delay_nvblox = node->get_parameter("delay_nvblox").as_double();
 
     RCLCPP_INFO(node->get_logger(), "------- Absolute Base EEF Joint Movement -------");
-    if (!client.absoluteBaseEefJointMovement(toPose(node->get_parameter("joint_movement_poses_0").as_double_array()))) {
+    if (!client.absoluteBaseEefJointMovement(toPose(
+            node->get_parameter("joint_movement_poses_0").as_double_array()))) {
         RCLCPP_ERROR(node->get_logger(), "Joint Movement failed");
         return false;
     }
 
-    if (!client.absoluteBaseEefJointMovement(toPose(node->get_parameter("joint_movement_poses_2").as_double_array()))) {
+    if (!client.absoluteBaseEefJointMovement(toPose(
+            node->get_parameter("joint_movement_poses_2").as_double_array()))) {
         RCLCPP_ERROR(node->get_logger(), "Move A failed");
         return false;
     }
@@ -91,11 +98,13 @@ bool runNvbloxDemo(const rclcpp::Node::SharedPtr& node, moveit2_client::MoveIt2C
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(delay_nvblox * 1000)));
 
     for (int i = 0; i < 2; i++) {
-        if (!client.absoluteBaseEefJointMovement(toPose(node->get_parameter("joint_movement_poses_1").as_double_array()))) {
+        if (!client.absoluteBaseEefJointMovement(toPose(
+                node->get_parameter("joint_movement_poses_1").as_double_array()))) {
             RCLCPP_ERROR(node->get_logger(), "Move A failed");
             return false;
         }
-        if (!client.absoluteBaseEefJointMovement(toPose(node->get_parameter("joint_movement_poses_2").as_double_array()))) {
+        if (!client.absoluteBaseEefJointMovement(toPose(
+                node->get_parameter("joint_movement_poses_2").as_double_array()))) {
             RCLCPP_ERROR(node->get_logger(), "Move A failed");
             return false;
         }

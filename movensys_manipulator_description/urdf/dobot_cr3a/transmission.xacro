@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="manipulator" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="movensys_manipulator" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <transmission name="joint1_transmission" type="SimpleTransmission">
     <type>transmission_interface/SimpleTransmission</type>

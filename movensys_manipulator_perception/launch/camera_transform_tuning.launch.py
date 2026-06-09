@@ -1,18 +1,20 @@
-"""Launch file for camera transform tuning with RViz visualization"""
+"""Launch file for camera transform tuning with RViz visualization."""
 
+import os
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
-import os
 
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('movensys_manipulator_perception')
     manipulator_model = os.environ.get('MANIPULATOR_MODEL', 'dobot_cr3a')
 
-    xacro_file = os.path.join(get_package_share_directory('movensys_manipulator_description'),
+    xacro_file = os.path.join(
+        get_package_share_directory('movensys_manipulator_description'),
         'urdf', manipulator_model, 'movensys_manipulator.xacro')
 
     rviz_config = os.path.join(pkg_share, 'rviz', 'camera_transform_tuning.rviz')

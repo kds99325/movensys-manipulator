@@ -1,7 +1,17 @@
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
+
 #include "trajectory_api.hpp"
-#include <tf2/LinearMath/Quaternion.h>
+
 #include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2/LinearMath/Quaternion.h>
+
+#include <chrono>
+#include <map>
+#include <memory>
+#include <string>
 #include <thread>
+#include <vector>
 
 MoveIt2ApiNode::MoveIt2ApiNode(){
     node_ = std::make_shared<rclcpp::Node>("trajectory_api");
@@ -41,10 +51,12 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
             for (const auto& p : params) {
                 if (p.get_name() == "vel_scale") {
                     client_->vel_scale = p.as_double();
-                    RCLCPP_INFO(node_->get_logger(), "vel_scale updated to %.3f", client_->vel_scale);
+                    RCLCPP_INFO(node_->get_logger(),
+                        "vel_scale updated to %.3f", client_->vel_scale);
                 } else if (p.get_name() == "acc_scale") {
                     client_->acc_scale = p.as_double();
-                    RCLCPP_INFO(node_->get_logger(), "acc_scale updated to %.3f", client_->acc_scale);
+                    RCLCPP_INFO(node_->get_logger(),
+                        "acc_scale updated to %.3f", client_->acc_scale);
                 }
             }
             return result;
@@ -53,63 +65,83 @@ MoveIt2ApiNode::MoveIt2ApiNode(){
     // Serialize movement commands so they don't interleave
     cb_group_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
-    abs_base_cart_srv_ = node_->create_service<MovePose>("/wmx/moveit2/absolute_base_eef_cartesian",
-                                                        std::bind(&MoveIt2ApiNode::onAbsoluteBaseEefCartesian, this,
-                                                        std::placeholders::_1, std::placeholders::_2),
-                                                        SERVICES_QOS, cb_group_);
+    abs_base_cart_srv_ = node_->create_service<MovePose>(
+        "/wmx/moveit2/absolute_base_eef_cartesian",
+        std::bind(&MoveIt2ApiNode::onAbsoluteBaseEefCartesian, this,
+        std::placeholders::_1, std::placeholders::_2),
+        SERVICES_QOS, cb_group_);
 
-    rel_base_cart_srv_ = node_->create_service<MovePose>("/wmx/moveit2/relative_base_eef_cartesian",
-                                                        std::bind(&MoveIt2ApiNode::onRelativeBaseEefCartesian, this,
-                                                        std::placeholders::_1, std::placeholders::_2),
-                                                        SERVICES_QOS, cb_group_);
+    rel_base_cart_srv_ = node_->create_service<MovePose>(
+        "/wmx/moveit2/relative_base_eef_cartesian",
+        std::bind(&MoveIt2ApiNode::onRelativeBaseEefCartesian, this,
+        std::placeholders::_1, std::placeholders::_2),
+        SERVICES_QOS, cb_group_);
 
-    rel_tool_cart_srv_ = node_->create_service<MovePose>("/wmx/moveit2/relative_tool_eef_cartesian",
-                                                        std::bind(&MoveIt2ApiNode::onRelativeToolEefCartesian, this,
-                                                        std::placeholders::_1, std::placeholders::_2),
-                                                        SERVICES_QOS, cb_group_);
+    rel_tool_cart_srv_ = node_->create_service<MovePose>(
+        "/wmx/moveit2/relative_tool_eef_cartesian",
+        std::bind(&MoveIt2ApiNode::onRelativeToolEefCartesian, this,
+        std::placeholders::_1, std::placeholders::_2),
+        SERVICES_QOS, cb_group_);
 
-    abs_base_joint_srv_ = node_->create_service<MovePose>("/wmx/moveit2/absolute_base_eef_joint_movement",
-                                                        std::bind(&MoveIt2ApiNode::onAbsoluteBaseEefJointMovement, this,
-                                                        std::placeholders::_1, std::placeholders::_2),
-                                                        SERVICES_QOS, cb_group_);
+    abs_base_joint_srv_ = node_->create_service<MovePose>(
+        "/wmx/moveit2/absolute_base_eef_joint_movement",
+        std::bind(&MoveIt2ApiNode::onAbsoluteBaseEefJointMovement, this,
+        std::placeholders::_1, std::placeholders::_2),
+        SERVICES_QOS, cb_group_);
 
-    joint_mov_srv_ = node_->create_service<MoveJoints>("/wmx/moveit2/joint_movement",
-                                                        std::bind(&MoveIt2ApiNode::onJointMovement, this,
-                                                        std::placeholders::_1, std::placeholders::_2),
-                                                        SERVICES_QOS, cb_group_);
+    joint_mov_srv_ = node_->create_service<MoveJoints>(
+        "/wmx/moveit2/joint_movement",
+        std::bind(&MoveIt2ApiNode::onJointMovement, this,
+        std::placeholders::_1, std::placeholders::_2),
+        SERVICES_QOS, cb_group_);
 
-    rel_joint_mov_srv_ = node_->create_service<MoveJoints>("/wmx/moveit2/relative_joint_movement",
-                                                        std::bind(&MoveIt2ApiNode::onRelativeJointMovement, this,
-                                                        std::placeholders::_1, std::placeholders::_2),
-                                                        SERVICES_QOS, cb_group_);
+    rel_joint_mov_srv_ = node_->create_service<MoveJoints>(
+        "/wmx/moveit2/relative_joint_movement",
+        std::bind(&MoveIt2ApiNode::onRelativeJointMovement, this,
+        std::placeholders::_1, std::placeholders::_2),
+        SERVICES_QOS, cb_group_);
 
-    get_eef_pose_srv_ = node_->create_service<GetEefPose>("/wmx/moveit2/get_eef_pose",
-                                                        std::bind(&MoveIt2ApiNode::onGetEefPose, this,
-                                                        std::placeholders::_1, std::placeholders::_2),
-                                                        SERVICES_QOS, cb_group_);
+    get_eef_pose_srv_ = node_->create_service<GetEefPose>(
+        "/wmx/moveit2/get_eef_pose",
+        std::bind(&MoveIt2ApiNode::onGetEefPose, this,
+        std::placeholders::_1, std::placeholders::_2),
+        SERVICES_QOS, cb_group_);
 
     // EEF pose publisher — separate callback group so it doesn't block movements
     pub_cb_group_ = node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
-    eef_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>("/wmx/moveit2/eef_pose", 10);
-    eef_rpy_pub_  = node_->create_publisher<geometry_msgs::msg::Vector3Stamped>("/wmx/moveit2/eef_rpy", 10);
+    eef_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>(
+        "/wmx/moveit2/eef_pose", 10);
+    eef_rpy_pub_  = node_->create_publisher<geometry_msgs::msg::Vector3Stamped>(
+        "/wmx/moveit2/eef_rpy", 10);
 
-    eef_pose_timer_ = node_->create_wall_timer(std::chrono::milliseconds(10),  // 100 Hz
-                                                std::bind(&MoveIt2ApiNode::publishEefPose, this), 
-                                                pub_cb_group_);
+    eef_pose_timer_ = node_->create_wall_timer(
+        std::chrono::milliseconds(10),  // 100 Hz
+        std::bind(&MoveIt2ApiNode::publishEefPose, this),
+        pub_cb_group_);
 
     RCLCPP_INFO(node_->get_logger(), "MoveIt2 API node ready. Services:");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/absolute_base_eef_cartesian      [MovePose]");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/relative_base_eef_cartesian      [MovePose]");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/relative_tool_eef_cartesian      [MovePose]");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/absolute_base_eef_joint_movement [MovePose]");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/joint_movement                   [MoveJoints]");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/relative_joint_movement          [MoveJoints]");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/get_eef_pose                     [GetEefPose]");
-    RCLCPP_INFO(node_->get_logger(), "  (gripper: call /wmx/set_gripper directly       [SetBool])");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/absolute_base_eef_cartesian      [MovePose]");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/relative_base_eef_cartesian      [MovePose]");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/relative_tool_eef_cartesian      [MovePose]");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/absolute_base_eef_joint_movement [MovePose]");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/joint_movement                   [MoveJoints]");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/relative_joint_movement          [MoveJoints]");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/get_eef_pose                     [GetEefPose]");
+    RCLCPP_INFO(node_->get_logger(),
+        "  (gripper: call /wmx/set_gripper directly       [SetBool])");
     RCLCPP_INFO(node_->get_logger(), "Publishers:");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/eef_pose [PoseStamped]     @ 100 Hz");
-    RCLCPP_INFO(node_->get_logger(), "  /wmx/moveit2/eef_rpy  [Vector3Stamped]  @ 100 Hz  (x=roll, y=pitch, z=yaw rad)");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/eef_pose [PoseStamped]     @ 100 Hz");
+    RCLCPP_INFO(node_->get_logger(),
+        "  /wmx/moveit2/eef_rpy  [Vector3Stamped]  @ 100 Hz  (x=roll, y=pitch, z=yaw rad)");
 }
 
 rclcpp::Node::SharedPtr MoveIt2ApiNode::get_node(){
@@ -168,7 +200,8 @@ void MoveIt2ApiNode::onJointMovement(const MoveJoints::Request::SharedPtr req,
     if (req->joint_names.size() != req->joint_values.size()) {
         res->success = false;
         res->message = "joint_names and joint_values size mismatch";
-        RCLCPP_ERROR(node_->get_logger(), "[svc] joint_movement: %s", res->message.c_str());
+        RCLCPP_ERROR(node_->get_logger(),
+            "[svc] joint_movement: %s", res->message.c_str());
         return;
     }
 
@@ -187,7 +220,8 @@ void MoveIt2ApiNode::onRelativeJointMovement(const MoveJoints::Request::SharedPt
     if (req->joint_names.size() != req->joint_values.size()) {
         res->success = false;
         res->message = "joint_names and joint_values size mismatch";
-        RCLCPP_ERROR(node_->get_logger(), "[svc] relative_joint_movement: %s", res->message.c_str());
+        RCLCPP_ERROR(node_->get_logger(),
+            "[svc] relative_joint_movement: %s", res->message.c_str());
         return;
     }
 
@@ -196,7 +230,8 @@ void MoveIt2ApiNode::onRelativeJointMovement(const MoveJoints::Request::SharedPt
         deltas[req->joint_names[i]] = req->joint_values[i];
     }
 
-    RCLCPP_INFO(node_->get_logger(), "[svc] relative_joint_movement: %zu joints", deltas.size());
+    RCLCPP_INFO(node_->get_logger(),
+        "[svc] relative_joint_movement: %zu joints", deltas.size());
     res->success = client_->relativeJointMovement(deltas);
     res->message = res->success ? "success" : "failed";
 }

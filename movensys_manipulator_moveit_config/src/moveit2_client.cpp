@@ -1,20 +1,34 @@
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
+
 #include "moveit2_client.hpp"
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+
 #include <Eigen/Geometry>
-#include <thread>
+
 #include <chrono>
+#include <map>
+#include <memory>
+#include <optional>
+#include <string>
+#include <thread>
+#include <vector>
 
-namespace moveit2_client{
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-MoveIt2Client::MoveIt2Client(const rclcpp::Node::SharedPtr& node, const std::string& group_name) : node_(node){
-    move_group_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, group_name);
+namespace moveit2_client {
+
+MoveIt2Client::MoveIt2Client(const rclcpp::Node::SharedPtr& node, const std::string& group_name)
+    : node_(node){
+    move_group_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(
+        node_, group_name);
     gripper_client_ = node_->create_client<std_srvs::srv::SetBool>("/wmx/set_gripper");
 
     tf_sub_ = node_->create_subscription<tf2_msgs::msg::TFMessage>(
         "/tf", 10,
         std::bind(&MoveIt2Client::tfCallback, this, std::placeholders::_1));
 
-    RCLCPP_INFO(node_->get_logger(), "MoveIt2Client initialized for group: %s", group_name.c_str());
+    RCLCPP_INFO(node_->get_logger(),
+        "MoveIt2Client initialized for group: %s", group_name.c_str());
 }
 
 void MoveIt2Client::tfCallback(const tf2_msgs::msg::TFMessage::SharedPtr msg) {
@@ -70,7 +84,8 @@ void MoveIt2Client::logCurrentState(){
     tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
 
     RCLCPP_INFO(node_->get_logger(), "Current joint: %s", joints_str.c_str());
-    RCLCPP_INFO(node_->get_logger(), "Current EEF: pos=[%.3f, %.3f, %.3f], rpy=[%.3f, %.3f, %.3f]",
+    RCLCPP_INFO(node_->get_logger(),
+                "Current EEF: pos=[%.3f, %.3f, %.3f], rpy=[%.3f, %.3f, %.3f]",
                 pos.x(), pos.y(), pos.z(), roll, pitch, yaw);
 }
 
@@ -80,7 +95,7 @@ bool MoveIt2Client::jointMovement(const std::map<std::string, double>& joint_tar
         targets_str += name + ": " + std::to_string(value) + ", ";
     }
     if (!joint_targets.empty()) {
-        targets_str = targets_str.substr(0, targets_str.length() - 2);  
+        targets_str = targets_str.substr(0, targets_str.length() - 2);
     }
     targets_str += " }";
 
@@ -103,7 +118,8 @@ bool MoveIt2Client::jointMovement(const std::map<std::string, double>& joint_tar
             break;
         }
         if (attempt < replan_attempts) {
-            RCLCPP_WARN(node_->get_logger(), "Joint movement attempt %d failed, retrying...", attempt + 1);
+            RCLCPP_WARN(node_->get_logger(),
+                "Joint movement attempt %d failed, retrying...", attempt + 1);
         }
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(delay_exec * 1000)));
@@ -131,11 +147,13 @@ bool MoveIt2Client::relativeJointMovement(const std::map<std::string, double>& j
         if (it != targets.end()) {
             it->second += delta;
         } else {
-            RCLCPP_WARN(node_->get_logger(), "relativeJointMovement: unknown joint '%s', skipping", name.c_str());
+            RCLCPP_WARN(node_->get_logger(),
+                "relativeJointMovement: unknown joint '%s', skipping", name.c_str());
         }
     }
 
-    RCLCPP_INFO(node_->get_logger(), "Sending relative joint movement for %zu joints", joint_deltas.size());
+    RCLCPP_INFO(node_->get_logger(),
+        "Sending relative joint movement for %zu joints", joint_deltas.size());
     return jointMovement(targets);
 }
 
@@ -149,7 +167,8 @@ bool MoveIt2Client::absoluteBaseEefJointMovement(const PoseTarget& target){
 
     logCurrentState();
     RCLCPP_INFO(node_->get_logger(),
-                "Sending absolute base eef joint movement = pos: [%.3f, %.3f, %.3f], ori: [%.3f, %.3f, %.3f]",
+                "Sending absolute base eef joint movement = "
+                "pos: [%.3f, %.3f, %.3f], ori: [%.3f, %.3f, %.3f]",
                 target.pos[0], target.pos[1], target.pos[2],
                 target.ori[0], target.ori[1], target.ori[2]);
 
@@ -163,7 +182,9 @@ bool MoveIt2Client::absoluteBaseEefJointMovement(const PoseTarget& target){
             break;
         }
         if (attempt < replan_attempts) {
-            RCLCPP_WARN(node_->get_logger(), "Absolute base eef joint movement attempt %d failed, retrying...", attempt + 1);
+            RCLCPP_WARN(node_->get_logger(),
+                "Absolute base eef joint movement attempt %d failed, retrying...",
+                attempt + 1);
         }
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(delay_exec * 1000)));
@@ -177,7 +198,8 @@ bool MoveIt2Client::absoluteBaseEefCartesian(const PoseTarget& target){
 
     logCurrentState();
     RCLCPP_INFO(node_->get_logger(),
-                "Sending absolute base eef cartesian = pos: [%.3f, %.3f, %.3f], ori: [%.3f, %.3f, %.3f]",
+                "Sending absolute base eef cartesian = "
+                "pos: [%.3f, %.3f, %.3f], ori: [%.3f, %.3f, %.3f]",
                 target.pos[0], target.pos[1], target.pos[2],
                 target.ori[0], target.ori[1], target.ori[2]);
 
@@ -193,23 +215,27 @@ bool MoveIt2Client::absoluteBaseEefCartesian(const PoseTarget& target){
 #endif
 
     if (fraction < 1.0) {
-        RCLCPP_WARN(node_->get_logger(), "Cartesian path fraction: %.2f (incomplete)", fraction);
+        RCLCPP_WARN(node_->get_logger(),
+            "Cartesian path fraction: %.2f (incomplete)", fraction);
         RCLCPP_ERROR(node_->get_logger(), "Cartesian path planning failed");
         return false;
     }
 
     // Apply velocity and acceleration scaling to the Cartesian trajectory
-    robot_trajectory::RobotTrajectory robot_traj(move_group_->getRobotModel(), move_group_->getName());
+    robot_trajectory::RobotTrajectory robot_traj(
+        move_group_->getRobotModel(), move_group_->getName());
     auto current_state = move_group_->getCurrentState(timeout);
     if (!current_state) {
-        RCLCPP_ERROR(node_->get_logger(), "Failed to get current state for trajectory processing");
+        RCLCPP_ERROR(node_->get_logger(),
+            "Failed to get current state for trajectory processing");
         return false;
     }
     robot_traj.setRobotTrajectoryMsg(*current_state, trajectory_msg);
 
     trajectory_processing::TimeOptimalTrajectoryGeneration totg;
     if (!totg.computeTimeStamps(robot_traj, vel_scale, acc_scale)) {
-        RCLCPP_ERROR(node_->get_logger(), "Failed to compute time stamps for Cartesian trajectory");
+        RCLCPP_ERROR(node_->get_logger(),
+            "Failed to compute time stamps for Cartesian trajectory");
         return false;
     }
 
@@ -224,7 +250,8 @@ bool MoveIt2Client::absoluteBaseEefCartesian(const PoseTarget& target){
 
 bool MoveIt2Client::relativeBaseEefCartesian(const PoseTarget& delta){
     RCLCPP_INFO(node_->get_logger(),
-                "Sending relative base eef cartesian = pos: [%.3f, %.3f, %.3f], ori: [%.3f, %.3f, %.3f]",
+                "Sending relative base eef cartesian = "
+                "pos: [%.3f, %.3f, %.3f], ori: [%.3f, %.3f, %.3f]",
                 delta.pos[0], delta.pos[1], delta.pos[2],
                 delta.ori[0], delta.ori[1], delta.ori[2]);
 
@@ -253,7 +280,8 @@ bool MoveIt2Client::relativeBaseEefCartesian(const PoseTarget& delta){
 
 bool MoveIt2Client::relativeToolEefCartesian(const PoseTarget& delta){
     RCLCPP_INFO(node_->get_logger(),
-                "Sending relative tool eef cartesian = pos: [%.3f, %.3f, %.3f], ori: [%.3f, %.3f, %.3f]",
+                "Sending relative tool eef cartesian = "
+                "pos: [%.3f, %.3f, %.3f], ori: [%.3f, %.3f, %.3f]",
                 delta.pos[0], delta.pos[1], delta.pos[2],
                 delta.ori[0], delta.ori[1], delta.ori[2]);
 
@@ -268,9 +296,10 @@ bool MoveIt2Client::relativeToolEefCartesian(const PoseTarget& delta){
 
     Eigen::Isometry3d T_delta = Eigen::Isometry3d::Identity();
     T_delta.translation() = Eigen::Vector3d(delta.pos[0], delta.pos[1], delta.pos[2]);
-    T_delta.linear() = (Eigen::AngleAxisd(delta.ori[2], Eigen::Vector3d::UnitZ()) *
-                        Eigen::AngleAxisd(delta.ori[1], Eigen::Vector3d::UnitY()) *
-                        Eigen::AngleAxisd(delta.ori[0], Eigen::Vector3d::UnitX())).toRotationMatrix();
+    T_delta.linear() =
+        (Eigen::AngleAxisd(delta.ori[2], Eigen::Vector3d::UnitZ()) *
+         Eigen::AngleAxisd(delta.ori[1], Eigen::Vector3d::UnitY()) *
+         Eigen::AngleAxisd(delta.ori[0], Eigen::Vector3d::UnitX())).toRotationMatrix();
 
     Eigen::Isometry3d T_target = T_base_eef * T_delta;
     Eigen::Vector3d pos = T_target.translation();
@@ -296,7 +325,8 @@ std::optional<TFResult> MoveIt2Client::lookupTF(const std::string& parent_frame,
         std::lock_guard<std::mutex> lock(tf_mutex_);
         auto it = tf_cache_.find(key);
         if (it == tf_cache_.end()) {
-            RCLCPP_WARN(node_->get_logger(), "TF lookup failed: %s not found in cache", key.c_str());
+            RCLCPP_WARN(node_->get_logger(),
+                "TF lookup failed: %s not found in cache", key.c_str());
             return std::nullopt;
         }
         transform = it->second;
@@ -358,7 +388,7 @@ std::optional<TFResult> MoveIt2Client::getCurrentEefPose() {
 bool MoveIt2Client::setGripper(bool gripper_value){
     if (!gripper_client_->wait_for_service(std::chrono::duration<double>(timeout))) {
         RCLCPP_WARN(node_->get_logger(), "Gripper service not available");
-        return false;  
+        return false;
     }
 
     auto request = std::make_shared<std_srvs::srv::SetBool::Request>();

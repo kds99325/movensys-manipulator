@@ -26,6 +26,7 @@ RUN apt-get update && \
       ros-jazzy-isaac-ros-image-proc \
       python3-colcon-common-extensions \
       python3-setuptools \
+      ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && \
@@ -74,7 +75,7 @@ RUN apt-get update && \
            /usr/lib/python3/dist-packages/sympy \
            /usr/lib/python3/dist-packages/sympy-*.egg-info && \
     python3 -m pip install --no-cache-dir --break-system-packages \
-        --index-url https://download.pytorch.org/whl/cu124 \
+        --index-url https://download.pytorch.org/whl/cu128 \
         torch torchvision && \
     python3 -m pip install --no-cache-dir --break-system-packages \
         "numpy<2" \

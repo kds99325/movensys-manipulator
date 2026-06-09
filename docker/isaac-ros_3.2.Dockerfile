@@ -40,7 +40,8 @@ RUN apt-get update && \
         ros-humble-ros2-controllers \
         ros-humble-controller-manager \
         ros-humble-moveit* \
-        curl jq tar && \
+        curl jq tar \
+        ninja-build && \
     rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y curl gpg && \

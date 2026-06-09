@@ -55,4 +55,5 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription(declared_arguments + [camera_hand_launch, moveit_launch, apriltag_node])
+    return LaunchDescription(
+        declared_arguments + [camera_hand_launch, moveit_launch, apriltag_node])

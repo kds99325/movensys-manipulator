@@ -1,10 +1,15 @@
-#include <rclcpp/rclcpp.hpp>
+// Copyright 2026 Movensys Corporation.
+// Licensed under the MIT License. See LICENSE.txt for details.
+
+#include <chrono>
 #include <cmath>
-#include <vector>
 #include <map>
 #include <string>
 #include <thread>
-#include <chrono>
+#include <vector>
+
+#include <rclcpp/rclcpp.hpp>
+
 #include "moveit2_client.hpp"
 
 struct BoxPose {

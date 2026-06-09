@@ -7,6 +7,7 @@ from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
+
 def generate_launch_description() -> LaunchDescription:
     use_sim_time_arg = DeclareLaunchArgument(
         "use_sim_time", default_value="false",
@@ -29,7 +30,8 @@ def generate_launch_description() -> LaunchDescription:
             ('realsense2_camera/color/image_raw', '/image_nvblox/rgb'),
             ('realsense2_camera/color/camera_info', '/image_nvblox/camera_info'),
             ('realsense2_camera/aligned_depth_to_color/image_raw', '/image_nvblox/depth'),
-            ('realsense2_camera/aligned_depth_to_color/camera_info', '/image_nvblox/depth/camera_info'),
+            ('realsense2_camera/aligned_depth_to_color/camera_info',
+             '/image_nvblox/depth/camera_info'),
         ],
     )
 

@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""
-Camera Transform Tuner - Interactive sliders for tuning camera_nvblox transform
-Publishes to /tf_static for real-time tuning
+"""Camera Transform Tuner with interactive sliders for tuning camera_nvblox transform.
+
+Publishes to /tf_static for real-time tuning.
 """
 
-import rclpy
-from rclpy.node import Node
-from geometry_msgs.msg import TransformStamped
-from tf2_ros import TransformBroadcaster
+import math
+import threading
 import tkinter as tk
 from tkinter import ttk
-import threading
-import math
+
+from geometry_msgs.msg import TransformStamped
+import rclpy
+from rclpy.node import Node
+from tf2_ros import TransformBroadcaster
 
 
 class CameraTransformTuner(Node):
@@ -51,7 +52,7 @@ class CameraTransformTuner(Node):
         # Publishes continuously at 20 Hz so RViz always has a fresh transform.
         self._timer = self.create_timer(0.05, self.publish_transform)
 
-        self.get_logger().info(f'Camera Transform Tuner started')
+        self.get_logger().info('Camera Transform Tuner started')
         self.get_logger().info(f'Parent: {self.parent_frame}, Child: {self.child_frame}')
 
     def publish_transform(self):
@@ -79,7 +80,7 @@ class CameraTransformTuner(Node):
         self.tf_broadcaster.sendTransform(t)
 
     def euler_to_quaternion(self, roll, pitch, yaw):
-        """Convert Euler angles (roll, pitch, yaw) to quaternion (x, y, z, w)"""
+        """Convert Euler angles (roll, pitch, yaw) to quaternion (x, y, z, w)."""
         cy = math.cos(yaw * 0.5)
         sy = math.sin(yaw * 0.5)
         cp = math.cos(pitch * 0.5)
@@ -154,7 +155,8 @@ class TunerGUI:
             ('yaw', -3.14159, 3.14159, 0.01, node.yaw, 'rad', True),
         ]
 
-        for i, (name, min_val, max_val, resolution, initial, unit, is_rot) in enumerate(slider_configs):
+        for i, (name, min_val, max_val, resolution, initial, unit, is_rot) in enumerate(
+                slider_configs):
             row = i + 3
 
             # Label
@@ -169,8 +171,8 @@ class TunerGUI:
             # Slider
             var = tk.DoubleVar(value=initial)
             slider = ttk.Scale(main_frame, from_=min_val, to=max_val,
-                             variable=var, orient=tk.HORIZONTAL, length=200,
-                             command=lambda v, n=name: self.on_slider_change(n))
+                               variable=var, orient=tk.HORIZONTAL, length=200,
+                               command=lambda v, n=name: self.on_slider_change(n))
             slider.grid(row=row, column=2, sticky=(tk.W, tk.E), pady=3, padx=2)
 
             # Plus button
@@ -216,7 +218,9 @@ class TunerGUI:
         save_btn.grid(row=0, column=0, padx=5)
 
         # Load saved position button
-        self.load_btn = ttk.Button(button_frame2, text="Load Saved", command=self.load_saved_position, state=tk.DISABLED)
+        self.load_btn = ttk.Button(
+            button_frame2, text="Load Saved",
+            command=self.load_saved_position, state=tk.DISABLED)
         self.load_btn.grid(row=0, column=1, padx=5)
 
         # Saved position indicator
@@ -335,7 +339,11 @@ class TunerGUI:
         }
         self.load_btn.config(state=tk.NORMAL)
         self.saved_label.config(
-            text=f"Saved: x={self.saved_position['x']:.2f}, y={self.saved_position['y']:.2f}, z={self.saved_position['z']:.2f}",
+            text=(
+                f"Saved: x={self.saved_position['x']:.2f}, "
+                f"y={self.saved_position['y']:.2f}, "
+                f"z={self.saved_position['z']:.2f}"
+            ),
             foreground="green"
         )
         self.node.get_logger().info(f"Position saved: {self.saved_position}")

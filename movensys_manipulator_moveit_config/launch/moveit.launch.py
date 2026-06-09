@@ -1,4 +1,5 @@
 import os
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -47,7 +48,8 @@ def launch_setup(context, *args, **kwargs):
     # ompl, chomp, pilz_industrial_motion_planner.
     moveit_config = (
         MoveItConfigsBuilder("movensys_manipulator")
-        .robot_description_semantic(file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
+        .robot_description_semantic(
+            file_path=f"config/{manipulator_model}/movensys_manipulator.srdf")
         .robot_description(file_path=f"config/{manipulator_model}/movensys_manipulator.urdf.xacro")
         .robot_description_kinematics(file_path=f"config/{manipulator_model}/kinematics.yaml")
         .joint_limits(file_path=f"config/{manipulator_model}/joint_limits.yaml")
