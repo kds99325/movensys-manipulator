@@ -25,9 +25,9 @@ yolo_dice_detector:
     # to overwrite with mask_color before the frame is fed to YOLO. Image
     # geometry is preserved, so camera intrinsics / pixel projection are
     # unaffected. Dice workspace excludes the left edge of the frame.
-    mask_left_fraction:   0.20
-    mask_right_fraction:  0.35
-    mask_top_fraction:    0.2
+    mask_left_fraction:   0.33
+    mask_right_fraction:  0.27
+    mask_top_fraction:    0.3
     mask_bottom_fraction: 0.05
     # Fill colour for masked pixels, BGR, each channel in [0, 255].
     mask_color: [0, 0, 0]
