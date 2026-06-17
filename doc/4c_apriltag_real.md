@@ -19,13 +19,13 @@ check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_mani
 ```
 mros ros2 launch movensys_manipulator_perception apriltag_detector.launch.py
 ```
-add `rsp:=false` if use gazebo or ros2_control.
+add `rsp:=false` if use gazebo (step 1b) or ros2_control.
 
 ### Step 3b: Launch cuMotion + Isaac Apriltag
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_apriltag.launch.py
 ```
-add `rsp:=false` if use gazebo or ros2_control.
+add `rsp:=false` if use gazebo (step 1b) or ros2_control.
 
 
 
