@@ -1,0 +1,33 @@
+yolo_dice_detector:
+  ros__parameters:
+    # model_path is resolved by the launch file to this package's
+    # share/models/dice_obb.pt; override via the model_path launch arg.
+    confidence_threshold: 0.5
+
+    # Scene geometry (scan pose). dice_height = floor + die top surface.
+    dice_height: 0.06
+    cam_z_world: 0.35   # orignal Value => 0.45
+    cam_x_world: 0.0
+    cam_y_world: 0.0
+    # Optical-frame orientation in world, [x, y, z, w] (scan RPY = (π, 0, π))
+    cam_orientation: [0.0, 1.0, 0.0, 0.0]
+
+    publish_debug_image: true
+    # device: cpu | cuda | AUTO | intel:cpu | intel:gpu | intel:npu
+    device: "cpu"
+
+    image_topic: "/image_hand/rgb"
+    camera_info_topic: "/image_hand/camera_info"
+    camera_frame: "camera_hand_color_optical_frame"
+
+    # Pre-inference input masking. Each fraction is the portion of the
+    # corresponding side (of width for left/right, of height for top/bottom)
+    # to overwrite with mask_color before the frame is fed to YOLO. Image
+    # geometry is preserved, so camera intrinsics / pixel projection are
+    # unaffected. Dice workspace excludes the left edge of the frame.
+    mask_left_fraction:   0.33
+    mask_right_fraction:  0.27
+    mask_top_fraction:    0.3
+    mask_bottom_fraction: 0.05
+    # Fill colour for masked pixels, BGR, each channel in [0, 255].
+    mask_color: [0, 0, 0]

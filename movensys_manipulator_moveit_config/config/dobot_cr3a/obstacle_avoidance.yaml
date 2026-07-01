@@ -1,0 +1,8 @@
+obstacle_avoidance_cpp:
+  ros__parameters:
+    delay_nvblox: 0.0
+
+    # Pose targets: [x, y, z, roll, pitch, yaw]
+    joint_movement_poses_0: [-0.25, -0.05, 0.45, 3.14159265, 0.0, 3.14159265]
+    joint_movement_poses_1: [ 0.25, -0.05, 0.4, 3.14159265, 0.0, 3.14159265]
+    joint_movement_poses_2: [-0.25, -0.05, 0.4, 3.14159265, 0.0, 3.14159265]

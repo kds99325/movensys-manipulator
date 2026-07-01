@@ -35,6 +35,9 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)
+  set(ament_cmake_uncrustify_FOUND TRUE)
+  set(ament_cmake_flake8_FOUND TRUE)
+  set(ament_cmake_xmllint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 
@@ -81,9 +84,9 @@ ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs traj
 add_executable(gazebo_bridge src/gazebo_bridge.cpp)
 ament_target_dependencies(gazebo_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
 
-add_executable(moveit2_trajectory_cpp src/moveit2_trajectory.cpp)
-target_link_libraries(moveit2_trajectory_cpp moveit2_client_lib)
-ament_target_dependencies(moveit2_trajectory_cpp
+add_executable(trajectory_test src/trajectory_test.cpp)
+target_link_libraries(trajectory_test moveit2_client_lib)
+ament_target_dependencies(trajectory_test
   rclcpp
   moveit_ros_planning_interface
   moveit_msgs
@@ -91,19 +94,66 @@ ament_target_dependencies(moveit2_trajectory_cpp
   std_srvs
 )
 
-add_executable(moveit2_api_node src/moveit2_api_node.cpp)
-target_link_libraries(moveit2_api_node moveit2_client_lib)
-ament_target_dependencies(moveit2_api_node
+add_executable(coverage_pose src/coverage_pose.cpp)
+target_link_libraries(coverage_pose moveit2_client_lib)
+ament_target_dependencies(coverage_pose
   rclcpp
   moveit_ros_planning_interface
   moveit_msgs
   geometry_msgs
   std_srvs
 )
+
+add_executable(obstacle_avoidance_cpp src/obstacle_avoidance.cpp)
+target_link_libraries(obstacle_avoidance_cpp moveit2_client_lib)
+ament_target_dependencies(obstacle_avoidance_cpp
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+
+add_executable(apriltag_pick_and_place src/apriltag_pick_and_place.cpp)
+target_link_libraries(apriltag_pick_and_place moveit2_client_lib)
+ament_target_dependencies(apriltag_pick_and_place
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+
+add_executable(yolo_pick_and_place_cpp src/yolo_pick_and_place.cpp)
+target_link_libraries(yolo_pick_and_place_cpp moveit2_client_lib)
+ament_target_dependencies(yolo_pick_and_place_cpp
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+
+add_executable(trajectory_api src/trajectory_api.cpp)
+target_link_libraries(trajectory_api moveit2_client_lib)
+ament_target_dependencies(trajectory_api
+  rclcpp
+  moveit_ros_planning_interface
+  moveit_msgs
+  geometry_msgs
+  std_srvs
+)
+
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
-target_link_libraries(moveit2_api_node ${cpp_typesupport_target})
+target_link_libraries(trajectory_api ${cpp_typesupport_target})
 
-install(TARGETS moveit2_trajectory_cpp moveit2_api_node
+install(TARGETS
+  trajectory_test
+  coverage_pose
+  obstacle_avoidance_cpp
+  apriltag_pick_and_place
+  trajectory_api
+  yolo_pick_and_place_cpp
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -128,8 +178,13 @@ ament_export_dependencies(
 )
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_srv_interfaces test/test_srv_interfaces.cpp)
+  if(TARGET test_srv_interfaces)
+    rosidl_get_typesupport_target(test_cpp_typesupport_target
+      ${PROJECT_NAME} rosidl_typesupport_cpp)
+    target_link_libraries(test_srv_interfaces "${test_cpp_typesupport_target}")
+  endif()
 endif()
 
 ament_package()

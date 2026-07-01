@@ -1,0 +1,60 @@
+name: Unit Tests
+
+on:
+  pull_request:
+    branches: [main, devel]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    name: colcon test (${{ matrix.ros_distro }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ros_distro: humble
+            os: ubuntu-22.04
+          - ros_distro: jazzy
+            os: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup ROS ${{ matrix.ros_distro }}
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: ${{ matrix.ros_distro }}
+
+      - name: Setup workspace
+        run: |
+          mkdir -p ~/movensys_ws/src
+          ln -s ${{ github.workspace }} ~/movensys_ws/src/movensys-manipulator
+
+      - name: rosdep install
+        run: |
+          sudo rosdep init || true
+          rosdep update
+          cd ~/movensys_ws
+          rosdep install --from-paths src --ignore-src -y \
+            --rosdistro ${{ matrix.ros_distro }}
+
+      - name: colcon build
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          cd ~/movensys_ws
+          colcon build --symlink-install \
+            --packages-select movensys_manipulator_moveit_config
+
+      - name: colcon test
+        run: |
+          source /opt/ros/${{ matrix.ros_distro }}/setup.bash
+          cd ~/movensys_ws
+          source install/setup.bash
+          colcon test --packages-select movensys_manipulator_moveit_config \
+            --event-handlers console_cohesion+
+          colcon test-result --verbose

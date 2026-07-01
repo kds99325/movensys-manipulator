@@ -1,0 +1,22 @@
+coverage_pose:
+  ros__parameters:
+    # Coverage sweep waypoints (executed in index order 0..5)
+    # Pose targets: [x, y, z, roll, pitch, yaw]
+    # Sequence: back right -> back left -> between 1 -> between 2 -> front left -> front right -> back right
+
+    joint_names:     [joint1, joint2, joint3, joint4, joint5, joint6]
+    joint_initial_0: [0.0, 0.0, -1.57, 0.0, 1.57, 0.0]
+
+    # Stamping pattern (between every pair of consecutive waypoints):
+    #   move to (xy, waypoint_z) -> drop to stamp_z_down -> lift to waypoint_z
+    # Repeated every stamp_step_size meters along each segment.
+    stamp_step_size: 0.05   # 5 cm
+    stamp_z_down:    0.28
+
+    coverage_poses_0: [-0.4,   0.05, 0.32, 3.14, 0.0, -1.57]   # back right
+    coverage_poses_1: [ 0.15,  0.05, 0.32, 3.14, 0.0, -1.57]   # back left
+    coverage_poses_2: [ 0.15, -0.05, 0.32, 3.14, 0.0, -1.57]   # between 1
+    coverage_poses_3: [ 0.33, -0.05, 0.32, 3.14, 0.0, -1.57]   # between 2
+    coverage_poses_4: [ 0.33, -0.15, 0.32, 3.14, 0.0, -1.57]   # front left
+    coverage_poses_5: [-0.4,  -0.15, 0.32, 3.14, 0.0, -1.57]   # front right
+    coverage_poses_6: [-0.4,   0.1, 0.32, 3.14, 0.0, -1.57]   # back right (close loop)

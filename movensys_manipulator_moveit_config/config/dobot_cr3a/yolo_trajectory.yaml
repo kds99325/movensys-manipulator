@@ -1,0 +1,46 @@
+yolo_trajectory_cpp:
+  ros__parameters:
+    # Camera optical frame used as the parent of TF lookups.
+    # Must match the frame the perception package broadcasts against.
+    camera_frame: "camera_hand_link_color_optical_frame"
+
+    # Prefix for TF frames published by yolo_cube_detector.
+    # Full child frame name: tf_prefix + cube class (e.g. "yolo_cube_green").
+    tf_prefix: "yolo_cube_"
+
+    # Cube classes in processing order. Each entry requires matching
+    # "box_<class>_up" / "box_<class>_down" pose parameters below.
+    cube_classes: ["green", "blue", "yellow", "red"]
+
+    # Visual-servoing convergence tolerances.
+    tol_pose:        0.03    # [m]   XY convergence
+    tol_orientation: 0.05    # [rad] yaw convergence
+
+    # Vertical descent from hover pose to grasp pose.
+    descent_z: 0.21          # [m]
+
+    # Camera-optical-centre to gripper-centre offset, expressed in the tool frame.
+    cam_to_grip_x:    0.015  # [m]
+    cam_to_grip_y:   -0.075  # [m]
+    cam_to_grip_yaw:  0.0    # [rad]
+
+    # TF-poll parameters while waiting for a cube to appear.
+    max_wait_retries:  100   # retries before skipping a cube
+    tf_poll_period_ms: 100   # [ms] between polls
+
+    # Named poses: [x, y, z, roll, pitch, yaw]
+    initial_pose: [ 0.098, -0.071, 0.561,  3.141, 0.0, 3.141]
+    scan_pose:    [-0.230, -0.070, 0.500,  3.141, 0.0, 3.141]
+
+    # Drop-box poses per class: "_up" is the hover pose, "_down" is the release height.
+    box_green_up:    [0.191,  -0.1945, 0.500, 3.141, 0.0, 3.108]
+    box_green_down:  [0.191,  -0.1945, 0.295, 3.141, 0.0, 3.108]
+
+    box_blue_up:     [0.299,  -0.1990, 0.500, 3.141, 0.0, 3.108]
+    box_blue_down:   [0.299,  -0.1990, 0.295, 3.141, 0.0, 3.108]
+
+    box_yellow_up:   [0.1955, -0.0390, 0.500, 3.142, 0.0, 3.101]
+    box_yellow_down: [0.1955, -0.0390, 0.295, 3.142, 0.0, 3.101]
+
+    box_red_up:      [0.303,  -0.0420, 0.500, 3.142, 0.0, 3.104]
+    box_red_down:    [0.303,  -0.0420, 0.295, 3.142, 0.0, 3.104]

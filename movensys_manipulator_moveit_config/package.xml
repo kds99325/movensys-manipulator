@@ -4,7 +4,7 @@
   <name>movensys_manipulator_moveit_config</name>
   <version>0.0.0</version>
   <description>movensys_manipulator_moveit_config</description>
-  <maintainer email="lp02781@gmail.com">mfikih15</maintainer>
+  <maintainer email="mfikih@movensys.com">LebahGanteng88</maintainer>
   <maintainer email="sjhwang1236@gmail.com">noah</maintainer>
   <license>MIT License</license>
 
@@ -13,8 +13,12 @@
   <buildtool_depend>rosidl_default_generators</buildtool_depend>
   
   <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
   <depend>rclpy</depend>
   <depend>std_srvs</depend>
+  <depend>control_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>sensor_msgs</depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>moveit_msgs</depend>
   <depend>geometry_msgs</depend>
@@ -23,6 +27,7 @@
   <depend>tf2_geometry_msgs</depend>
   <depend>eigen</depend>
 
+  <exec_depend>moveit_configs_utils</exec_depend>
   <exec_depend>moveit_resources_panda_description</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>
@@ -30,10 +35,12 @@
   <exec_depend>xacro</exec_depend>
 
   <exec_depend>rosidl_default_runtime</exec_depend>
-  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <export>
     <build_type>ament_cmake</build_type>

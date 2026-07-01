@@ -6,6 +6,9 @@ WORKDIR /workspaces
 
 RUN rm -f /etc/apt/sources.list.d/yarn.list || true
 
+RUN sed -i -E 's|http://(archive\|security)\.ubuntu\.com/ubuntu/|https://\1.ubuntu.com/ubuntu/|g' \
+      /etc/apt/sources.list.d/ubuntu.sources
+
 RUN apt-get update && \
     apt-get install -y \
       ros-jazzy-ament-package \
@@ -23,6 +26,7 @@ RUN apt-get update && \
       ros-jazzy-isaac-ros-image-proc \
       python3-colcon-common-extensions \
       python3-setuptools \
+      ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && \
@@ -35,6 +39,9 @@ RUN apt-get update && \
 COPY fix_cumotion_planner.sh /tmp/fix_cumotion_planner.sh
 RUN chmod +x /tmp/fix_cumotion_planner.sh && /tmp/fix_cumotion_planner.sh && rm /tmp/fix_cumotion_planner.sh
 
+COPY fix_robot_segmenter.sh /tmp/fix_robot_segmenter.sh
+RUN chmod +x /tmp/fix_robot_segmenter.sh && /tmp/fix_robot_segmenter.sh && rm /tmp/fix_robot_segmenter.sh
+
 RUN apt-get update && apt-get install -y \
         ros-jazzy-rclcpp-action \
         ros-jazzy-moveit-ros \
@@ -43,3 +50,37 @@ RUN apt-get update && apt-get install -y \
         ros-jazzy-moveit-setup-assistant \
         ros-jazzy-moveit-configs-utils \
     && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    if [ "$ROS_DISTRO" = "jazzy" ]; then \
+      apt-get install -y \
+        ros-${ROS_DISTRO}-ros-gz-sim \
+        ros-${ROS_DISTRO}-gz-ros2-control \
+        ros-${ROS_DISTRO}-ros-gz-bridge \
+        ros-${ROS_DISTRO}-gz-sim-vendor \
+        ros-${ROS_DISTRO}-gz-transport-vendor; \
+    elif [ "$ROS_DISTRO" = "humble" ]; then \
+      apt-get install -y \
+        ros-${ROS_DISTRO}-ros-ign-gazebo \
+        ros-${ROS_DISTRO}-ign-ros2-control \
+        ros-${ROS_DISTRO}-ros-ign-bridge; \
+    fi && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /usr/lib/python3/dist-packages/transforms3d \
+           /usr/lib/python3/dist-packages/transforms3d-*.egg-info \
+           /usr/lib/python3/dist-packages/sympy \
+           /usr/lib/python3/dist-packages/sympy-*.egg-info && \
+    python3 -m pip install --no-cache-dir --break-system-packages \
+        --index-url https://download.pytorch.org/whl/cu128 \
+        torch torchvision && \
+    python3 -m pip install --no-cache-dir --break-system-packages \
+        "numpy<2" \
+        opencv-python \
+        "transforms3d>=0.4.1" \
+        pyyaml \
+        ultralytics \
+        pyapriltags

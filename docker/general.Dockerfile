@@ -1,13 +1,18 @@
 ARG ROS_DISTRO
-FROM osrf/ros:${ROS_DISTRO}-desktop
+FROM ros:${ROS_DISTRO}-ros-base
 ARG ROS_DISTRO
 USER root
 WORKDIR /workspaces
 
-RUN sed -i 's|http://security.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean && \
-    apt-get update
+RUN rm -f /etc/apt/sources.list.d/yarn.list || true
+
+RUN if [ "${ROS_DISTRO}" = "jazzy" ]; then \
+      sed -i -E 's|http://(archive\|security)\.ubuntu\.com/ubuntu/|https://\1.ubuntu.com/ubuntu/|g' \
+        /etc/apt/sources.list.d/ubuntu.sources; \
+    elif [ "${ROS_DISTRO}" = "humble" ]; then \
+      sed -i -E 's|http://(archive\|security)\.ubuntu\.com/ubuntu/|https://\1.ubuntu.com/ubuntu/|g' \
+        /etc/apt/sources.list; \
+    fi
 
 RUN apt-get update && \
     apt-get install -y \
@@ -70,3 +75,22 @@ RUN apt-get update && \
         ros-${ROS_DISTRO}-ros-ign-bridge; \
     fi && \
     rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /usr/lib/python3/dist-packages/transforms3d \
+           /usr/lib/python3/dist-packages/transforms3d-*.egg-info \
+           /usr/lib/python3/dist-packages/sympy \
+           /usr/lib/python3/dist-packages/sympy-*.egg-info && \
+    python3 -m pip install --no-cache-dir --break-system-packages \
+        --index-url https://download.pytorch.org/whl/cu124 \
+        torch torchvision && \
+    python3 -m pip install --no-cache-dir --break-system-packages \
+        "numpy<2" \
+        opencv-python \
+        "transforms3d>=0.4.1" \
+        pyyaml \
+        ultralytics \
+        openvino \
+        pyapriltags
