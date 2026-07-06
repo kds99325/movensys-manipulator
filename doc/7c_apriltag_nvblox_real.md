@@ -21,6 +21,7 @@ check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_mani
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_nvblox.launch.py
 ```
+add `rsp:=false` if use ros2_control.
 
 
 
