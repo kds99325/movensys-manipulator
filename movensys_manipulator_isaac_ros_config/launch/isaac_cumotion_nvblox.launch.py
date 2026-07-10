@@ -16,6 +16,13 @@ def generate_launch_description():
         description="Use simulation clock (/clock)"
     )
 
+    declare_rsp = DeclareLaunchArgument(
+        "rsp",
+        default_value="true",
+        description="Publish /robot_description via isaac_cumotion.launch.py. Set false "
+                    "when a backend launch (Gazebo sim or wmx_ros2_control) already publishes it."
+    )
+
     pkg_movensys_isaac_ros_config = get_package_share_directory(
         'movensys_manipulator_isaac_ros_config')
     pkg_movensys_manipulator_perception = get_package_share_directory(
@@ -38,6 +45,7 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'read_esdf_world': 'true',
             'rviz_config': nvblox_rviz,
+            'rsp': LaunchConfiguration('rsp'),
         }.items()
     )
 
@@ -50,6 +58,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_use_sim_time,
+        declare_rsp,
         camera_nvblox,
         cumotion_launch,
         nvblox_launch,

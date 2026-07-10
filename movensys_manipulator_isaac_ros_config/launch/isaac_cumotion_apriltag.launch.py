@@ -16,6 +16,13 @@ def generate_launch_description():
         description="Use simulation clock (/clock)"
     )
 
+    declare_rsp = DeclareLaunchArgument(
+        "rsp",
+        default_value="true",
+        description="Publish /robot_description via isaac_cumotion.launch.py. Set false "
+                    "when a backend launch (Gazebo sim or wmx_ros2_control) already publishes it."
+    )
+
     pkg = get_package_share_directory('movensys_manipulator_isaac_ros_config')
 
     apriltag_launch = IncludeLaunchDescription(
@@ -29,11 +36,15 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg, 'launch', 'isaac_cumotion.launch.py')
         ),
-        launch_arguments={'use_sim_time': use_sim_time}.items()
+        launch_arguments={
+            'use_sim_time': use_sim_time,
+            'rsp': LaunchConfiguration('rsp'),
+        }.items()
     )
 
     return LaunchDescription([
         declare_use_sim_time,
+        declare_rsp,
         apriltag_launch,
         cumotion_launch,
     ])

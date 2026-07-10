@@ -2,6 +2,7 @@ import os
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -28,6 +29,18 @@ def generate_launch_description():
             "use_sim_time",
             default_value="false",
             description="Use simulation time",
+        )
+    )
+
+    # Publish /robot_description here. Set false when a backend launch (Gazebo
+    # sim or wmx_ros2_control) already publishes it, so there is a single
+    # publisher and the CR3A controller_manager reads the right description.
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "rsp",
+            default_value="true",
+            description="Start robot_state_publisher here (set false to defer to a "
+                        "backend launch that publishes /robot_description)",
         )
     )
 
@@ -101,6 +114,7 @@ def launch_setup(context, *args, **kwargs):
         executable="robot_state_publisher",
         name="robot_state_publisher",
         output="both",
+        condition=IfCondition(LaunchConfiguration("rsp")),
         parameters=[
             moveit_config.robot_description,
             {"use_sim_time": use_sim_time},
