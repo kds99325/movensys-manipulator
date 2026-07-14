@@ -28,7 +28,7 @@ add `rsp:=false` if use ros2_control.
 
 ### Step 3b: Launch cuMotion + API
 ```
-mros ros2 launch movensys_manipulator_moveit_config cumotion.launch.py use_sim_time:=true
+mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion.launch.py use_sim_time:=true
 ```
 add `rsp:=false` if use ros2_control.
 
