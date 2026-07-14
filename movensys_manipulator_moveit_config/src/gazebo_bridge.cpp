@@ -24,6 +24,7 @@
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
 #include "trajectory_msgs/msg/joint_trajectory_point.hpp"
 // joint state for robot's status & command
+#include "control_msgs/msg/joint_jog.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_msgs/msg/float64_multi_array.hpp"
 #include "std_srvs/srv/set_bool.hpp"
@@ -96,14 +97,27 @@ public:
     sub_servo_ = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
         servo_command_topic, 10,
         std::bind(&GazeboBridge::cbServoCommand, this, std::placeholders::_1));
-    
+
+    pub_servo_reset_ = this->create_publisher<control_msgs::msg::JointJog>(
+        "/servo_node/delta_joint_cmds", 10);
+
     RCLCPP_INFO(this->get_logger(), "gazebo_bridge is ready");
   }
 
 private:
   rclcpp_action::Server<FollowJT>::SharedPtr action_server_;
 
-  std::atomic<bool> action_active_{false};
+  // Servo is rejected while a move_group trajectory executes, accepted otherwise.
+  std::atomic<bool> in_execution_{false};
+  rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr pub_servo_reset_;
+
+  void resetServo() {
+    control_msgs::msg::JointJog jog;
+    jog.header.stamp = this->get_clock()->now();
+    jog.joint_names = arm_joint_names_;
+    jog.velocities.assign(arm_joint_names_.size(), 0.0);
+    pub_servo_reset_->publish(jog);
+  }
 
   // What is the purpose of this line?
   void cb(const sensor_msgs::msg::JointState::SharedPtr msg_in)
@@ -112,8 +126,8 @@ private:
   }
 
   void cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg) {
-    if (action_active_.load() || msg->points.empty()) {
-      return;  // move_group is executing; ignore servo while it drives
+    if (msg->points.empty() || in_execution_.load()) {
+      return;  // reject servo while a move_group plan is executing
     }
     // Servo streams short trajectories; the last point is the freshest target.
     const auto& pt = msg->points.back();
@@ -183,7 +197,7 @@ private:
   }
 
   void execute(const std::shared_ptr<GoalHandleFJT> goal_handle){
-    action_active_ = true;
+    in_execution_ = true;   // reject servo while this plan executes
     // which repo have information about moveit2's trajectory?
     RCLCPP_INFO(this->get_logger(), "Received a new trajectory goal!");
     const auto goal = goal_handle->get_goal();
@@ -269,7 +283,8 @@ private:
     auto result = std::make_shared<FollowJT::Result>();
     result->error_code = 0;
     goal_handle->succeed(result);
-    action_active_ = false;
+    in_execution_ = false;  // done -> servo accepted again
+    resetServo();           // re-anchor servo to the current pose (no snap-back)
   }
 };
 

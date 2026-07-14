@@ -15,6 +15,7 @@
 #include "control_msgs/action/follow_joint_trajectory.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "control_msgs/msg/joint_jog.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
@@ -44,12 +45,13 @@ public:
 private:
     rclcpp_action::Server<FollowJT>::SharedPtr action_server_;
 
-    std::atomic<bool> action_active_{false};
+    // Servo is rejected while a move_group trajectory executes, accepted otherwise.
+    std::atomic<bool> in_execution_{false};
+    rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr pub_servo_reset_;
 
     void cbJointStates(const sensor_msgs::msg::JointState::SharedPtr msg);
-
-   
     void cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
+    void resetServo();
 
     void setGripper(const std::shared_ptr<std_srvs::srv::SetBool::Request>  request,
                           std::shared_ptr<std_srvs::srv::SetBool::Response> response);
@@ -109,7 +111,10 @@ IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
     sub_servo_ = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
         servo_command_topic, 10,
         std::bind(&IsaacSimBridge::cbServoCommand, this, std::placeholders::_1));
-    
+
+    pub_servo_reset_ = this->create_publisher<control_msgs::msg::JointJog>(
+        "/servo_node/delta_joint_cmds", 10);
+
     RCLCPP_INFO(this->get_logger(), "isaacsim_bridge is ready");
 }
 
@@ -118,8 +123,8 @@ void IsaacSimBridge::cbJointStates(const sensor_msgs::msg::JointState::SharedPtr
 }
 
 void IsaacSimBridge::cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg){
-    if (action_active_.load() || msg->points.empty()) {
-        return;  // move_group is executing; ignore servo while it drives
+    if (msg->points.empty() || in_execution_.load()) {
+        return;  // reject servo while a move_group plan is executing
     }
     const auto& pt = msg->points.back();
 
@@ -130,7 +135,6 @@ void IsaacSimBridge::cbServoCommand(const trajectory_msgs::msg::JointTrajectory:
 
     std::vector<double> pos = pt.positions;
     std::vector<double> vel = pt.velocities;
-
     const size_t total_joints = joint_names_.size() + gripper_joint_names_.size();
     pos.resize(total_joints, gripper_state_);
     vel.resize(total_joints, 0.0);
@@ -139,6 +143,14 @@ void IsaacSimBridge::cbServoCommand(const trajectory_msgs::msg::JointTrajectory:
     joint_command.velocity     = std::move(vel);
     joint_command.header.stamp = this->get_clock()->now();
     pub_joint_state_->publish(joint_command);
+}
+
+void IsaacSimBridge::resetServo(){
+    control_msgs::msg::JointJog jog;
+    jog.header.stamp = this->get_clock()->now();
+    jog.joint_names = joint_names_;
+    jog.velocities.assign(joint_names_.size(), 0.0);
+    pub_servo_reset_->publish(jog);
 }
 
 void IsaacSimBridge::setGripper(const std::shared_ptr<std_srvs::srv::SetBool::Request>  request,
@@ -181,7 +193,7 @@ void IsaacSimBridge::handle_accepted(const std::shared_ptr<GoalHandleFJT> goal_h
 
 void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
 {
-    action_active_ = true;
+    in_execution_ = true;   // reject servo while this plan executes
     const auto& traj = goal_handle->get_goal()->trajectory;
 
     RCLCPP_INFO(this->get_logger(),
@@ -256,7 +268,8 @@ void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
     auto result       = std::make_shared<FollowJT::Result>();
     result->error_code = 0;
     goal_handle->succeed(result);
-    action_active_ = false;
+    in_execution_ = false;  // done -> servo accepted again
+    resetServo();           // re-anchor servo to the current pose (no snap-back)
 }
 
 int main(int argc, char** argv)
