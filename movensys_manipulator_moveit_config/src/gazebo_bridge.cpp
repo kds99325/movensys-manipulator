@@ -1,6 +1,7 @@
 // Copyright 2026 Movensys Corporation.
 // Licensed under the MIT License. See LICENSE.txt for details.
 
+#include <atomic>
 // std::chrono::nanoseconds
 #include <chrono>
 // for using std::bind
@@ -102,6 +103,8 @@ public:
 private:
   rclcpp_action::Server<FollowJT>::SharedPtr action_server_;
 
+  std::atomic<bool> action_active_{false};
+
   // What is the purpose of this line?
   void cb(const sensor_msgs::msg::JointState::SharedPtr msg_in)
   {
@@ -109,8 +112,8 @@ private:
   }
 
   void cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg) {
-    if (msg->points.empty()) {
-      return;
+    if (action_active_.load() || msg->points.empty()) {
+      return;  // move_group is executing; ignore servo while it drives
     }
     // Servo streams short trajectories; the last point is the freshest target.
     const auto& pt = msg->points.back();
@@ -180,6 +183,7 @@ private:
   }
 
   void execute(const std::shared_ptr<GoalHandleFJT> goal_handle){
+    action_active_ = true;
     // which repo have information about moveit2's trajectory?
     RCLCPP_INFO(this->get_logger(), "Received a new trajectory goal!");
     const auto goal = goal_handle->get_goal();
@@ -265,6 +269,7 @@ private:
     auto result = std::make_shared<FollowJT::Result>();
     result->error_code = 0;
     goal_handle->succeed(result);
+    action_active_ = false;
   }
 };
 

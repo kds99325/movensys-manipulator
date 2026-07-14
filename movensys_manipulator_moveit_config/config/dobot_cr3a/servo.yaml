@@ -24,9 +24,10 @@ planning_frame: world_manipulator
 ee_frame: Link6                             
 robot_link_command_frame: world_manipulator  
 
-# Servo hosts its own PlanningScene so it can run without move_group.
-is_primary_planning_scene_monitor: true
-monitored_planning_scene_topic: "/planning_scene"
+# Follow move_group's planning scene (move_group is the primary monitor), so the
+# two share one collision world when run together from moveit.launch.py.
+is_primary_planning_scene_monitor: false
+monitored_planning_scene_topic: "/monitored_planning_scene"
 
 # Stopping behaviour
 incoming_command_timeout: 0.1            # halt if no command for this long [s]

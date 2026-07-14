@@ -11,7 +11,8 @@
 //   j = JOINT_JOG : keys 1..6 jog each joint
 //   t = TWIST     : arrows / '.' / ';' jog the EEF in the base or eef frame
 //   p = POSE      : arrows / '.' / ';' nudge an absolute EEF target pose, seeded
-//                   from the current pose (via TF) and streamed so Servo tracks it
+//                   from the current pose (via TF) and streamed so Servo tracks it;
+//                   'w'/'e' choose base- or eef-frame nudging
 
 #include <csignal>
 #include <cstdio>
@@ -29,6 +30,8 @@
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <moveit_msgs/srv/servo_command_type.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Vector3.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
@@ -199,9 +202,16 @@ void KeyboardServo::enterPoseMode() {
 
 void KeyboardServo::nudgePose(double dx, double dy, double dz) {
     std::lock_guard<std::mutex> lock(mtx_);
-    target_pose_.pose.position.x += dx;
-    target_pose_.pose.position.y += dy;
-    target_pose_.pose.position.z += dz;
+    tf2::Vector3 d(dx, dy, dz);
+    if (frame_ == EEF_FRAME_ID) {
+        tf2::Quaternion q(
+            target_pose_.pose.orientation.x, target_pose_.pose.orientation.y,
+            target_pose_.pose.orientation.z, target_pose_.pose.orientation.w);
+        d = tf2::quatRotate(q, d);
+    }
+    target_pose_.pose.position.x += d.x();
+    target_pose_.pose.position.y += d.y();
+    target_pose_.pose.position.z += d.z();
 }
 
 void KeyboardServo::publishPose() {
@@ -217,8 +227,9 @@ int KeyboardServo::keyLoop() {
     puts("\nMovensys keyboard tele-op for MoveIt Servo");
     puts("------------------------------------------");
     puts("  j : JOINT mode   -> keys 1..6 jog joint 1..6");
-    puts("  t : TWIST mode   -> arrows = X/Y, '.'/';' = Z; 'w'/'e' = base/eef frame");
+    puts("  t : TWIST mode   -> arrows = X/Y, '.'/';' = Z");
     puts("  p : POSE mode    -> arrows = X/Y, '.'/';' = Z nudge the EEF target pose");
+    puts("  w / e : frame for TWIST jog and POSE nudge = base / eef");
     puts("  r : reverse direction (twist/joint)");
     puts("  q : quit\n");
 

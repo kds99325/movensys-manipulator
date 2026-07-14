@@ -1,6 +1,7 @@
 // Copyright 2026 Movensys Corporation.
 // Licensed under the MIT License. See LICENSE.txt for details.
 
+#include <atomic>
 #include <chrono>
 #include <functional>
 #include <iomanip>
@@ -42,6 +43,8 @@ public:
 
 private:
     rclcpp_action::Server<FollowJT>::SharedPtr action_server_;
+
+    std::atomic<bool> action_active_{false};
 
     void cbJointStates(const sensor_msgs::msg::JointState::SharedPtr msg);
 
@@ -115,8 +118,8 @@ void IsaacSimBridge::cbJointStates(const sensor_msgs::msg::JointState::SharedPtr
 }
 
 void IsaacSimBridge::cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg){
-    if (msg->points.empty()) {
-        return;
+    if (action_active_.load() || msg->points.empty()) {
+        return;  // move_group is executing; ignore servo while it drives
     }
     const auto& pt = msg->points.back();
 
@@ -178,6 +181,7 @@ void IsaacSimBridge::handle_accepted(const std::shared_ptr<GoalHandleFJT> goal_h
 
 void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
 {
+    action_active_ = true;
     const auto& traj = goal_handle->get_goal()->trajectory;
 
     RCLCPP_INFO(this->get_logger(),
@@ -252,6 +256,7 @@ void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
     auto result       = std::make_shared<FollowJT::Result>();
     result->error_code = 0;
     goal_handle->succeed(result);
+    action_active_ = false;
 }
 
 int main(int argc, char** argv)
