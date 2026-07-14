@@ -38,6 +38,25 @@ python3 ~/rosbag2video/rosbag2video.py -t /record_rgb -r 15 -o run1.mp4 /home/no
 static_ffmpeg -i run1.mp4 -vf "fps=15,scale=1280:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" run1.gif
 ```
 
+## Speed up / slow down (x times)
+
+`X > 1` = faster, `X < 1` = slower. Set `X` once and reuse it.
+`setpts=PTS/X` divides each frame's timestamp, so `X=2` plays twice as fast and `X=0.5` plays at half speed.
+
+### mp4 → mp4
+
+```bash
+X=1
+static_ffmpeg -i run1.mp4 -filter:v "setpts=PTS/$X" -an run1_x${X}.mp4
+```
+
+### gif → gif
+
+```bash
+X=1
+static_ffmpeg -i run1.gif -filter:v "setpts=PTS/$X,split[a][b];[a]palettegen[p];[b][p]paletteuse" run1_x${X}.gif
+```
+
 ## Fallback: extract frames → encode
 
 Frames are written to `frames/%07d.png` (7-digit index) in the current directory.
@@ -45,5 +64,5 @@ Frames are written to `frames/%07d.png` (7-digit index) in the current directory
 ```bash
 python3 ~/rosbag2video/rosbag2video.py -t /record_rgb --save_images /home/noah/recordings/run1
 static_ffmpeg -framerate 15 -i frames/%07d.png -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -pix_fmt yuv420p run1.mp4
-static_ffmpeg -framerate 15 -i frames/%07d.png -vf "fps=10,scale=480:-1:flags=lanczos" run1.gif
+static_ffmpeg -framerate 15 -i frames/%07d.png -vf "fps=15,scale=1280:-1:flags=lanczos" run1.gif
 ```
