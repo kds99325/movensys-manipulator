@@ -48,7 +48,8 @@ prefix selects the scenario; the trailing letter selects the execution mode.
 | 7  | AprilTag + Nvblox                 | [7a](doc/7a_apriltag_nvblox_simulation.md)            | [7b](doc/7b_apriltag_nvblox_hil.md)            | [7c](doc/7c_apriltag_nvblox_real.md)            |
 
 A ROS 2 API example (`doc/3d_api_example.md`) and host-setup guides
-(`doc/1_setup.md`, `doc/2_docker.md`) are also provided.
+(`doc/1_setup.md`, `doc/2_docker.md`) are also provided. RGB recording and
+video conversion commands are in [`doc/8_recording.md`](doc/8_recording.md).
 
 ## Requirements
 
