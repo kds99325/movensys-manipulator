@@ -35,7 +35,7 @@ python3 ~/rosbag2video/rosbag2video.py -t /record_rgb -r 15 -o run1.mp4 /home/no
 ## mp4 → gif
 
 ```bash
-static_ffmpeg -i run1.mp4 -vf "fps=10,scale=480:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" run1.gif
+static_ffmpeg -i run1.mp4 -vf "fps=15,scale=1280:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" run1.gif
 ```
 
 ## Fallback: extract frames → encode
