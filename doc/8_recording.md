@@ -19,7 +19,8 @@ cp ~/workspaces/movensys_ws/src/movensys-manipulator/tools/rosbag2video/rosbag2v
 ## Bashrc Configuration
 
 ```bash
-# ROS2 based recording configuration 
+# ROS2 based recording configuration
+## Change *record_name* for each recording process
 export record_name=basic_motion
 export record_dir=~/recordings/${record_name}
 alias ros_record='ros2 bag record -o ~/recordings/$record_name record_rgb'
@@ -66,14 +67,14 @@ mp42gif
 ### mp4
 
 ```bash
-speed=1
+speed=2
 static_ffmpeg -i ${record_dir}/${record_name}.mp4 -filter:v "setpts=PTS/$speed" -an ${record_dir}/${record_name}_${speed}.mp4
 ```
 
 ### gif
 
 ```bash
-speed=1
+speed=2
 static_ffmpeg -i ${record_dir}/${record_name}.gif -filter:v "setpts=PTS/$speed,split[a][b];[a]palettegen[p];[b][p]paletteuse" ${record_dir}/${record_name}_${speed}.gif
 ```
 
