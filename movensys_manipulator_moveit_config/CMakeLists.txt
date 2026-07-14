@@ -84,6 +84,9 @@ ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs traj
 add_executable(gazebo_bridge src/gazebo_bridge.cpp)
 ament_target_dependencies(gazebo_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
 
+add_executable(keyboard_teleop src/keyboard_teleop.cpp)
+ament_target_dependencies(keyboard_teleop rclcpp geometry_msgs control_msgs moveit_msgs tf2_ros)
+
 add_executable(trajectory_test src/trajectory_test.cpp)
 target_link_libraries(trajectory_test moveit2_client_lib)
 ament_target_dependencies(trajectory_test
@@ -154,6 +157,7 @@ install(TARGETS
   apriltag_pick_and_place
   trajectory_api
   yolo_pick_and_place_cpp
+  keyboard_teleop
   DESTINATION lib/${PROJECT_NAME}
 )
 

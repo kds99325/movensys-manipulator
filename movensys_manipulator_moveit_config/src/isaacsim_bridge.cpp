@@ -103,6 +103,10 @@ IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
         std::bind(&IsaacSimBridge::handle_cancel,   this, std::placeholders::_1),
         std::bind(&IsaacSimBridge::handle_accepted, this, std::placeholders::_1));
 
+    sub_servo_ = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
+        servo_command_topic, 10,
+        std::bind(&IsaacSimBridge::cbServoCommand, this, std::placeholders::_1));
+    
     RCLCPP_INFO(this->get_logger(), "isaacsim_bridge is ready");
 }
 

@@ -23,28 +23,25 @@ mros ros2 launch movensys_manipulator_moveit_config servo.launch.py use_sim_time
 
 
 
-### Step 4: Enable moveit2 servo
+### Step 4: Drive the end effector with the keyboard
 ```
-mros ros2 service call /servo_node/start_servo std_srvs/srv/Trigger
+mros ros2 run movensys_manipulator_moveit_config keyboard_teleop
 ```
+Pick a mode first (`j` / `t` / `p`), then jog:
 
+| Key            | Action                                                     |
+|----------------|------------------------------------------------------------|
+| `j`            | **JOINT** mode — keys `1`…`6` jog joint 1…6                 |
+| `t`            | **TWIST** mode — Cartesian EEF jog                          |
+| `p`            | **POSE** mode — nudge an absolute EEF target pose          |
+| `↑` / `↓`      | X (+ / −)  — twist jog, or pose-target nudge                |
+| `←` / `→`      | Y (− / +)  — twist jog, or pose-target nudge                |
+| `.` / `;`      | Z (− / +)  — twist jog, or pose-target nudge                |
+| `1` … `6`      | Joint jog for joint 1 … 6            (JOINT mode)           |
+| `w` / `e`      | Twist frame = base (`world_manipulator`) / eef (`Link6`)   |
+| `r`            | Reverse jog direction (twist / joint)                      |
+| `q`            | Quit                                                       |
 
-
-
-### Step 5: Drive the end effector with the keyboard
-```
-mros ros2 run moveit_servo servo_keyboard_input
-```
-Keep this terminal focused — it reads keys directly. It prints its own key map on
-start-up; the defaults are:
-
-| Key            | Action                                             |
-|----------------|----------------------------------------------------|
-| `↑` / `↓`      | Cartesian jog along **x** (+ / −)                  |
-| `←` / `→`      | Cartesian jog along **y** (− / +)                  |
-| `.` / `;`      | Cartesian jog along **z** (− / +)                  |
-| `1` … `6`      | Joint jog for joint 1 … 6                          |
-| `r`            | Reverse the current jog direction                  |
-| `w`            | Command in the **world/base** frame (`world_manipulator`) |
-| `e`            | Command in the **end-effector** frame (`Link6`)    |
-| `q`            | Quit                                               |
+In **POSE** mode the target is seeded from the current EEF pose (via TF) and
+streamed to Servo, which tracks it; the arrows/`.`/`;` move that target in the
+base frame (orientation held from the seed).

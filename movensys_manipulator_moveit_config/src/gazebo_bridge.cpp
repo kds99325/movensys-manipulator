@@ -92,6 +92,10 @@ public:
         std::bind(&GazeboBridge::handle_cancel,   this, std::placeholders::_1),
         std::bind(&GazeboBridge::handle_accepted, this, std::placeholders::_1));
 
+    sub_servo_ = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
+        servo_command_topic, 10,
+        std::bind(&GazeboBridge::cbServoCommand, this, std::placeholders::_1));
+    
     RCLCPP_INFO(this->get_logger(), "gazebo_bridge is ready");
   }
 
