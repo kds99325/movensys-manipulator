@@ -1,9 +1,11 @@
-# 8. RGB Recording & Video Conversion
+# 1. RGB Recording & Video Conversion
 
 - Recording `record_rgb` topic via rosbag command.
 - Bag of commands for converting the rosbag results to mp4 or gif videos.
 
-## Setup (once)
+# 2. Setup (once)
+
+## Packages
 
 ```bash
 python3 -m venv ~/.venvs/rosbag2video
@@ -14,55 +16,83 @@ git clone https://github.com/mlaiacker/rosbag2video ~/rosbag2video
 cp ~/workspaces/movensys_ws/src/movensys-manipulator/tools/rosbag2video/rosbag2video.py ~/rosbag2video/rosbag2video.py
 ```
 
-## Start Record
+## Bashrc Configuration
 
 ```bash
-ros2 bag record -o /home/noah/recordings/run1 record_rgb
+# ROS2 based recording configuration 
+export record_name=basic_motion
+export record_dir=~/recordings/${record_name}
+alias ros_record='ros2 bag record -o ~/recordings/$record_name record_rgb'
+alias activate_record='source ~/.venvs/rosbag2video/bin/activate'
+alias bag2mp4='python3 ~/rosbag2video/rosbag2video.py -t /record_rgb -r 15 -o ${record_dir}/${record_name}.mp4 ~/recordings/${record_name}'
+alias mp42gif='static_ffmpeg -i ${record_dir}/${record_name}.mp4 -vf "fps=15,scale=1280:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" ${record_dir}/${record_name}.gif'
 ```
 
-## Activate (each session)
+# 3. Useful commands
+
+## Step 1. Start Record
+
+- Ctrl + C will stop the recording.
 
 ```bash
-source ~/.venvs/rosbag2video/bin/activate
+ros_record
 ```
 
-## bag → mp4
+## Step 2. Activate venv for video
 
 ```bash
-python3 ~/rosbag2video/rosbag2video.py -t /record_rgb -r 15 -o run1.mp4 /home/noah/recordings/run1
+activate_record
 ```
 
-## mp4 → gif
+## Step 3. bag → mp4
 
 ```bash
-static_ffmpeg -i run1.mp4 -vf "fps=15,scale=1280:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" run1.gif
+bag2mp4
 ```
 
-## Speed up / slow down (x times)
-
-`X > 1` = faster, `X < 1` = slower. Set `X` once and reuse it.
-`setpts=PTS/X` divides each frame's timestamp, so `X=2` plays twice as fast and `X=0.5` plays at half speed.
-
-### mp4 → mp4
+## Step 4. mp4 → gif
 
 ```bash
-X=1
-static_ffmpeg -i run1.mp4 -filter:v "setpts=PTS/$X" -an run1_x${X}.mp4
+mp42gif
 ```
 
-### gif → gif
+# 4. Extensions
+
+## 4-1. Speed up / slow down (x times)
+
+`speed > 1` = faster, `speed < 1` = slower. Set `speed` once and reuse it.
+`setpts=PTS/speed` divides each frame's timestamp, so `speed=2` plays twice as fast and `speed=0.5` plays at half speed.
+
+### mp4
 
 ```bash
-X=1
-static_ffmpeg -i run1.gif -filter:v "setpts=PTS/$X,split[a][b];[a]palettegen[p];[b][p]paletteuse" run1_x${X}.gif
+speed=1
+static_ffmpeg -i ${record_dir}/${record_name}.mp4 -filter:v "setpts=PTS/$speed" -an ${record_dir}/${record_name}_${speed}.mp4
 ```
 
-## Fallback: extract frames → encode
+### gif
+
+```bash
+speed=1
+static_ffmpeg -i ${record_dir}/${record_name}.gif -filter:v "setpts=PTS/$speed,split[a][b];[a]palettegen[p];[b][p]paletteuse" ${record_dir}/${record_name}_${speed}.gif
+```
+
+## 4-2. extract frames
 
 Frames are written to `frames/%07d.png` (7-digit index) in the current directory.
 
+### rosbag
+
 ```bash
-python3 ~/rosbag2video/rosbag2video.py -t /record_rgb --save_images /home/noah/recordings/run1
-static_ffmpeg -framerate 15 -i frames/%07d.png -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -pix_fmt yuv420p run1.mp4
-static_ffmpeg -framerate 15 -i frames/%07d.png -vf "fps=15,scale=1280:-1:flags=lanczos" run1.gif
+python3 ~/rosbag2video/rosbag2video.py -t /record_rgb --save_images ${record_dir}/${record_name}
+```
+
+### mp4
+```bash
+static_ffmpeg -framerate 15 -i frames/%07d.png -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -pix_fmt yuv420p ${record_dir}/${record_name}.mp4
+```
+
+### gif
+```bash
+static_ffmpeg -framerate 15 -i frames/%07d.png -vf "fps=15,scale=1280:-1:flags=lanczos" ${record_dir}/${record_name}.gif
 ```
