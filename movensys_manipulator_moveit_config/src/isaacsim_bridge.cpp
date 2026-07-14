@@ -36,6 +36,7 @@ public:
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr    pub_joint_state_;
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_joint_state_;
     rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr            set_gripper_srv_;
+    rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr sub_servo_;
 
     IsaacSimBridge();
 
@@ -43,6 +44,9 @@ private:
     rclcpp_action::Server<FollowJT>::SharedPtr action_server_;
 
     void cbJointStates(const sensor_msgs::msg::JointState::SharedPtr msg);
+
+   
+    void cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
 
     void setGripper(const std::shared_ptr<std_srvs::srv::SetBool::Request>  request,
                           std::shared_ptr<std_srvs::srv::SetBool::Response> response);
@@ -67,6 +71,7 @@ IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
     this->declare_parameter("joint_states_topic",  "/joint_states_topic/no_topic");
     this->declare_parameter("set_gripper_service", "/set_gripper_service/no_topic");
     this->declare_parameter("action_name", "/action_name/no_action");
+    this->declare_parameter("servo_command_topic", "/servo_command_topic/no_topic");
 
     // Fetch parameters
     joint_names_         = this->get_parameter("joint_names").as_string_array();
@@ -77,6 +82,7 @@ IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
     const auto joint_states_topic  = this->get_parameter("joint_states_topic").as_string();
     const auto set_gripper_service = this->get_parameter("set_gripper_service").as_string();
     const auto action_name         = this->get_parameter("action_name").as_string();
+    const auto servo_command_topic = this->get_parameter("servo_command_topic").as_string();
 
     // Create interfaces
     pub_joint_state_ = this->create_publisher<sensor_msgs::msg::JointState>(
@@ -102,6 +108,30 @@ IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
 
 void IsaacSimBridge::cbJointStates(const sensor_msgs::msg::JointState::SharedPtr msg){
     last_joint_state_ = *msg;
+}
+
+void IsaacSimBridge::cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg){
+    if (msg->points.empty()) {
+        return;
+    }
+    const auto& pt = msg->points.back();
+
+    sensor_msgs::msg::JointState joint_command;
+    joint_command.name = joint_names_;
+    joint_command.name.insert(joint_command.name.end(),
+        gripper_joint_names_.begin(), gripper_joint_names_.end());
+
+    std::vector<double> pos = pt.positions;
+    std::vector<double> vel = pt.velocities;
+
+    const size_t total_joints = joint_names_.size() + gripper_joint_names_.size();
+    pos.resize(total_joints, gripper_state_);
+    vel.resize(total_joints, 0.0);
+
+    joint_command.position     = std::move(pos);
+    joint_command.velocity     = std::move(vel);
+    joint_command.header.stamp = this->get_clock()->now();
+    pub_joint_state_->publish(joint_command);
 }
 
 void IsaacSimBridge::setGripper(const std::shared_ptr<std_srvs::srv::SetBool::Request>  request,

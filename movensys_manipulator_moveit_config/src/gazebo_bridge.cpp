@@ -47,6 +47,7 @@ public:
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr pub_joint_command_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_joint_state_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr setGripperService_;
+  rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr sub_servo_;
 
   GazeboBridge() : Node("gazebo_bridge") {
     // Declare parameters
@@ -59,6 +60,7 @@ public:
     this->declare_parameter("joint_states_topic",  "/joint_states_topic/no_topic");
     this->declare_parameter("set_gripper_service", "/set_gripper_service/no_topic");
     this->declare_parameter("action_name", "/action_name/no_action");
+    this->declare_parameter("servo_command_topic", "/servo_command_topic/no_topic");
 
     // Fetch parameters
     arm_joint_names_     = this->get_parameter("arm_joint_names").as_string_array();
@@ -69,6 +71,7 @@ public:
     const auto joint_states_topic  = this->get_parameter("joint_states_topic").as_string();
     const auto set_gripper_service = this->get_parameter("set_gripper_service").as_string();
     const auto action_name         = this->get_parameter("action_name").as_string();
+    const auto servo_command_topic = this->get_parameter("servo_command_topic").as_string();
 
     // Create interfaces
     pub_joint_command_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(
@@ -99,6 +102,29 @@ private:
   void cb(const sensor_msgs::msg::JointState::SharedPtr msg_in)
   {
     last_joint_state = *msg_in;
+  }
+
+  void cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg) {
+    if (msg->points.empty()) {
+      return;
+    }
+    // Servo streams short trajectories; the last point is the freshest target.
+    const auto& pt = msg->points.back();
+
+    const size_t n_arm   = arm_joint_names_.size();
+    const size_t n_total = n_arm + gripper_joint_names_.size();
+
+    std_msgs::msg::Float64MultiArray joint_command;
+    joint_command.data.resize(n_total);
+
+    for (size_t j = 0; j < pt.positions.size() && j < n_arm; ++j) {
+      joint_command.data[j] = pt.positions[j];
+    }
+    for (size_t j = 0; j < gripper_joint_names_.size(); ++j) {
+      joint_command.data[n_arm + j] = gripper_state_;
+    }
+
+    pub_joint_command_->publish(joint_command);
   }
 
   // If we get a gripper-open request -> open gripper

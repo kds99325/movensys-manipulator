@@ -46,6 +46,7 @@ prefix selects the scenario; the trailing letter selects the execution mode.
 | 5  | Nvblox obstacle avoidance         | [5a](doc/5a_nvblox_simulation.md)                     | [5b](doc/5b_nvblox_hil.md)                     | [5c](doc/5c_nvblox_real.md)                     |
 | 6  | YOLO object detection             | [6a](doc/6a_yolo_simulation.md)                       | [6b](doc/6b_yolo_hil.md)                       | [6c](doc/6c_yolo_real.md)                       |
 | 7  | AprilTag + Nvblox                 | [7a](doc/7a_apriltag_nvblox_simulation.md)            | [7b](doc/7b_apriltag_nvblox_hil.md)            | [7c](doc/7c_apriltag_nvblox_real.md)            |
+| 8  | VLA application                   | [8a](doc/8a_vla_simulation.md)                        | —                                              | —                                               |
 
 A ROS 2 API example (`doc/3d_api_example.md`) and host-setup guides
 (`doc/1_setup.md`, `doc/2_docker.md`) are also provided.

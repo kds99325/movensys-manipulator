@@ -10,3 +10,4 @@ isaacsim_bridge:
     joint_command_topic: /joint_command
     joint_states_topic:  /joint_states
     action_name: /movensys_manipulator_arm_controller/follow_joint_trajectory
+    servo_command_topic: /movensys_manipulator_arm_controller/joint_trajectory
