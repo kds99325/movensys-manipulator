@@ -194,6 +194,14 @@ def save_image_from_rosbag(
             cv_image = cv2.imdecode(np.frombuffer(msg.data, np.uint8), cv2.IMREAD_UNCHANGED)
         else:
             cv_image = imgmsg_to_array(msg)
+            # cv2.imwrite always treats arrays as BGR(A); sensor_msgs rgb8/rgba8
+            # data is in RGB(A) order, so swap channels to avoid a red/blue swap
+            # (e.g. brown backgrounds turning blue) in the saved PNG frames.
+            enc = msg.encoding.lower()
+            if enc == "rgb8":
+                cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+            elif enc == "rgba8":
+                cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGBA2BGRA)
 
         padded_number = f"{i:07d}"
         output_filename = f"frames/{padded_number}{image_file_type}"
@@ -305,8 +313,15 @@ def create_video_from_images(image_folder: str, output_video: str, pix_fmt: str,
         image_list_file,  # Input list of images
         "-c:v",
         "libx264",
+        # Ensure even dimensions (required by yuv420p / libx264).
+        "-vf",
+        "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+        # The PNG frames already carry the correct colours; encode the H.264
+        # stream as yuv420p so it plays in standard players (VLC, browsers,
+        # QuickTime). Encoding as rgb24 produces a file only ffmpeg can decode,
+        # which shows up as a blank screen elsewhere.
         "-pix_fmt",
-        pix_fmt,
+        "yuv420p",
         output_video,
         "-y",
     ]
