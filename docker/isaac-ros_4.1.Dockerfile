@@ -66,3 +66,27 @@ RUN apt-get update && \
         ros-${ROS_DISTRO}-ros-ign-bridge; \
     fi && \
     rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /usr/lib/python3/dist-packages/transforms3d \
+           /usr/lib/python3/dist-packages/transforms3d-*.egg-info \
+           /usr/lib/python3/dist-packages/sympy \
+           /usr/lib/python3/dist-packages/sympy-*.egg-info && \
+    python3 -m pip install --no-cache-dir --break-system-packages \
+        --index-url https://download.pytorch.org/whl/cu130 \
+        torch torchvision && \
+    python3 -m pip install --no-cache-dir --break-system-packages \
+        "numpy<2" \
+        opencv-python \
+        "transforms3d>=0.4.1" \
+        pyyaml \
+        ultralytics \
+        pyapriltags
+
+# torch cu130 (needed for Thor / sm_110) breaks the prebuilt curobo binary via a
+# c10 ABI change, forcing a JIT rebuild that fails on the helper_math.h lerp vs
+# C++20 std::lerp clash. Patch helper_math.h so the JIT build succeeds.
+COPY fix_curobo_lerp.sh /tmp/fix_curobo_lerp.sh
+RUN chmod +x /tmp/fix_curobo_lerp.sh && /tmp/fix_curobo_lerp.sh && rm /tmp/fix_curobo_lerp.sh
