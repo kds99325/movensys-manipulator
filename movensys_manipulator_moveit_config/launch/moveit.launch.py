@@ -33,7 +33,7 @@ def generate_launch_description():
     )
 
     # Publish /robot_description here. Set false when a backend launch (Gazebo
-    # sim or wmx_ros2_control) already publishes it, so there is a single
+    # sim or wmx_r2_control) already publishes it, so there is a single
     # publisher and the CR3A controller_manager reads the right description.
     declared_arguments.append(
         DeclareLaunchArgument(

@@ -2,7 +2,7 @@
 
 ROS 2 packages, Docker compose configs, and end-to-end examples for driving
 [Dobot CR3A/CR5A](https://www.movensys.com/) manipulators with the
-[WMX ROS 2](https://github.com/movensys/wmx-ros2) motion control stack,
+[WMX R2](https://github.com/movensys/wmx-r2) motion control stack,
 MoveIt 2 / NVIDIA Isaac cuMotion planning, and perception via Nvblox, YOLO,
 and AprilTag.
 
@@ -44,7 +44,7 @@ object detection, and AprilTag with Nvblox combined.
 | `movensys_manipulator_perception`       | Perception nodes: AprilTag detection and YOLO OBB cube/dice detectors, with camera bring-up |
 
 Planned trajectories execute on the servos through the
-[WMX ROS 2](https://github.com/movensys/wmx-ros2) `joint_trajectory_controller`
+[WMX R2](https://github.com/movensys/wmx-r2) `joint_trajectory_controller`
 over EtherCAT; see that repository for the underlying motion-control nodes.
 
 ## Examples
@@ -161,8 +161,8 @@ launch MoveIt 2 or cuMotion, and trigger the trajectory test.
 
 ## Related Repositories
 
-- [wmx-ros2](https://github.com/movensys/wmx-ros2) — Core WMX ROS 2 motion control packages
-- [wmx-ros2-doc](https://github.com/movensys/wmx-ros2-doc) — Documentation site for the WMX ROS 2 stack
+- [wmx-r2](https://github.com/movensys/wmx-r2) — Core WMX R2 motion control packages
+- [wmx-r2-doc](https://github.com/movensys/wmx-r2-doc) — Documentation site for the WMX R2 stack
 - [movensys-simulation](https://github.com/movensys/movensys-simulation) — Isaac Sim USD scenes used by the examples here
 - [movensys-intelligence](https://github.com/movensys/movensys-intelligence) — VLM-driven task planning
 

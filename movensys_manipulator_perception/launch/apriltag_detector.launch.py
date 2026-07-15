@@ -28,7 +28,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'rsp', default_value='true',
             description='Publish /robot_description via moveit.launch.py. Set false when a '
-                        'backend launch (Gazebo sim or wmx_ros2_control) already publishes it.',
+                        'backend launch (Gazebo sim or wmx_r2_control) already publishes it.',
         ),
     ]
 

@@ -20,7 +20,7 @@ def generate_launch_description():
         "rsp",
         default_value="true",
         description="Publish /robot_description via isaac_cumotion.launch.py. Set false "
-                    "when a backend launch (Gazebo sim or wmx_ros2_control) already publishes it."
+                    "when a backend launch (Gazebo sim or wmx_r2_control) already publishes it."
     )
 
     pkg = get_package_share_directory('movensys_manipulator_isaac_ros_config')

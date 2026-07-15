@@ -11,8 +11,8 @@
 
 
 
-### Step 2: Run wmx-ros2 for manipulator
-check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md` 
+### Step 2: Run wmx-r2 for manipulator
+check `~/workspaces/movensys_ws/src/wmx-r2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md` 
 set `use_sim_time:=true`
 
 
