@@ -10,7 +10,7 @@ yolo_pick_and_place_cpp:
 
     # Cube classes in processing order. Each entry requires matching
     # "box_<class>_up" / "box_<class>_down" pose parameters below.
-    cube_classes: ["green", "blue", "yellow", "red"]
+    cube_classes: ["green", "red"]
 
     # Visual-servoing convergence tolerances.
     tol_pose:        0.03    # [m]   XY convergence
@@ -41,12 +41,6 @@ yolo_pick_and_place_cpp:
     # Drop-box poses per class: "_up" is the hover pose, "_down" is the release height.
     box_green_up:    [0.191,  -0.1945, 0.500, 3.141, 0.0, 3.108]
     box_green_down:  [0.191,  -0.1945, 0.295, 3.141, 0.0, 3.108]
-
-    box_blue_up:     [0.299,  -0.1990, 0.500, 3.141, 0.0, 3.108]
-    box_blue_down:   [0.299,  -0.1990, 0.295, 3.141, 0.0, 3.108]
-
-    box_yellow_up:   [0.1955, -0.0390, 0.500, 3.142, 0.0, 3.101]
-    box_yellow_down: [0.1955, -0.0390, 0.295, 3.142, 0.0, 3.101]
 
     box_red_up:      [0.303,  -0.0420, 0.500, 3.142, 0.0, 3.104]
     box_red_down:    [0.303,  -0.0420, 0.295, 3.142, 0.0, 3.104]
