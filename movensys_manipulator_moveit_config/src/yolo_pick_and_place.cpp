@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     node->declare_parameter<std::string>("camera_frame", "camera_hand_link_color_optical_frame");
     node->declare_parameter<std::string>("tf_prefix",    "yolo_cube_");
     node->declare_parameter<std::vector<std::string>>(
-        "cube_classes", std::vector<std::string>{"green", "blue", "yellow", "red"});
+        "cube_classes", std::vector<std::string>{"green", "red"});
 
     node->declare_parameter("tol_pose",          0.03);
     node->declare_parameter("tol_orientation",   0.05);
