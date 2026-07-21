@@ -22,6 +22,14 @@ static moveit2_client::PoseTarget toPose(const std::vector<double>& v)
     return {{v[0], v[1], v[2]}, {v[3], v[4], v[5]}};
 }
 
+static std::map<std::string, double> toJointMap(
+    const std::vector<double>& v, const std::vector<std::string>& names)
+{
+    std::map<std::string, double> m;
+    for (size_t i = 0; i < names.size(); ++i) m[names[i]] = v[i];
+    return m;
+}
+
 bool runYoloPickPlace(const rclcpp::Node::SharedPtr& node,
                       moveit2_client::MoveIt2Client& client);
 
@@ -49,10 +57,10 @@ int main(int argc, char* argv[]) {
     node->declare_parameter("replan_attempts",   5);
 
     // YOLO pick-and-place config
-    node->declare_parameter<std::string>("camera_frame", "camera_hand_link_color_optical_frame");
+    node->declare_parameter<std::string>("camera_frame", "camera_hand_color_optical_frame");
     node->declare_parameter<std::string>("tf_prefix",    "yolo_cube_");
     node->declare_parameter<std::vector<std::string>>(
-        "cube_classes", std::vector<std::string>{"green", "blue", "yellow", "red"});
+        "cube_classes", std::vector<std::string>{"green", "red"});
 
     node->declare_parameter("tol_pose",          0.03);
     node->declare_parameter("tol_orientation",   0.05);
@@ -63,6 +71,8 @@ int main(int argc, char* argv[]) {
     node->declare_parameter("max_wait_retries",  100);
     node->declare_parameter("tf_poll_period_ms", 100);
 
+    node->declare_parameter("joint_names",
+        std::vector<std::string>{"joint1", "joint2", "joint3", "joint4", "joint5", "joint6"});
     node->declare_parameter("initial_pose", std::vector<double>(6, 0.0));
     node->declare_parameter("scan_pose",    std::vector<double>(6, 0.0));
 
@@ -112,8 +122,9 @@ bool runYoloPickPlace(const rclcpp::Node::SharedPtr& node,
     const int    max_wait_retries   = node->get_parameter("max_wait_retries").as_int();
     const int    tf_poll_period_ms  = node->get_parameter("tf_poll_period_ms").as_int();
 
-    const auto initial_pose = toPose(
-        node->get_parameter("initial_pose").as_double_array());
+    const auto joint_names  = node->get_parameter("joint_names").as_string_array();
+    const auto initial_pose = toJointMap(
+        node->get_parameter("initial_pose").as_double_array(), joint_names);
     const auto scan_pose = toPose(
         node->get_parameter("scan_pose").as_double_array());
 
@@ -132,7 +143,7 @@ bool runYoloPickPlace(const rclcpp::Node::SharedPtr& node,
 
     RCLCPP_INFO(node->get_logger(), "======= YOLO PICK-AND-PLACE START =======");
 
-    if (!client.absoluteBaseEefCartesian(initial_pose)) {
+    if (!client.jointMovement(initial_pose)) {
         RCLCPP_ERROR(node->get_logger(), "Move to initial pose failed");
         return false;
     }
@@ -150,7 +161,7 @@ bool runYoloPickPlace(const rclcpp::Node::SharedPtr& node,
             "[%zu/%zu] ── cube: %s  (TF child: %s) ──",
             i + 1, cube_classes.size(), cls.c_str(), tf_child.c_str());
 
-        if (!client.absoluteBaseEefCartesian(scan_pose)) {
+        if (!client.absoluteBaseEefJointMovement(scan_pose)) {
             RCLCPP_ERROR(node->get_logger(), "Move to scan pose failed");
             return false;
         }
@@ -192,6 +203,14 @@ bool runYoloPickPlace(const rclcpp::Node::SharedPtr& node,
             x_tag   = tf->x;
             y_tag   = tf->y;
             yaw_tag = tf->yaw;
+
+            // A cube's top face is square (90° rotational symmetry), so the
+            // gripper only needs to align within ±45°. The YOLO-OBB yaw of a
+            // near-square box flips by ~90° between frames; applying the full
+            // value spins the camera and prevents convergence. Wrap the yaw
+            // error into [-π/4, π/4] so a flip becomes a small correction.
+            while (yaw_tag >  M_PI / 4.0) yaw_tag -= M_PI / 2.0;
+            while (yaw_tag < -M_PI / 4.0) yaw_tag += M_PI / 2.0;
 
             RCLCPP_INFO(node->get_logger(),
                 "  %s offset  x=%.3f  y=%.3f  yaw=%.3f",
@@ -253,7 +272,7 @@ bool runYoloPickPlace(const rclcpp::Node::SharedPtr& node,
         }
         const auto& box = it->second;
 
-        if (!client.absoluteBaseEefCartesian(box.up)) {
+        if (!client.absoluteBaseEefJointMovement(box.up)) {
             RCLCPP_ERROR(node->get_logger(), "Move to box-up failed for %s", cls.c_str());
             return false;
         }
@@ -273,7 +292,7 @@ bool runYoloPickPlace(const rclcpp::Node::SharedPtr& node,
         RCLCPP_INFO(node->get_logger(), "  %s placed successfully.", cls.c_str());
     }
 
-    if (!client.absoluteBaseEefCartesian(scan_pose)) {
+    if (!client.absoluteBaseEefJointMovement(scan_pose)) {
         RCLCPP_ERROR(node->get_logger(), "Return to scan pose failed");
         return false;
     }
