@@ -39,7 +39,7 @@ mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion.launch.py 
 
 ### Step 4: Launch Yolo detector
 ```
-mros ros2 launch movensys_manipulator_perception yolo_dice_and_cube_detector.launch.py use_sim_time:=true
+mros ros2 launch movensys_manipulator_perception yolo_cube_detector.launch.py use_sim_time:=true
 ```
 
 
