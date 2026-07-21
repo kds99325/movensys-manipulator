@@ -78,7 +78,36 @@ speed=2
 static_ffmpeg -i ${record_dir}/${record_name}.gif -filter:v "setpts=PTS/$speed,split[a][b];[a]palettegen[p];[b][p]paletteuse" ${record_dir}/${record_name}_${speed}.gif
 ```
 
-## 4-2. extract frames
+## 4-2. Reduce width / height (resize)
+
+Shrink the output resolution. `scale=W:H` sets the target size; using `-1` for one side keeps the aspect ratio (and `-2` forces an even number, required by mp4/`yuv420p`).
+
+### mp4 (by target width)
+
+Set `width` and let the height follow the aspect ratio.
+
+```bash
+width=640
+static_ffmpeg -i ${record_dir}/${record_name}.mp4 -vf "scale=${width}:-2" -pix_fmt yuv420p ${record_dir}/${record_name}_${width}w.mp4
+```
+
+### mp4 (by ratio)
+
+`ratio < 1` shrinks (e.g. `0.5` = half size). `-2` keeps both sides even.
+
+```bash
+ratio=0.5
+static_ffmpeg -i ${record_dir}/${record_name}.mp4 -vf "scale=trunc(iw*${ratio}/2)*2:trunc(ih*${ratio}/2)*2" -pix_fmt yuv420p ${record_dir}/${record_name}_${ratio}x.mp4
+```
+
+### gif (by target width)
+
+```bash
+width=480
+static_ffmpeg -i ${record_dir}/${record_name}.gif -vf "fps=15,scale=${width}:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" ${record_dir}/${record_name}_${width}w.gif
+```
+
+## 4-3. extract frames
 
 Frames are written to `frames/%07d.png` (7-digit index) in the current directory.
 
