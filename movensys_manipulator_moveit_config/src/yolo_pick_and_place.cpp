@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     node->declare_parameter("replan_attempts",   5);
 
     // YOLO pick-and-place config
-    node->declare_parameter<std::string>("camera_frame", "camera_hand_link_color_optical_frame");
+    node->declare_parameter<std::string>("camera_frame", "camera_hand_color_optical_frame");
     node->declare_parameter<std::string>("tf_prefix",    "yolo_cube_");
     node->declare_parameter<std::vector<std::string>>(
         "cube_classes", std::vector<std::string>{"green", "red"});
@@ -203,6 +203,14 @@ bool runYoloPickPlace(const rclcpp::Node::SharedPtr& node,
             x_tag   = tf->x;
             y_tag   = tf->y;
             yaw_tag = tf->yaw;
+
+            // A cube's top face is square (90° rotational symmetry), so the
+            // gripper only needs to align within ±45°. The YOLO-OBB yaw of a
+            // near-square box flips by ~90° between frames; applying the full
+            // value spins the camera and prevents convergence. Wrap the yaw
+            // error into [-π/4, π/4] so a flip becomes a small correction.
+            while (yaw_tag >  M_PI / 4.0) yaw_tag -= M_PI / 2.0;
+            while (yaw_tag < -M_PI / 4.0) yaw_tag += M_PI / 2.0;
 
             RCLCPP_INFO(node->get_logger(),
                 "  %s offset  x=%.3f  y=%.3f  yaw=%.3f",
