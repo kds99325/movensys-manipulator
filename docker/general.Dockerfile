@@ -29,6 +29,7 @@ RUN apt-get update && \
       ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
       ros-${ROS_DISTRO}-ros-testing \
       ros-${ROS_DISTRO}-moveit-ros \
+      ros-${ROS_DISTRO}-moveit-servo \
       ros-${ROS_DISTRO}-moveit-planners \
       ros-${ROS_DISTRO}-moveit-plugins \
       ros-${ROS_DISTRO}-moveit-setup-assistant \
@@ -82,7 +83,10 @@ RUN apt-get update && \
     rm -rf /usr/lib/python3/dist-packages/transforms3d \
            /usr/lib/python3/dist-packages/transforms3d-*.egg-info \
            /usr/lib/python3/dist-packages/sympy \
-           /usr/lib/python3/dist-packages/sympy-*.egg-info && \
+           /usr/lib/python3/dist-packages/sympy-*.egg-info \
+           /usr/lib/python3/dist-packages/filelock \
+           /usr/lib/python3/dist-packages/filelock-*.egg-info \
+           /usr/lib/python3/dist-packages/filelock-*.dist-info && \
     python3 -m pip install --no-cache-dir --break-system-packages \
         --index-url https://download.pytorch.org/whl/cu124 \
         torch torchvision && \
