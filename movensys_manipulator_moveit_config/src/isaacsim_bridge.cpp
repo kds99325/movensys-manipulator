@@ -17,6 +17,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "control_msgs/msg/joint_jog.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "std_msgs/msg/bool.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
 #include "trajectory_msgs/msg/joint_trajectory_point.hpp"
@@ -24,6 +25,13 @@
 using FollowJT = control_msgs::action::FollowJointTrajectory;
 using GoalHandleFJT = rclcpp_action::ServerGoalHandle<FollowJT>;
 using namespace std::chrono_literals;
+
+// Runs its callback when the enclosing scope exits (normal return or exception),
+// so servo is always re-enabled even if trajectory execution bails out early.
+struct ScopeExit {
+    std::function<void()> fn;
+    ~ScopeExit() { fn(); }
+};
 
 class IsaacSimBridge : public rclcpp::Node {
 public:
@@ -49,9 +57,13 @@ private:
     std::atomic<bool> in_execution_{false};
     rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr pub_servo_reset_;
 
+    // Broadcasts execution state so keyboard_teleop can pause/re-anchor POSE mode.
+    rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pub_exec_active_;
+
     void cbJointStates(const sensor_msgs::msg::JointState::SharedPtr msg);
     void cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
     void resetServo();
+    void publishExecActive(bool active);
 
     void setGripper(const std::shared_ptr<std_srvs::srv::SetBool::Request>  request,
                           std::shared_ptr<std_srvs::srv::SetBool::Response> response);
@@ -115,6 +127,11 @@ IsaacSimBridge::IsaacSimBridge() : Node("isaacsim_bridge")
     pub_servo_reset_ = this->create_publisher<control_msgs::msg::JointJog>(
         "/servo_node/delta_joint_cmds", 10);
 
+    // Latched so a keyboard_teleop that starts after a trajectory still sees state.
+    pub_exec_active_ = this->create_publisher<std_msgs::msg::Bool>(
+        "/bridge/execution_active", rclcpp::QoS(1).transient_local());
+    publishExecActive(false);
+
     RCLCPP_INFO(this->get_logger(), "isaacsim_bridge is ready");
 }
 
@@ -151,6 +168,12 @@ void IsaacSimBridge::resetServo(){
     jog.joint_names = joint_names_;
     jog.velocities.assign(joint_names_.size(), 0.0);
     pub_servo_reset_->publish(jog);
+}
+
+void IsaacSimBridge::publishExecActive(bool active){
+    std_msgs::msg::Bool msg;
+    msg.data = active;
+    pub_exec_active_->publish(msg);
 }
 
 void IsaacSimBridge::setGripper(const std::shared_ptr<std_srvs::srv::SetBool::Request>  request,
@@ -194,6 +217,14 @@ void IsaacSimBridge::handle_accepted(const std::shared_ptr<GoalHandleFJT> goal_h
 void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
 {
     in_execution_ = true;   // reject servo while this plan executes
+    publishExecActive(true);
+    // Always re-enable servo on exit (completion, early return, or exception),
+    // and re-anchor POSE mode to wherever this trajectory leaves the arm.
+    ScopeExit on_exit{[this]() {
+        in_execution_ = false;
+        publishExecActive(false);
+        resetServo();
+    }};
     const auto& traj = goal_handle->get_goal()->trajectory;
 
     RCLCPP_INFO(this->get_logger(),
@@ -268,8 +299,7 @@ void IsaacSimBridge::execute(const std::shared_ptr<GoalHandleFJT> goal_handle)
     auto result       = std::make_shared<FollowJT::Result>();
     result->error_code = 0;
     goal_handle->succeed(result);
-    in_execution_ = false;  // done -> servo accepted again
-    resetServo();           // re-anchor servo to the current pose (no snap-back)
+    // on_exit re-enables servo and signals execution end (see ScopeExit above).
 }
 
 int main(int argc, char** argv)

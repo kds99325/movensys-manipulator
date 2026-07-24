@@ -19,6 +19,7 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include <atomic>
 #include <chrono>
 #include <memory>
 #include <mutex>
@@ -30,6 +31,7 @@
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <moveit_msgs/srv/servo_command_type.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/bool.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Vector3.h>
 #include <tf2_ros/buffer.h>
@@ -121,6 +123,12 @@ public:
         // Streams the POSE target so Servo keeps tracking it (~50 Hz).
         pose_timer_ = node_->create_wall_timer(
             20ms, std::bind(&KeyboardServo::publishPose, this));
+
+        // While move_group executes a trajectory, pause POSE streaming and
+        // re-anchor the target when it finishes (transient_local = catch last state).
+        exec_sub_ = node_->create_subscription<std_msgs::msg::Bool>(
+            "/bridge/execution_active", rclcpp::QoS(1).transient_local(),
+            std::bind(&KeyboardServo::cbExecActive, this, std::placeholders::_1));
     }
 
     void spin() {
@@ -133,18 +141,23 @@ public:
 
 private:
     void switchCommandType(int8_t type);
+    bool seedTargetFromTF();
     void enterPoseMode();
     void nudgePose(double dx, double dy, double dz);
     void publishPose();
+    void cbExecActive(std_msgs::msg::Bool::SharedPtr msg);
 
     rclcpp::Node::SharedPtr node_;
     rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
     rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr joint_pub_;
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
     rclcpp::Client<moveit_msgs::srv::ServoCommandType>::SharedPtr switch_client_;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr exec_sub_;
     std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
     rclcpp::TimerBase::SharedPtr pose_timer_;
+
+    std::atomic<bool> exec_active_{false};   // true while a move_group plan runs
 
     std::mutex mtx_;                       // guards mode_ and target_pose_
     Mode mode_ = Mode::NONE;
@@ -164,11 +177,10 @@ void KeyboardServo::switchCommandType(int8_t type) {
     switch_client_->async_send_request(req);
 }
 
-void KeyboardServo::enterPoseMode() {
-    switchCommandType(CMD_POSE);
-
-    // Seed the target from the current EEF pose (base -> eef). TimePointZero =
-    // latest available; retry while the TF listener fills the buffer.
+// Seeds target_pose_ from the current EEF pose (base -> eef). TimePointZero =
+// latest available; retry while the TF listener fills the buffer. Returns true on
+// success. Must be called WITHOUT holding mtx_ (it takes the lock itself).
+bool KeyboardServo::seedTargetFromTF() {
     geometry_msgs::msg::TransformStamped tf;
     bool ok = false;
     for (int i = 0; i < 20 && rclcpp::ok(); ++i) {
@@ -182,9 +194,9 @@ void KeyboardServo::enterPoseMode() {
     }
     if (!ok) {
         RCLCPP_WARN(node_->get_logger(),
-                    "POSE mode: could not look up %s -> %s; staying in previous mode",
+                    "POSE mode: could not look up %s -> %s",
                     BASE_FRAME_ID, EEF_FRAME_ID);
-        return;
+        return false;
     }
 
     std::lock_guard<std::mutex> lock(mtx_);
@@ -193,11 +205,35 @@ void KeyboardServo::enterPoseMode() {
     target_pose_.pose.position.y = tf.transform.translation.y;
     target_pose_.pose.position.z = tf.transform.translation.z;
     target_pose_.pose.orientation = tf.transform.rotation;
-    mode_ = Mode::POSE;
     RCLCPP_INFO(node_->get_logger(),
-                "POSE mode: target seeded at [%.3f, %.3f, %.3f]",
+                "POSE target seeded at [%.3f, %.3f, %.3f]",
                 target_pose_.pose.position.x, target_pose_.pose.position.y,
                 target_pose_.pose.position.z);
+    return true;
+}
+
+void KeyboardServo::enterPoseMode() {
+    switchCommandType(CMD_POSE);
+    if (!seedTargetFromTF()) {
+        RCLCPP_WARN(node_->get_logger(), "POSE mode: staying in previous mode");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(mtx_);
+    mode_ = Mode::POSE;
+}
+
+// move_group execution boundary: pause POSE streaming while it runs; on the
+// true->false edge, re-anchor the target to where the trajectory left the arm
+// so POSE mode resumes holding the new pose instead of snapping back.
+void KeyboardServo::cbExecActive(std_msgs::msg::Bool::SharedPtr msg) {
+    const bool was_active = exec_active_.exchange(msg->data);
+    if (was_active && !msg->data) {
+        Mode mode;
+        { std::lock_guard<std::mutex> lock(mtx_); mode = mode_; }
+        if (mode == Mode::POSE) {
+            seedTargetFromTF();   // re-anchor to the arm's new pose
+        }
+    }
 }
 
 void KeyboardServo::nudgePose(double dx, double dy, double dz) {
@@ -215,6 +251,9 @@ void KeyboardServo::nudgePose(double dx, double dy, double dz) {
 }
 
 void KeyboardServo::publishPose() {
+    if (exec_active_.load()) {
+        return;  // paused while a move_group trajectory executes
+    }
     std::lock_guard<std::mutex> lock(mtx_);
     if (mode_ != Mode::POSE) {
         return;

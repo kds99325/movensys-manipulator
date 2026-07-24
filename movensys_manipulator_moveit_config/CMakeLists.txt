@@ -22,6 +22,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(control_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(moveit_msgs REQUIRED)
@@ -80,13 +81,16 @@ install(DIRECTORY include/
 )
 
 add_executable(isaacsim_bridge src/isaacsim_bridge.cpp)
-ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
+ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_msgs std_srvs)
 
 add_executable(gazebo_bridge src/gazebo_bridge.cpp)
 ament_target_dependencies(gazebo_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
 
 add_executable(keyboard_teleop src/keyboard_teleop.cpp)
-ament_target_dependencies(keyboard_teleop rclcpp geometry_msgs control_msgs moveit_msgs tf2 tf2_ros)
+ament_target_dependencies(keyboard_teleop rclcpp geometry_msgs control_msgs moveit_msgs std_msgs tf2 tf2_ros)
+
+add_executable(quest_servo_teleop src/quest_servo_teleop.cpp)
+ament_target_dependencies(quest_servo_teleop rclcpp geometry_msgs sensor_msgs moveit_msgs std_msgs tf2 tf2_ros)
 
 add_executable(trajectory_test src/trajectory_test.cpp)
 target_link_libraries(trajectory_test moveit2_client_lib)
@@ -159,6 +163,7 @@ install(TARGETS
   trajectory_api
   yolo_pick_and_place_cpp
   keyboard_teleop
+  quest_servo_teleop
   DESTINATION lib/${PROJECT_NAME}
 )
 

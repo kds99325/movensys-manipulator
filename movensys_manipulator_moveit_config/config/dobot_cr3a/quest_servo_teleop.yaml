@@ -1,0 +1,27 @@
+quest_servo_teleop:
+  ros__parameters:
+    # --- topics / services ---
+    quest_pose_topic: /quest_pose_publisher/controller_pose_right
+    enable_topic:     /quest_pose_publisher/joy_right
+    pose_target_topic: /servo_node/pose_target_cmds
+    switch_service:    /servo_node/switch_command_type
+
+    # --- frames (match servo.yaml: planning_frame / ee_frame) ---
+    base_frame: world_manipulator
+    eef_frame:  Link6
+
+    # --- clutch / deadman (right grip) ---
+    # Joy layout from quest_pose_publisher:
+    #   axes    = [thumbstick_x, thumbstick_y, trigger_value, squeeze_value]
+    #   buttons = [primary_click, secondary_click, thumbstick_click, menu_click]
+    # squeeze_value (axis 3) is the analog grip -> use it as the clutch.
+    enable_axis_index: 3
+    enable_axis_threshold: 0.6
+    enable_button_index: -1        # >=0 to use a digital button instead of the axis
+
+    # --- mapping ---
+    position_scale: 0.5            # controller metres -> robot metres (start conservative)
+    orientation_scale: 1.0         # 0..1; 1.0 = 1:1 hand rotation
+    align_yaw_deg: 0.0             # rotate operator "forward" onto robot +X (calibrate)
+    max_target_step: 0.05          # max target jump per publish [m] (glitch guard)
+    stream_rate_hz: 50.0
