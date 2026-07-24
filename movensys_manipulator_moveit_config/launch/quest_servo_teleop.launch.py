@@ -8,7 +8,8 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    """Quest right-controller -> MoveIt Servo POSE teleop (relative clutch).
+    """
+    Quest right-controller -> MoveIt Servo POSE teleop (relative clutch).
 
     Assumes moveit.launch.py (move_group + servo_node + RViz) and a sim bridge
     (sim_bridge.launch.py simulator:=gazebo) are already running, and that the

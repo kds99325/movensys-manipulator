@@ -14,13 +14,18 @@
 //                   from the current pose (via TF) and streamed so Servo tracks it;
 //                   'w'/'e' choose base- or eef-frame nudging
 
-#include <csignal>
-#include <cstdio>
 #include <termios.h>
 #include <unistd.h>
 
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Vector3.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <atomic>
 #include <chrono>
+#include <csignal>
+#include <cstdio>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -32,10 +37,6 @@
 #include <moveit_msgs/srv/servo_command_type.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/bool.hpp>
-#include <tf2/LinearMath/Quaternion.h>
-#include <tf2/LinearMath/Vector3.h>
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
 
 using namespace std::chrono_literals;
 
@@ -299,25 +300,49 @@ int KeyboardServo::keyLoop() {
 
             // --- X / Y ---
             case KEYCODE_UP:
-                if (mode == Mode::POSE) nudgePose(POSE_STEP, 0, 0);
-                else { twist->twist.linear.x =  sign_; publish_twist = true; } break;
+                if (mode == Mode::POSE) {
+                    nudgePose(POSE_STEP, 0, 0);
+                } else {
+                    twist->twist.linear.x =  sign_; publish_twist = true;
+                }
+                break;
             case KEYCODE_DOWN:
-                if (mode == Mode::POSE) nudgePose(-POSE_STEP, 0, 0);
-                else { twist->twist.linear.x = -sign_; publish_twist = true; } break;
+                if (mode == Mode::POSE) {
+                    nudgePose(-POSE_STEP, 0, 0);
+                } else {
+                    twist->twist.linear.x = -sign_; publish_twist = true;
+                }
+                break;
             case KEYCODE_RIGHT:
-                if (mode == Mode::POSE) nudgePose(0, POSE_STEP, 0);
-                else { twist->twist.linear.y =  sign_; publish_twist = true; } break;
+                if (mode == Mode::POSE) {
+                    nudgePose(0, POSE_STEP, 0);
+                } else {
+                    twist->twist.linear.y =  sign_; publish_twist = true;
+                }
+                break;
             case KEYCODE_LEFT:
-                if (mode == Mode::POSE) nudgePose(0, -POSE_STEP, 0);
-                else { twist->twist.linear.y = -sign_; publish_twist = true; } break;
+                if (mode == Mode::POSE) {
+                    nudgePose(0, -POSE_STEP, 0);
+                } else {
+                    twist->twist.linear.y = -sign_; publish_twist = true;
+                }
+                break;
 
             // --- Z ---
             case KEYCODE_SEMICOLON:
-                if (mode == Mode::POSE) nudgePose(0, 0, POSE_STEP);
-                else { twist->twist.linear.z =  sign_; publish_twist = true; } break;
+                if (mode == Mode::POSE) {
+                    nudgePose(0, 0, POSE_STEP);
+                } else {
+                    twist->twist.linear.z =  sign_; publish_twist = true;
+                }
+                break;
             case KEYCODE_PERIOD:
-                if (mode == Mode::POSE) nudgePose(0, 0, -POSE_STEP);
-                else { twist->twist.linear.z = -sign_; publish_twist = true; } break;
+                if (mode == Mode::POSE) {
+                    nudgePose(0, 0, -POSE_STEP);
+                } else {
+                    twist->twist.linear.z = -sign_; publish_twist = true;
+                }
+                break;
 
             // --- twist command frame / direction ---
             case KEYCODE_W: frame_ = BASE_FRAME_ID;
