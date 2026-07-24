@@ -1,13 +1,22 @@
 import os
 
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch_ros.actions import Node
+from launch_ros.actions import ComposableNodeContainer, Node
+from launch_ros.descriptions import ComposableNode
 from launch_ros.substitutions import FindPackageShare
 from moveit_configs_utils import MoveItConfigsBuilder
+import yaml
+
+
+def load_yaml(package_name, file_path):
+    absolute_file_path = os.path.join(get_package_share_directory(package_name), file_path)
+    with open(absolute_file_path, "r") as f:
+        return yaml.safe_load(f)
 
 
 def generate_launch_description():
@@ -132,9 +141,37 @@ def launch_setup(context, *args, **kwargs):
         launch_arguments={"use_sim_time": use_sim_time}.items(),
     )
 
+    servo_yaml = load_yaml(
+        "movensys_manipulator_moveit_config",
+        f"config/{manipulator_model}/servo.yaml",
+    )
+    servo_container = ComposableNodeContainer(
+        name="servo_container",
+        namespace="",
+        package="rclcpp_components",
+        executable="component_container_mt",
+        output="screen",
+        composable_node_descriptions=[
+            ComposableNode(
+                package="moveit_servo",
+                plugin="moveit_servo::ServoNode",
+                name="servo_node",
+                parameters=[
+                    {"moveit_servo": servo_yaml},
+                    moveit_config.robot_description,
+                    moveit_config.robot_description_semantic,
+                    moveit_config.robot_description_kinematics,
+                    moveit_config.joint_limits,
+                    {"use_sim_time": use_sim_time},
+                ],
+            ),
+        ],
+    )
+
     return [
         rviz_node,
         robot_state_publisher,
         run_move_group_node,
         api_launch,
+        servo_container,
     ]
