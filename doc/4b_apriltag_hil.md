@@ -9,8 +9,8 @@
 
 
 
-### Step 2: Run wmx-ros2 for manipulator
-check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md` 
+### Step 2: Run wmx-r2 for manipulator
+check `~/workspaces/movensys_ws/src/wmx-r2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md` 
 set `use_sim_time:=true`
 
 
@@ -20,11 +20,13 @@ set `use_sim_time:=true`
 ```
 mros ros2 launch movensys_manipulator_perception apriltag_detector.launch.py use_sim_time:=true
 ```
+add `rsp:=false` if use gazebo (step 1b) or ros2_control.
 
 ### Step 3b: Launch cuMotion + Isaac Apriltag
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_apriltag.launch.py use_sim_time:=true
 ```
+add `rsp:=false` if use gazebo (step 1b) or ros2_control.
 
 
 

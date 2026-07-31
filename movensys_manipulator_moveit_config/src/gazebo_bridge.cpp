@@ -1,6 +1,7 @@
 // Copyright 2026 Movensys Corporation.
 // Licensed under the MIT License. See LICENSE.txt for details.
 
+#include <atomic>
 // std::chrono::nanoseconds
 #include <chrono>
 // for using std::bind
@@ -23,6 +24,7 @@
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
 #include "trajectory_msgs/msg/joint_trajectory_point.hpp"
 // joint state for robot's status & command
+#include "control_msgs/msg/joint_jog.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_msgs/msg/float64_multi_array.hpp"
 #include "std_srvs/srv/set_bool.hpp"
@@ -47,6 +49,7 @@ public:
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr pub_joint_command_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_joint_state_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr setGripperService_;
+  rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr sub_servo_;
 
   GazeboBridge() : Node("gazebo_bridge") {
     // Declare parameters
@@ -59,6 +62,7 @@ public:
     this->declare_parameter("joint_states_topic",  "/joint_states_topic/no_topic");
     this->declare_parameter("set_gripper_service", "/set_gripper_service/no_topic");
     this->declare_parameter("action_name", "/action_name/no_action");
+    this->declare_parameter("servo_command_topic", "/servo_command_topic/no_topic");
 
     // Fetch parameters
     arm_joint_names_     = this->get_parameter("arm_joint_names").as_string_array();
@@ -69,6 +73,7 @@ public:
     const auto joint_states_topic  = this->get_parameter("joint_states_topic").as_string();
     const auto set_gripper_service = this->get_parameter("set_gripper_service").as_string();
     const auto action_name         = this->get_parameter("action_name").as_string();
+    const auto servo_command_topic = this->get_parameter("servo_command_topic").as_string();
 
     // Create interfaces
     pub_joint_command_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(
@@ -89,16 +94,58 @@ public:
         std::bind(&GazeboBridge::handle_cancel,   this, std::placeholders::_1),
         std::bind(&GazeboBridge::handle_accepted, this, std::placeholders::_1));
 
+    sub_servo_ = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
+        servo_command_topic, 10,
+        std::bind(&GazeboBridge::cbServoCommand, this, std::placeholders::_1));
+
+    pub_servo_reset_ = this->create_publisher<control_msgs::msg::JointJog>(
+        "/servo_node/delta_joint_cmds", 10);
+
     RCLCPP_INFO(this->get_logger(), "gazebo_bridge is ready");
   }
 
 private:
   rclcpp_action::Server<FollowJT>::SharedPtr action_server_;
 
+  // Servo is rejected while a move_group trajectory executes, accepted otherwise.
+  std::atomic<bool> in_execution_{false};
+  rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr pub_servo_reset_;
+
+  void resetServo() {
+    control_msgs::msg::JointJog jog;
+    jog.header.stamp = this->get_clock()->now();
+    jog.joint_names = arm_joint_names_;
+    jog.velocities.assign(arm_joint_names_.size(), 0.0);
+    pub_servo_reset_->publish(jog);
+  }
+
   // What is the purpose of this line?
   void cb(const sensor_msgs::msg::JointState::SharedPtr msg_in)
   {
     last_joint_state = *msg_in;
+  }
+
+  void cbServoCommand(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg) {
+    if (msg->points.empty() || in_execution_.load()) {
+      return;  // reject servo while a move_group plan is executing
+    }
+    // Servo streams short trajectories; the last point is the freshest target.
+    const auto& pt = msg->points.back();
+
+    const size_t n_arm   = arm_joint_names_.size();
+    const size_t n_total = n_arm + gripper_joint_names_.size();
+
+    std_msgs::msg::Float64MultiArray joint_command;
+    joint_command.data.resize(n_total);
+
+    for (size_t j = 0; j < pt.positions.size() && j < n_arm; ++j) {
+      joint_command.data[j] = pt.positions[j];
+    }
+    for (size_t j = 0; j < gripper_joint_names_.size(); ++j) {
+      joint_command.data[n_arm + j] = gripper_state_;
+    }
+
+    pub_joint_command_->publish(joint_command);
   }
 
   // If we get a gripper-open request -> open gripper
@@ -150,6 +197,7 @@ private:
   }
 
   void execute(const std::shared_ptr<GoalHandleFJT> goal_handle){
+    in_execution_ = true;   // reject servo while this plan executes
     // which repo have information about moveit2's trajectory?
     RCLCPP_INFO(this->get_logger(), "Received a new trajectory goal!");
     const auto goal = goal_handle->get_goal();
@@ -235,6 +283,8 @@ private:
     auto result = std::make_shared<FollowJT::Result>();
     result->error_code = 0;
     goal_handle->succeed(result);
+    in_execution_ = false;  // done -> servo accepted again
+    resetServo();           // re-anchor servo to the current pose (no snap-back)
   }
 };
 

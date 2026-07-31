@@ -2,7 +2,7 @@
 
 ROS 2 packages, Docker compose configs, and end-to-end examples for driving
 [Dobot CR3A/CR5A](https://www.movensys.com/) manipulators with the
-[WMX ROS 2](https://github.com/movensys/wmx-ros2) motion control stack,
+[WMX R2](https://github.com/movensys/wmx-r2) motion control stack,
 MoveIt 2 / NVIDIA Isaac cuMotion planning, and perception via Nvblox, YOLO,
 and AprilTag.
 
@@ -14,7 +14,7 @@ engine with a planning and perception stack on top of either Gazebo or
 supports three execution modes for every example:
 
 - **Simulation** — pure simulation (Isaac Sim or Gazebo), no hardware
-- **HIL** — hardware-in-the-loop, simulator visual + real WMX runtime
+- **SIL** — simulation-in-the-loop, simulator visuals + real WMX runtime
 - **Real** — control of the real robot via WMX over EtherCAT
 
 The included examples cover trajectory planning (MoveIt 2 OMPL or Isaac
@@ -34,21 +34,36 @@ object detection, and AprilTag with Nvblox combined.
 └── tools/                                 # Data collection and training utilities
 ```
 
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| `movensys_manipulator_description`      | URDF/xacro, meshes, and RViz/Gazebo bring-up for the Dobot CR3A/CR5A arms |
+| `movensys_manipulator_moveit_config`    | MoveIt 2 configuration, the `trajectory_api` service node (`/wmx/moveit2/*`), the simulator bridge, and the demo launches (trajectory, AprilTag pick-and-place, obstacle avoidance, YOLO) |
+| `movensys_manipulator_isaac_ros_config` | NVIDIA Isaac ROS launches — Isaac cuMotion planning plus Isaac AprilTag and Nvblox perception bridges |
+| `movensys_manipulator_perception`       | Perception nodes: AprilTag detection and YOLO OBB cube/dice detectors, with camera bring-up |
+
+Planned trajectories execute on the servos through the
+[WMX R2](https://github.com/movensys/wmx-r2) `joint_trajectory_controller`
+over EtherCAT; see that repository for the underlying motion-control nodes.
+
 ## Examples
 
 Each example has a dedicated walkthrough under [`doc/`](doc/). The numbered
 prefix selects the scenario; the trailing letter selects the execution mode.
 
-| #  | Scenario                          | Simulation                                            | HIL                                            | Real                                            |
+| #  | Scenario                          | Simulation                                            | SIL                                            | Real                                            |
 |----|-----------------------------------|-------------------------------------------------------|------------------------------------------------|-------------------------------------------------|
 | 3  | Trajectory planning               | [3a](doc/3a_trajectory_simulation.md)                 | [3b](doc/3b_trajectory_hil.md)                 | [3c](doc/3c_trajectory_real.md)                 |
 | 4  | AprilTag pick-and-place           | [4a](doc/4a_apriltag_simulation.md)                   | [4b](doc/4b_apriltag_hil.md)                   | [4c](doc/4c_apriltag_real.md)                   |
 | 5  | Nvblox obstacle avoidance         | [5a](doc/5a_nvblox_simulation.md)                     | [5b](doc/5b_nvblox_hil.md)                     | [5c](doc/5c_nvblox_real.md)                     |
 | 6  | YOLO object detection             | [6a](doc/6a_yolo_simulation.md)                       | [6b](doc/6b_yolo_hil.md)                       | [6c](doc/6c_yolo_real.md)                       |
 | 7  | AprilTag + Nvblox                 | [7a](doc/7a_apriltag_nvblox_simulation.md)            | [7b](doc/7b_apriltag_nvblox_hil.md)            | [7c](doc/7c_apriltag_nvblox_real.md)            |
+| 8  | VLA application                   | [8a](doc/8a_vla_simulation.md)                        | —                                              | —                                               |
 
 A ROS 2 API example (`doc/3d_api_example.md`) and host-setup guides
-(`doc/1_setup.md`, `doc/2_docker.md`) are also provided.
+(`doc/1_setup.md`, `doc/2_docker.md`) are also provided. RGB recording and
+video conversion commands are in [`doc/8_recording.md`](doc/8_recording.md).
 
 ## Requirements
 
@@ -68,7 +83,7 @@ Add the following to your `~/.bashrc` (adjust the variables for your setup):
 ```
 export ROS_DOMAIN_ID=73                         # any free domain id
 export ROS_DISTRO=jazzy                         # {jazzy, humble}
-export MOVENSYS_ROS_VERSION=isaac-ros_4.1       # {isaac-ros_4.1, isaac-ros_3.2, general}
+export MOVENSYS_ROS_VERSION=isaac-ros_4.1       # {intel-xpu, isaac-ros_4.1, isaac-ros_3.2, general}
 export CPU_ARCH=amd64                           # {amd64, arm64}
 export MANIPULATOR_MODEL=dobot_cr3a             # {dobot_cr3a, dobot_cr5a}
 
@@ -147,8 +162,8 @@ launch MoveIt 2 or cuMotion, and trigger the trajectory test.
 
 ## Related Repositories
 
-- [wmx-ros2](https://github.com/movensys/wmx-ros2) — Core WMX ROS 2 motion control packages
-- [wmx-ros2-doc](https://github.com/movensys/wmx-ros2-doc) — Documentation site for the WMX ROS 2 stack
+- [wmx-r2](https://github.com/movensys/wmx-r2) — Core WMX R2 motion control packages
+- [wmx-r2-doc](https://github.com/movensys/wmx-r2-doc) — Documentation site for the WMX R2 stack
 - [movensys-simulation](https://github.com/movensys/movensys-simulation) — Isaac Sim USD scenes used by the examples here
 - [movensys-intelligence](https://github.com/movensys/movensys-intelligence) — VLM-driven task planning
 

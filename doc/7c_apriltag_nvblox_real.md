@@ -9,8 +9,8 @@
 
 
 
-### Step 2: Run wmx-ros2 for manipulator
-check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md` 
+### Step 2: Run wmx-r2 for manipulator
+check `~/workspaces/movensys_ws/src/wmx-r2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md` 
 
 
 
@@ -21,6 +21,7 @@ check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_mani
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_nvblox.launch.py
 ```
+add `rsp:=false` if use ros2_control.
 
 
 

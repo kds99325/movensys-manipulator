@@ -21,11 +21,15 @@ mros ros2 launch movensys_manipulator_moveit_config sim_bridge.launch.py simulat
 ### Step 3a: Launch MoveIt2's OMPL + OpenCV Apriltag
 ```
 mros ros2 launch movensys_manipulator_perception apriltag_detector.launch.py use_sim_time:=true
+
+mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py use_sim_time:=true
 ```
 
 ### Step 3b: Launch cuMotion + Isaac Apriltag
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion_apriltag.launch.py use_sim_time:=true
+
+
 ```
 
 

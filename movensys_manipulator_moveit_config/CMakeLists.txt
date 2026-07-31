@@ -22,14 +22,26 @@ find_package(rclcpp_action REQUIRED)
 find_package(control_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
+
+# MoveIt Servo's ServoCommandType service only exists on Jazzy and newer; it is
+# absent on Humble. Guard the servo teleop executables so the package still
+# builds on distros that lack it. moveit_msgs_DIR points at share/moveit_msgs/cmake.
+if(EXISTS "${moveit_msgs_DIR}/../srv/ServoCommandType.srv")
+  set(HAVE_SERVO_COMMAND_TYPE TRUE)
+else()
+  message(STATUS "moveit_msgs/srv/ServoCommandType not found; "
+    "skipping servo teleop executables (keyboard_teleop, quest_servo_teleop)")
+endif()
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -79,10 +91,18 @@ install(DIRECTORY include/
 )
 
 add_executable(isaacsim_bridge src/isaacsim_bridge.cpp)
-ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
+ament_target_dependencies(isaacsim_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_msgs std_srvs)
 
 add_executable(gazebo_bridge src/gazebo_bridge.cpp)
 ament_target_dependencies(gazebo_bridge rclcpp rclcpp_action control_msgs trajectory_msgs sensor_msgs std_srvs)
+
+if(HAVE_SERVO_COMMAND_TYPE)
+  add_executable(keyboard_teleop src/keyboard_teleop.cpp)
+  ament_target_dependencies(keyboard_teleop rclcpp geometry_msgs control_msgs moveit_msgs std_msgs tf2 tf2_ros)
+
+  add_executable(quest_servo_teleop src/quest_servo_teleop.cpp)
+  ament_target_dependencies(quest_servo_teleop rclcpp geometry_msgs sensor_msgs moveit_msgs std_msgs tf2 tf2_ros)
+endif()
 
 add_executable(trajectory_test src/trajectory_test.cpp)
 target_link_libraries(trajectory_test moveit2_client_lib)
@@ -156,6 +176,14 @@ install(TARGETS
   yolo_pick_and_place_cpp
   DESTINATION lib/${PROJECT_NAME}
 )
+
+if(HAVE_SERVO_COMMAND_TYPE)
+  install(TARGETS
+    keyboard_teleop
+    quest_servo_teleop
+    DESTINATION lib/${PROJECT_NAME}
+  )
+endif()
 
 install(TARGETS moveit2_client_lib isaacsim_bridge gazebo_bridge
   EXPORT export_moveit2_client_lib

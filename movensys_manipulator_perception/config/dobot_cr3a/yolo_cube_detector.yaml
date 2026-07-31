@@ -5,8 +5,8 @@ yolo_cube_detector:
     confidence_threshold: 0.5
 
     # Scene geometry (scan pose). cube_height = floor + cube top surface.
-    cube_height: 0.044 # origin value => 0.038, total height => board height + cube height
-    cam_z_world: 0.45   # original value => 0.45
+    cube_height: 0.05 # origin value => 0.038, total height => board height + cube height
+    cam_z_world: 0.5   # original value => 0.45
     cam_x_world: 0.0
     cam_y_world: 0.0
     # Optical-frame orientation in world, [x, y, z, w] (scan RPY = (π, 0, π))
@@ -25,9 +25,9 @@ yolo_cube_detector:
     # to overwrite with mask_color before the frame is fed to YOLO. Image
     # geometry is preserved, so camera intrinsics / pixel projection are
     # unaffected. Cube workspace excludes the right edge of the frame.
-    mask_left_fraction:   0.115
-    mask_right_fraction:  0.24
-    mask_top_fraction:    0.14
-    mask_bottom_fraction: 0.22
+    mask_left_fraction:   0.0 # 0.115
+    mask_right_fraction:  0.0  # 0.24
+    mask_top_fraction:    0.0  # 0.14
+    mask_bottom_fraction: 0.0  # 0.22
     # Fill colour for masked pixels, BGR, each channel in [0, 255].
     mask_color: [0, 0, 0]

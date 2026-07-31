@@ -89,8 +89,16 @@ RUN apt-get update && \
            /usr/lib/python3/dist-packages/filelock-*.dist-info && \
     if [ "$ROS_DISTRO" = "humble" ]; then PIP_FLAGS=""; else PIP_FLAGS="--break-system-packages"; fi && \
     python3 -m pip install --no-cache-dir $PIP_FLAGS \
+        --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/ \
+        torch==2.5.1+cxx11.abi \
+        torchvision==0.20.1+cxx11.abi \
+        intel-extension-for-pytorch==2.5.10+xpu \
+        oneccl_bind_pt==2.5.0+xpu && \
+    python3 -m pip install --no-cache-dir $PIP_FLAGS \
         "numpy<2" \
         opencv-python \
         "transforms3d>=0.4.1" \
         pyyaml \
+        ultralytics \
+        openvino \
         pyapriltags

@@ -75,7 +75,7 @@ RUN apt-get update && \
            /usr/lib/python3/dist-packages/sympy \
            /usr/lib/python3/dist-packages/sympy-*.egg-info && \
     python3 -m pip install --no-cache-dir --break-system-packages \
-        --index-url https://download.pytorch.org/whl/cu128 \
+        --index-url https://download.pytorch.org/whl/cu130 \
         torch torchvision && \
     python3 -m pip install --no-cache-dir --break-system-packages \
         "numpy<2" \
@@ -84,3 +84,9 @@ RUN apt-get update && \
         pyyaml \
         ultralytics \
         pyapriltags
+
+# torch cu130 (needed for Thor / sm_110) breaks the prebuilt curobo binary via a
+# c10 ABI change, forcing a JIT rebuild that fails on the helper_math.h lerp vs
+# C++20 std::lerp clash. Patch helper_math.h so the JIT build succeeds.
+COPY fix_curobo_lerp.sh /tmp/fix_curobo_lerp.sh
+RUN chmod +x /tmp/fix_curobo_lerp.sh && /tmp/fix_curobo_lerp.sh && rm /tmp/fix_curobo_lerp.sh

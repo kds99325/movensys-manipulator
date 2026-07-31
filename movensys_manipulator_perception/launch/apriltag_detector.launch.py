@@ -25,6 +25,11 @@ def generate_launch_description():
             'use_sim_time', default_value='false',
             description='Use simulation clock (/clock)',
         ),
+        DeclareLaunchArgument(
+            'rsp', default_value='true',
+            description='Publish /robot_description via moveit.launch.py. Set false when a '
+                        'backend launch (Gazebo sim or wmx_r2_control) already publishes it.',
+        ),
     ]
 
     camera_hand_launch = IncludeLaunchDescription(
@@ -41,7 +46,10 @@ def generate_launch_description():
                 'launch', 'moveit.launch.py',
             )
         ),
-        launch_arguments={'use_sim_time': use_sim_time}.items(),
+        launch_arguments={
+            'use_sim_time': use_sim_time,
+            'rsp': LaunchConfiguration('rsp'),
+        }.items(),
     )
 
     apriltag_node = Node(

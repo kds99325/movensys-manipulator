@@ -12,8 +12,8 @@ mros ros2 launch movensys_manipulator_description gazebo_trajectory_real.launch.
 
 
 
-### Step 2: Run wmx-ros2 for manipulator
-check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md`
+### Step 2: Run wmx-r2 for manipulator
+check `~/workspaces/movensys_ws/src/wmx-r2/doc/launch_<MANIPULATOR_MODEL>_manipulator.md`
 
 
 
@@ -24,11 +24,13 @@ check `~/workspaces/movensys_ws/src/wmx-ros2/doc/launch_<MANIPULATOR_MODEL>_mani
 ```
 mros ros2 launch movensys_manipulator_moveit_config moveit.launch.py
 ```
+add `rsp:=false` if use gazebo (step 1b) or ros2_control.
 
 ### Step 3b: Launch cuMotion + API
 ```
 mros ros2 launch movensys_manipulator_isaac_ros_config isaac_cumotion.launch.py
 ```
+add `rsp:=false` if use gazebo (step 1b)  or ros2_control.
 
 
 
