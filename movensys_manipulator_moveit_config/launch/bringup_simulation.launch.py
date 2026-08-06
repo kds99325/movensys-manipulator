@@ -1,73 +1,130 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    OpaqueFunction,
+)
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import (
+    EnvironmentVariable,
+    LaunchConfiguration,
+    PathJoinSubstitution,
+)
 from launch_ros.substitutions import FindPackageShare
 
-def generate_launch_description():
-    sim_arg = DeclareLaunchArgument(
-        'simulator',
-        default_value='gazebo',
-        description='Simulation engine: [gazebo, isaacsim]'
+
+VALID_SIMULATORS = {"gazebo", "isaacsim"}
+VALID_PLANNERS = {"moveit", "cumotion"}
+VALID_MODELS = {"dobot_cr3a", "dobot_cr5a"}
+
+
+def include_launch(package, filename, arguments):
+    return IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare(package),
+                "launch",
+                filename,
+            ])
+        ),
+        launch_arguments=arguments.items(),
     )
-    planner_arg = DeclareLaunchArgument(
-        'planner',
-        default_value='moveit',
-        description='Motion planner: [moveit, cumotion]'
-    )
 
-    def launch_setup(context, *args, **kwargs):
-        sim = LaunchConfiguration('simulator').perform(context)
-        planner = LaunchConfiguration('planner').perform(context)
 
-        # Gazebo 사용 시 자동으로 rsp=false 처리
-        use_rsp = 'false' if sim == 'gazebo' else 'true'
+def launch_setup(context):
+    simulator = LaunchConfiguration("simulator").perform(context)
+    planner = LaunchConfiguration("planner").perform(context)
+    model = LaunchConfiguration("model").perform(context)
 
-        actions = []
-
-        # 1. Gazebo 실행 (simulator=gazebo일 때만 자동 포함)
-        if sim == 'gazebo':
-            gazebo_launch = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([
-                    FindPackageShare('movensys_manipulator_description'),
-                    '/launch/gazebo_trajectory_simulation.launch.py'
-                ])
-            )
-            actions.append(gazebo_launch)
-
-        # 2. Simulator Bridge 실행
-        sim_bridge_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                FindPackageShare('movensys_manipulator_moveit_config'),
-                '/launch/sim_bridge.launch.py'
-            ]),
-            launch_arguments={'simulator': sim, 'use_sim_time': 'true'}.items()
+    if simulator not in VALID_SIMULATORS:
+        raise RuntimeError(
+            f"Invalid simulator '{simulator}'; "
+            f"expected one of {sorted(VALID_SIMULATORS)}"
         )
-        actions.append(sim_bridge_launch)
 
-        # 3. Motion Planner 실행 (MoveIt2 or cuMotion)
-        if planner == 'moveit':
-            planner_launch = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([
-                    FindPackageShare('movensys_manipulator_moveit_config'),
-                    '/launch/moveit.launch.py'
-                ]),
-                launch_arguments={'use_sim_time': 'true', 'rsp': use_rsp}.items()
+    if planner not in VALID_PLANNERS:
+        raise RuntimeError(
+            f"Invalid planner '{planner}'; "
+            f"expected one of {sorted(VALID_PLANNERS)}"
+        )
+
+    if model not in VALID_MODELS:
+        raise RuntimeError(
+            f"Invalid model '{model}'; "
+            f"expected one of {sorted(VALID_MODELS)}"
+        )
+
+    common_arguments = {
+        "model": model,
+        "use_sim_time": "true",
+    }
+
+    actions = []
+
+    if simulator == "gazebo":
+        actions.append(
+            include_launch(
+                "movensys_manipulator_description",
+                "gazebo_trajectory_simulation.launch.py",
+                common_arguments,
             )
-        else:
-            planner_launch = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([
-                    FindPackageShare('movensys_manipulator_isaac_ros_config'),
-                    '/launch/isaac_cumotion.launch.py'
-                ]),
-                launch_arguments={'use_sim_time': 'true', 'rsp': use_rsp}.items()
-            )
-        actions.append(planner_launch)
+        )
 
-        return actions
+    actions.append(
+        include_launch(
+            "movensys_manipulator_moveit_config",
+            "sim_bridge.launch.py",
+            {
+                **common_arguments,
+                "simulator": simulator,
+            },
+        )
+    )
 
+    planner_package = (
+        "movensys_manipulator_moveit_config"
+        if planner == "moveit"
+        else "movensys_manipulator_isaac_ros_config"
+    )
+    planner_file = (
+        "moveit.launch.py"
+        if planner == "moveit"
+        else "isaac_cumotion.launch.py"
+    )
+
+    actions.append(
+        include_launch(
+            planner_package,
+            planner_file,
+            {
+                **common_arguments,
+                "rsp": "false" if simulator == "gazebo" else "true",
+            },
+        )
+    )
+
+    return actions
+
+
+def generate_launch_description():
     return LaunchDescription([
-        sim_arg,
-        planner_arg,
-        OpaqueFunction(function=launch_setup)
+        DeclareLaunchArgument(
+            "simulator",
+            default_value="gazebo",
+            description="gazebo or isaacsim",
+        ),
+        DeclareLaunchArgument(
+            "planner",
+            default_value="moveit",
+            description="moveit or cumotion",
+        ),
+        DeclareLaunchArgument(
+            "model",
+            default_value=EnvironmentVariable(
+                "MANIPULATOR_MODEL",
+                default_value="dobot_cr3a",
+            ),
+            description="dobot_cr3a or dobot_cr5a",
+        ),
+        OpaqueFunction(function=launch_setup),
     ])
