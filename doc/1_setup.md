@@ -48,5 +48,5 @@ sysctl net.core.rmem_max net.core.rmem_default net.core.wmem_max net.core.wmem_d
 ```
 mkdir -p  ~/workspaces/movensys_ws/src
 cd ~/workspaces/movensys_ws/src
-git clone git@github.com:movensys/movensys-manipulator.git
+git clone -b tmux-sidebar https://github.com/kds99325/Studying_movensy.git
 ```

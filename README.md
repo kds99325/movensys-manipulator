@@ -1,3 +1,13 @@
+
+# 📌 Study & Development Workspace (Forked)
+
+> **Note:** This repository has been forked from the original [movensys/movensys-manipulator] for personal learning, development, and system optimization.
+
+### 🎯 Current Focus
+* **Target:** Studying robotic manipulator kinematics (forward/inverse kinematics) and arm control.
+* **Core Task:** Focus on **simulation optimization**—streamlining simulation startup
+
+
 # Movensys Manipulator
 
 ROS 2 packages, Docker compose configs, and end-to-end examples for driving
